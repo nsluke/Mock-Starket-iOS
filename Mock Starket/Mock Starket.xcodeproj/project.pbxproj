@@ -1,0 +1,852 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		808AAA3599E08E545E9A8F39 /* libPods-Mock StarketTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79F40A339287EF1E78812F68 /* libPods-Mock StarketTests.a */; };
+		D1EF8EE75CC1CC126D857A20 /* Pods_Mock_Starket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */; };
+		D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C0C200D491200B2E203 /* AppDelegate.swift */; };
+		D5376C0F200D491200B2E203 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C0E200D491200B2E203 /* ViewController.swift */; };
+		D5376C12200D491200B2E203 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5376C10200D491200B2E203 /* Main.storyboard */; };
+		D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */; };
+		D5376C17200D491200B2E203 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5376C16200D491200B2E203 /* Assets.xcassets */; };
+		D5376C1A200D491200B2E203 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5376C18200D491200B2E203 /* LaunchScreen.storyboard */; };
+		D5376C25200D491300B2E203 /* Mock_StarketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C24200D491300B2E203 /* Mock_StarketTests.swift */; };
+		D5376C30200D491300B2E203 /* Mock_StarketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */; };
+		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
+		F1A6375FFD68F5548C778885 /* libPods-Mock StarketUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D5376C21200D491200B2E203 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5376C01200D491200B2E203 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5376C08200D491200B2E203;
+			remoteInfo = "Mock Starket";
+		};
+		D5376C2C200D491300B2E203 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5376C01200D491200B2E203 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5376C08200D491200B2E203;
+			remoteInfo = "Mock Starket";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mock_Starket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		79F40A339287EF1E78812F68 /* libPods-Mock StarketTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mock StarketTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		85FBC1370C51219A1E862E05 /* Pods-Mock StarketTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests.release.xcconfig"; sourceTree = "<group>"; };
+		94F13307ADF8ACC34810667F /* Pods-Mock Starket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock Starket.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket.release.xcconfig"; sourceTree = "<group>"; };
+		9C17390A6B0F7C821E5973AB /* Pods-Mock StarketUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests.release.xcconfig"; sourceTree = "<group>"; };
+		A63E5B604470014206301D76 /* Pods-Mock StarketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B4AC8CD25668CA520DEF07A1 /* Pods-Mock StarketUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		BC761FC55E30FF55D0CC32CD /* Pods-Mock Starket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock Starket.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket.debug.xcconfig"; sourceTree = "<group>"; };
+		D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mock StarketUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5376C09200D491200B2E203 /* Mock Starket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mock Starket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5376C0C200D491200B2E203 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D5376C0E200D491200B2E203 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D5376C11200D491200B2E203 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D5376C14200D491200B2E203 /* Mock_Starket.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Mock_Starket.xcdatamodel; sourceTree = "<group>"; };
+		D5376C16200D491200B2E203 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D5376C19200D491200B2E203 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D5376C1B200D491200B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5376C20200D491200B2E203 /* Mock StarketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mock StarketTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5376C24200D491300B2E203 /* Mock_StarketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketTests.swift; sourceTree = "<group>"; };
+		D5376C26200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5376C2B200D491300B2E203 /* Mock StarketUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mock StarketUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketUITests.swift; sourceTree = "<group>"; };
+		D5376C31200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D5376C06200D491200B2E203 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D1EF8EE75CC1CC126D857A20 /* Pods_Mock_Starket.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5376C1D200D491200B2E203 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				808AAA3599E08E545E9A8F39 /* libPods-Mock StarketTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5376C28200D491300B2E203 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1A6375FFD68F5548C778885 /* libPods-Mock StarketUITests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		923C30930B9EE659A671E183 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				BC761FC55E30FF55D0CC32CD /* Pods-Mock Starket.debug.xcconfig */,
+				94F13307ADF8ACC34810667F /* Pods-Mock Starket.release.xcconfig */,
+				A63E5B604470014206301D76 /* Pods-Mock StarketTests.debug.xcconfig */,
+				85FBC1370C51219A1E862E05 /* Pods-Mock StarketTests.release.xcconfig */,
+				B4AC8CD25668CA520DEF07A1 /* Pods-Mock StarketUITests.debug.xcconfig */,
+				9C17390A6B0F7C821E5973AB /* Pods-Mock StarketUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		CDFD0F2215B4C8B080544406 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */,
+				D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */,
+				79F40A339287EF1E78812F68 /* libPods-Mock StarketTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D5376C00200D491200B2E203 = {
+			isa = PBXGroup;
+			children = (
+				D5376C0B200D491200B2E203 /* Mock Starket */,
+				D5376C23200D491200B2E203 /* Mock StarketTests */,
+				D5376C2E200D491300B2E203 /* Mock StarketUITests */,
+				D5376C0A200D491200B2E203 /* Products */,
+				923C30930B9EE659A671E183 /* Pods */,
+				CDFD0F2215B4C8B080544406 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D5376C0A200D491200B2E203 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C09200D491200B2E203 /* Mock Starket.app */,
+				D5376C20200D491200B2E203 /* Mock StarketTests.xctest */,
+				D5376C2B200D491300B2E203 /* Mock StarketUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D5376C0B200D491200B2E203 /* Mock Starket */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C42200D4B2E00B2E203 /* IBFiles */,
+				D5376C40200D4AB100B2E203 /* Services */,
+				D5376C3F200D4AAD00B2E203 /* Helpers */,
+				D5376C3E200D4AA600B2E203 /* Models */,
+				D5376C3D200D4A9F00B2E203 /* Controllers */,
+				D5376C41200D4AB800B2E203 /* Views */,
+				D5376C0C200D491200B2E203 /* AppDelegate.swift */,
+				D5376C1B200D491200B2E203 /* Info.plist */,
+				D5376C16200D491200B2E203 /* Assets.xcassets */,
+				D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */,
+			);
+			path = "Mock Starket";
+			sourceTree = "<group>";
+		};
+		D5376C23200D491200B2E203 /* Mock StarketTests */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C24200D491300B2E203 /* Mock_StarketTests.swift */,
+				D5376C26200D491300B2E203 /* Info.plist */,
+			);
+			path = "Mock StarketTests";
+			sourceTree = "<group>";
+		};
+		D5376C2E200D491300B2E203 /* Mock StarketUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */,
+				D5376C31200D491300B2E203 /* Info.plist */,
+			);
+			path = "Mock StarketUITests";
+			sourceTree = "<group>";
+		};
+		D5376C3D200D4A9F00B2E203 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C0E200D491200B2E203 /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		D5376C3E200D4AA600B2E203 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D5376C3F200D4AAD00B2E203 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		D5376C40200D4AB100B2E203 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C43200D4B8200B2E203 /* NetworkService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D5376C41200D4AB800B2E203 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D5376C42200D4B2E00B2E203 /* IBFiles */ = {
+			isa = PBXGroup;
+			children = (
+				D5376C10200D491200B2E203 /* Main.storyboard */,
+				D5376C18200D491200B2E203 /* LaunchScreen.storyboard */,
+			);
+			path = IBFiles;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D5376C08200D491200B2E203 /* Mock Starket */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5376C34200D491300B2E203 /* Build configuration list for PBXNativeTarget "Mock Starket" */;
+			buildPhases = (
+				D52E35C0C812D24687C8ADE7 /* [CP] Check Pods Manifest.lock */,
+				D5376C05200D491200B2E203 /* Sources */,
+				D5376C06200D491200B2E203 /* Frameworks */,
+				D5376C07200D491200B2E203 /* Resources */,
+				DE4D50AEF0153B23C6768F38 /* [CP] Embed Pods Frameworks */,
+				29630DA03A464CEE90636319 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Mock Starket";
+			productName = "Mock Starket";
+			productReference = D5376C09200D491200B2E203 /* Mock Starket.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D5376C1F200D491200B2E203 /* Mock StarketTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5376C37200D491300B2E203 /* Build configuration list for PBXNativeTarget "Mock StarketTests" */;
+			buildPhases = (
+				9E8EB914E1330D598AB2A46A /* [CP] Check Pods Manifest.lock */,
+				D5376C1C200D491200B2E203 /* Sources */,
+				D5376C1D200D491200B2E203 /* Frameworks */,
+				D5376C1E200D491200B2E203 /* Resources */,
+				FEB52288A829875DECC98CC9 /* [CP] Embed Pods Frameworks */,
+				3BEDE2EC69380C83F28874EE /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5376C22200D491200B2E203 /* PBXTargetDependency */,
+			);
+			name = "Mock StarketTests";
+			productName = "Mock StarketTests";
+			productReference = D5376C20200D491200B2E203 /* Mock StarketTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D5376C2A200D491300B2E203 /* Mock StarketUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5376C3A200D491300B2E203 /* Build configuration list for PBXNativeTarget "Mock StarketUITests" */;
+			buildPhases = (
+				68A4079473DD4722B3097D4D /* [CP] Check Pods Manifest.lock */,
+				D5376C27200D491300B2E203 /* Sources */,
+				D5376C28200D491300B2E203 /* Frameworks */,
+				D5376C29200D491300B2E203 /* Resources */,
+				FBC8AAC67F3CE4D257E9D904 /* [CP] Embed Pods Frameworks */,
+				9F3446B17762859919B58D61 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5376C2D200D491300B2E203 /* PBXTargetDependency */,
+			);
+			name = "Mock StarketUITests";
+			productName = "Mock StarketUITests";
+			productReference = D5376C2B200D491300B2E203 /* Mock StarketUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D5376C01200D491200B2E203 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Luke Solomon";
+				TargetAttributes = {
+					D5376C08200D491200B2E203 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					D5376C1F200D491200B2E203 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = D5376C08200D491200B2E203;
+					};
+					D5376C2A200D491300B2E203 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = D5376C08200D491200B2E203;
+					};
+				};
+			};
+			buildConfigurationList = D5376C04200D491200B2E203 /* Build configuration list for PBXProject "Mock Starket" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D5376C00200D491200B2E203;
+			productRefGroup = D5376C0A200D491200B2E203 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D5376C08200D491200B2E203 /* Mock Starket */,
+				D5376C1F200D491200B2E203 /* Mock StarketTests */,
+				D5376C2A200D491300B2E203 /* Mock StarketUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D5376C07200D491200B2E203 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5376C1A200D491200B2E203 /* LaunchScreen.storyboard in Resources */,
+				D5376C17200D491200B2E203 /* Assets.xcassets in Resources */,
+				D5376C12200D491200B2E203 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5376C1E200D491200B2E203 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5376C29200D491300B2E203 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		29630DA03A464CEE90636319 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3BEDE2EC69380C83F28874EE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		68A4079473DD4722B3097D4D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Mock StarketUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9E8EB914E1330D598AB2A46A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Mock StarketTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9F3446B17762859919B58D61 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D52E35C0C812D24687C8ADE7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Mock Starket-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DE4D50AEF0153B23C6768F38 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxStarscream/RxStarscream.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxStarscream.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FBC8AAC67F3CE4D257E9D904 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FEB52288A829875DECC98CC9 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/RxSwift-iOS11.2/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
+				"${BUILT_PRODUCTS_DIR}/RxTest/RxTest.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxTest.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D5376C05200D491200B2E203 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5376C0F200D491200B2E203 /* ViewController.swift in Sources */,
+				D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */,
+				D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */,
+				D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5376C1C200D491200B2E203 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5376C25200D491300B2E203 /* Mock_StarketTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5376C27200D491300B2E203 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5376C30200D491300B2E203 /* Mock_StarketUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D5376C22200D491200B2E203 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5376C08200D491200B2E203 /* Mock Starket */;
+			targetProxy = D5376C21200D491200B2E203 /* PBXContainerItemProxy */;
+		};
+		D5376C2D200D491300B2E203 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5376C08200D491200B2E203 /* Mock Starket */;
+			targetProxy = D5376C2C200D491300B2E203 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D5376C10200D491200B2E203 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5376C11200D491200B2E203 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D5376C18200D491200B2E203 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5376C19200D491200B2E203 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D5376C32200D491300B2E203 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D5376C33200D491300B2E203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D5376C35200D491300B2E203 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC761FC55E30FF55D0CC32CD /* Pods-Mock Starket.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Mock Starket/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-Starket";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D5376C36200D491300B2E203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94F13307ADF8ACC34810667F /* Pods-Mock Starket.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Mock Starket/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-Starket";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D5376C38200D491300B2E203 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A63E5B604470014206301D76 /* Pods-Mock StarketTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Mock StarketTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-StarketTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mock Starket.app/Mock Starket";
+			};
+			name = Debug;
+		};
+		D5376C39200D491300B2E203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85FBC1370C51219A1E862E05 /* Pods-Mock StarketTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Mock StarketTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-StarketTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mock Starket.app/Mock Starket";
+			};
+			name = Release;
+		};
+		D5376C3B200D491300B2E203 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B4AC8CD25668CA520DEF07A1 /* Pods-Mock StarketUITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Mock StarketUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-StarketUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Mock Starket";
+			};
+			name = Debug;
+		};
+		D5376C3C200D491300B2E203 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9C17390A6B0F7C821E5973AB /* Pods-Mock StarketUITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Mock StarketUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-StarketUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Mock Starket";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D5376C04200D491200B2E203 /* Build configuration list for PBXProject "Mock Starket" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5376C32200D491300B2E203 /* Debug */,
+				D5376C33200D491300B2E203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5376C34200D491300B2E203 /* Build configuration list for PBXNativeTarget "Mock Starket" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5376C35200D491300B2E203 /* Debug */,
+				D5376C36200D491300B2E203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5376C37200D491300B2E203 /* Build configuration list for PBXNativeTarget "Mock StarketTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5376C38200D491300B2E203 /* Debug */,
+				D5376C39200D491300B2E203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5376C3A200D491300B2E203 /* Build configuration list for PBXNativeTarget "Mock StarketUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5376C3B200D491300B2E203 /* Debug */,
+				D5376C3C200D491300B2E203 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D5376C14200D491200B2E203 /* Mock_Starket.xcdatamodel */,
+			);
+			currentVersion = D5376C14200D491200B2E203 /* Mock_Starket.xcdatamodel */;
+			path = Mock_Starket.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = D5376C01200D491200B2E203 /* Project object */;
+}
