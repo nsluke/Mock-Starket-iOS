@@ -28,14 +28,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         let responseString = socket.rx.response.map { response -> String in
-            
             print(response)
             
             switch response {
                 case .connected:
                     print(response)
                     return "Connected\n"
-                
                 case .disconnected(let error):
                     return "Disconnected with error: \(String(describing: error)) \n"
                 case .message(let msg):
@@ -47,17 +45,18 @@ class ViewController: UIViewController {
             }
         }
         
-        Observable.merge([responseString, writeSubject.asObservable()])
-            .scan([]) { lastMsg, newMsg -> Array<String> in
-                return Array(lastMsg + [newMsg])
-            }.map { $0.joined(separator: "\n")
-            }.asDriver(onErrorJustReturn: "")
+        Observable.merge( [responseString, writeSubject.asObservable()] )
+            .scan([]) { lastMsg, newMsg -> Array<String> in return Array(lastMsg + [newMsg]) }
+            .map { $0.joined(separator: "\n") }
+            .asDriver(onErrorJustReturn: "")
             .drive(textview.rx.text)
             .disposed(by: disposeBag)
-        socket.disableSSLCertValidation = true
         
+        socket.disableSSLCertValidation = true
         socket.connect()
+        
         //self.sendMessage(message:"{\"action\": \"login\", \"value\": {\"username\": \"username\", \"password\":\"password\"}}" )
+        
         self.textField.text = "{\"action\": \"login\", \"value\": {\"username\": \"username\", \"password\":\"password\"}}"
     }
 
@@ -72,12 +71,8 @@ class ViewController: UIViewController {
     @IBAction func sendButtonTapped(_ sender: Any) {
         if let text = textField.text {
             sendMessage(message:text)
-
         }
     }
-    
-    
-    
 }
 
 //extension ViewController: UITextFieldDelegate {

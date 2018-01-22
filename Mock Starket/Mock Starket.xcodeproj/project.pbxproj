@@ -18,6 +18,7 @@
 		D5376C25200D491300B2E203 /* Mock_StarketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C24200D491300B2E203 /* Mock_StarketTests.swift */; };
 		D5376C30200D491300B2E203 /* Mock_StarketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */; };
 		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
+		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
 		F1A6375FFD68F5548C778885 /* libPods-Mock StarketUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +64,7 @@
 		D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketUITests.swift; sourceTree = "<group>"; };
 		D5376C31200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				D5376C0E200D491200B2E203 /* ViewController.swift */,
+				D57567A22015C63000186CED /* ChartViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -529,6 +532,7 @@
 				D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */,
 				D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */,
 				D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */,
+				D57567A32015C63000186CED /* ChartViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -700,7 +704,7 @@
 				INFOPLIST_FILE = "Mock Starket/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-Starket";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Solomon.MockStarket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -717,7 +721,7 @@
 				INFOPLIST_FILE = "Mock Starket/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "MockStarket.Mock-Starket";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Solomon.MockStarket;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

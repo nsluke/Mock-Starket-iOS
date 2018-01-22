@@ -7,10 +7,14 @@ target 'Mock Starket' do
   pod 'RxSwift'
   pod 'RxCocoa'
   pod 'RxStarscream'
+  pod 'RxDataSources'
+  pod 'HamburgerMenu'
+  
 # Pods for Mock Starket
-
     target 'Mock StarketTests' do
-        
+        inherit! :search_paths
+        pod 'Quick'
+        pod 'Nimble'
     end
 
     target 'Mock StarketUITests' do
