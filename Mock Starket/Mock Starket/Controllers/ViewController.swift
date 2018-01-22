@@ -33,7 +33,9 @@ class ViewController: UIViewController {
             
             switch response {
                 case .connected:
+                    print(response)
                     return "Connected\n"
+                
                 case .disconnected(let error):
                     return "Disconnected with error: \(String(describing: error)) \n"
                 case .message(let msg):
@@ -53,15 +55,16 @@ class ViewController: UIViewController {
             .drive(textview.rx.text)
             .disposed(by: disposeBag)
         socket.disableSSLCertValidation = true
-        socket.connect()
         
-        sendMessage(message:"{\"action\": \"login\", \"value\": {\"username\": \"username\", \"password\":\"password\"}}" )
+        socket.connect()
+        //self.sendMessage(message:"{\"action\": \"login\", \"value\": {\"username\": \"username\", \"password\":\"password\"}}" )
+        self.textField.text = "{\"action\": \"login\", \"value\": {\"username\": \"username\", \"password\":\"password\"}}"
     }
 
 
-    fileprivate func sendMessage(message: String) {
+    @objc fileprivate func sendMessage(message: String) {
         socket.write(string: message)
-        writeSubject.onNext("SENT: \(message)")
+        writeSubject.onNext("SENT: \(message) \n")
         textField.text = nil
         textField.resignFirstResponder()
     }

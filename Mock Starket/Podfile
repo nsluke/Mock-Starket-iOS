@@ -8,15 +8,14 @@ target 'Mock Starket' do
   pod 'RxCocoa'
   pod 'RxStarscream'
 # Pods for Mock Starket
+
+    target 'Mock StarketTests' do
+        
+    end
+
+    target 'Mock StarketUITests' do
+        inherit! :search_paths
+        # Pods for testing
+    end
+
 end
-
-target 'Mock StarketTests' do
-
-end
-
-target 'Mock StarketUITests' do
-    inherit! :search_paths
-    # Pods for testing
-end
-
-
