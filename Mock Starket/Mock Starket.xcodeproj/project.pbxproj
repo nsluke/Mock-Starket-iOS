@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		808AAA3599E08E545E9A8F39 /* libPods-Mock StarketTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 79F40A339287EF1E78812F68 /* libPods-Mock StarketTests.a */; };
+		9B312BBDD93EA1CE20E17F7A /* Pods_Mock_StarketUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E5F4BF11928A187FE5188DD /* Pods_Mock_StarketUITests.framework */; };
+		AF439200B97883279F80A6AB /* Pods_Mock_StarketTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AE3860D95B2E4094C621CB3 /* Pods_Mock_StarketTests.framework */; };
 		D1EF8EE75CC1CC126D857A20 /* Pods_Mock_Starket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */; };
 		D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C0C200D491200B2E203 /* AppDelegate.swift */; };
 		D5376C0F200D491200B2E203 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C0E200D491200B2E203 /* ViewController.swift */; };
@@ -18,8 +19,8 @@
 		D5376C25200D491300B2E203 /* Mock_StarketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C24200D491300B2E203 /* Mock_StarketTests.swift */; };
 		D5376C30200D491300B2E203 /* Mock_StarketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */; };
 		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
+		D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5387995201D17D4001ECC44 /* NetworkObjects.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
-		F1A6375FFD68F5548C778885 /* libPods-Mock StarketUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,14 +42,14 @@
 
 /* Begin PBXFileReference section */
 		3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mock_Starket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		79F40A339287EF1E78812F68 /* libPods-Mock StarketTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mock StarketTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AE3860D95B2E4094C621CB3 /* Pods_Mock_StarketTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mock_StarketTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E5F4BF11928A187FE5188DD /* Pods_Mock_StarketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mock_StarketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		85FBC1370C51219A1E862E05 /* Pods-Mock StarketTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests.release.xcconfig"; sourceTree = "<group>"; };
 		94F13307ADF8ACC34810667F /* Pods-Mock Starket.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock Starket.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket.release.xcconfig"; sourceTree = "<group>"; };
 		9C17390A6B0F7C821E5973AB /* Pods-Mock StarketUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests.release.xcconfig"; sourceTree = "<group>"; };
 		A63E5B604470014206301D76 /* Pods-Mock StarketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4AC8CD25668CA520DEF07A1 /* Pods-Mock StarketUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC761FC55E30FF55D0CC32CD /* Pods-Mock Starket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock Starket.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket.debug.xcconfig"; sourceTree = "<group>"; };
-		D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Mock StarketUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5376C09200D491200B2E203 /* Mock Starket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mock Starket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5376C0C200D491200B2E203 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D5376C0E200D491200B2E203 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -64,6 +65,7 @@
 		D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketUITests.swift; sourceTree = "<group>"; };
 		D5376C31200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		D5387995201D17D4001ECC44 /* NetworkObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkObjects.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				808AAA3599E08E545E9A8F39 /* libPods-Mock StarketTests.a in Frameworks */,
+				AF439200B97883279F80A6AB /* Pods_Mock_StarketTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1A6375FFD68F5548C778885 /* libPods-Mock StarketUITests.a in Frameworks */,
+				9B312BBDD93EA1CE20E17F7A /* Pods_Mock_StarketUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,8 +114,8 @@
 			isa = PBXGroup;
 			children = (
 				3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */,
-				D00F6392CCBDB414349A589D /* libPods-Mock StarketUITests.a */,
-				79F40A339287EF1E78812F68 /* libPods-Mock StarketTests.a */,
+				4AE3860D95B2E4094C621CB3 /* Pods_Mock_StarketTests.framework */,
+				6E5F4BF11928A187FE5188DD /* Pods_Mock_StarketUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -187,6 +189,7 @@
 		D5376C3E200D4AA600B2E203 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D5387995201D17D4001ECC44 /* NetworkObjects.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -467,17 +470,25 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
+				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
 				"${BUILT_PRODUCTS_DIR}/RxStarscream/RxStarscream.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxStarscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -506,15 +517,13 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/RxSwift-iOS11.2/RxSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/RxBlocking/RxBlocking.framework",
-				"${BUILT_PRODUCTS_DIR}/RxTest/RxTest.framework",
+				"${BUILT_PRODUCTS_DIR}/Nimble/Nimble.framework",
+				"${BUILT_PRODUCTS_DIR}/Quick/Quick.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxBlocking.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxTest.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nimble.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Quick.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -531,6 +540,7 @@
 				D5376C0F200D491200B2E203 /* ViewController.swift in Sources */,
 				D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */,
 				D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */,
+				D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */,
 				D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */,
 				D57567A32015C63000186CED /* ChartViewController.swift in Sources */,
 			);

@@ -8,13 +8,10 @@
 
 import Foundation
 import RxSwift
-import RxStarscream
+import Starscream
 
 struct NetworkService {
-    
-    
     func receiveSocket () {
-        
 //        socket = WebSocket(url: URL(string: "ws://localhost:8000/ws")!)
 //        socket.connect()
 //        
@@ -34,10 +31,6 @@ struct NetworkService {
 //                print("Pong")
 //            }
 //        }).disposed(by disposeBag)
-//        
+        
     }
-    
-    
-    
-    
 }

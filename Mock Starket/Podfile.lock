@@ -1,5 +1,15 @@
 PODS:
+  - Charts (3.0.5):
+    - Charts/Core (= 3.0.5)
+  - Charts/Core (3.0.5)
+  - Differentiator (3.0.2)
+  - Nimble (7.0.3)
+  - Quick (1.2.0)
   - RxCocoa (4.1.1):
+    - RxSwift (~> 4.0)
+  - RxDataSources (3.0.2):
+    - Differentiator (~> 3.0)
+    - RxCocoa (~> 4.0)
     - RxSwift (~> 4.0)
   - RxStarscream (0.8):
     - RxCocoa (~> 4.0)
@@ -7,18 +17,31 @@ PODS:
     - Starscream (~> 3.0)
   - RxSwift (4.1.1)
   - Starscream (3.0.4)
+  - SwiftyJSON (4.0.0)
 
 DEPENDENCIES:
+  - Charts
+  - Nimble
+  - Quick
   - RxCocoa
+  - RxDataSources
   - RxStarscream
   - RxSwift
+  - Starscream
+  - SwiftyJSON
 
 SPEC CHECKSUMS:
+  Charts: 45cdc985b764c838b35ee47eb1365d15735f6d1a
+  Differentiator: a87be69eba49ec4ab460c7671143ee3a9eececfd
+  Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
+  Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
   RxCocoa: fd0862fd2df95fa55562ad28ffd2522c25eb4a85
+  RxDataSources: cb7c31e652a87ebb919da45f716bbb87b3765f6b
   RxStarscream: 4aef6751cdb8a3a2b28dabeea36a3b10b980ea42
   RxSwift: c6e3b1c7b325c7d121cd4327e9d98b7ed746b570
   Starscream: f5da93fe6984c77b694366bf7299b7dc63a76f26
+  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: c5441befcda96b405fc87c9ca7d32b04f272e065
+PODFILE CHECKSUM: d7345589283a63163ca9e88747f2ef665b048dd5
 
 COCOAPODS: 1.3.1

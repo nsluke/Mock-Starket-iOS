@@ -8,7 +8,9 @@ target 'Mock Starket' do
   pod 'RxCocoa'
   pod 'RxStarscream'
   pod 'RxDataSources'
-  pod 'HamburgerMenu'
+  pod 'SwiftyJSON'
+  pod 'Starscream'
+  pod 'Charts'
   
 # Pods for Mock Starket
     target 'Mock StarketTests' do

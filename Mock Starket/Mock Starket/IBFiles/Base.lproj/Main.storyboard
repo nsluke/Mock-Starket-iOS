@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ylc-IS-P1D">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,7 +15,7 @@
                 <navigationController id="JSZ-tH-tgU" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Socket Test" id="31p-Mt-6fw"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Em8-WA-ejL">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -31,18 +31,18 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Mock_Starket" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="gUc-g1-lkp">
-                                <rect key="frame" x="0.0" y="139" width="375" height="479"/>
+                                <rect key="frame" x="0.0" y="151" width="414" height="536"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Dar-OK-e4T">
-                                <rect key="frame" x="125" y="72" width="250" height="30"/>
+                                <rect key="frame" x="164" y="84" width="250" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="250" id="RlQ-3R-F7v"/>
                                 </constraints>
@@ -51,13 +51,13 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0bL-Ka-9wW">
-                                <rect key="frame" x="0.0" y="110" width="30.5" height="21"/>
+                                <rect key="frame" x="0.0" y="122" width="30.666666666666668" height="21"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                 <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D7G-EW-qqj">
-                                <rect key="frame" x="0.0" y="72" width="36" height="30"/>
+                                <rect key="frame" x="0.0" y="84" width="36" height="30"/>
                                 <state key="normal" title="Send"/>
                                 <connections>
                                     <action selector="sendButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FZx-KR-gN0"/>
@@ -69,10 +69,9 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="gUc-g1-lkp" secondAttribute="trailing" id="1ZY-GL-Csv"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="gUc-g1-lkp" secondAttribute="bottom" id="5MD-SC-B0g"/>
                             <constraint firstItem="gUc-g1-lkp" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9so-nY-1nn"/>
-                            <constraint firstItem="Dar-OK-e4T" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="D7G-EW-qqj" secondAttribute="trailing" constant="8" id="AOD-u5-HDU"/>
                             <constraint firstItem="D7G-EW-qqj" firstAttribute="leading" secondItem="0bL-Ka-9wW" secondAttribute="leading" id="Exp-ID-rFC"/>
                             <constraint firstItem="Dar-OK-e4T" firstAttribute="bottom" secondItem="D7G-EW-qqj" secondAttribute="bottom" id="Ml3-nZ-Wve"/>
-                            <constraint firstItem="D7G-EW-qqj" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="TeB-6L-78e"/>
+                            <constraint firstItem="D7G-EW-qqj" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="ShR-Fh-UeR"/>
                             <constraint firstItem="D7G-EW-qqj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Wdi-br-ulx"/>
                             <constraint firstItem="gUc-g1-lkp" firstAttribute="top" secondItem="0bL-Ka-9wW" secondAttribute="bottom" constant="8" id="a5y-SW-z7q"/>
                             <constraint firstItem="0bL-Ka-9wW" firstAttribute="top" secondItem="D7G-EW-qqj" secondAttribute="bottom" constant="8" id="ff7-cM-z1z"/>
@@ -115,11 +114,11 @@
             <objects>
                 <viewController id="JAK-29-swU" customClass="ChartViewController" customModule="Mock_Starket" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="yFl-6E-Dbh">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k91-ym-ckC">
-                                <rect key="frame" x="164" y="64" width="48" height="36"/>
+                                <rect key="frame" x="183" y="64" width="48" height="36"/>
                                 <fontDescription key="fontDescription" type="system" weight="thin" pointSize="20"/>
                                 <state key="normal" title="Begin"/>
                                 <connections>
@@ -127,7 +126,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hgI-0e-9mr">
-                                <rect key="frame" x="0.0" y="100" width="375" height="518"/>
+                                <rect key="frame" x="0.0" y="100" width="414" height="587"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
@@ -154,7 +153,7 @@
                 <navigationController id="aWT-Fh-yR4" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Chart" id="NPh-81-FfC"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="phL-yW-tq7">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
