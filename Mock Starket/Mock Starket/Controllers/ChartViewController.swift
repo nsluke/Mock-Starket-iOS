@@ -25,7 +25,7 @@ class ChartViewController: UIViewController {
         super.viewDidLoad()
         
         socket = WebSocket(url: URL(string: "ws://localhost:8080/")!)
-        socket.delegate = self
+        socket.delegate = self as! WebSocketDelegate
         socket.connect()
         
         Observable.just([])

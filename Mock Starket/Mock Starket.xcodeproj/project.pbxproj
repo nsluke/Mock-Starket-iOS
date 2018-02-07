@@ -21,6 +21,8 @@
 		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
 		D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5387995201D17D4001ECC44 /* NetworkObjects.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
+		D5B513FB202A78C70013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
+		D5B513FC202A78C80013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +52,7 @@
 		A63E5B604470014206301D76 /* Pods-Mock StarketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketTests/Pods-Mock StarketTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B4AC8CD25668CA520DEF07A1 /* Pods-Mock StarketUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock StarketUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock StarketUITests/Pods-Mock StarketUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC761FC55E30FF55D0CC32CD /* Pods-Mock Starket.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Mock Starket.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket.debug.xcconfig"; sourceTree = "<group>"; };
+		D51F23C0202A76F400D8B8D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C09200D491200B2E203 /* Mock Starket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mock Starket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5376C0C200D491200B2E203 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D5376C0E200D491200B2E203 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,13 +60,10 @@
 		D5376C14200D491200B2E203 /* Mock_Starket.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Mock_Starket.xcdatamodel; sourceTree = "<group>"; };
 		D5376C16200D491200B2E203 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D5376C19200D491200B2E203 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		D5376C1B200D491200B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C20200D491200B2E203 /* Mock StarketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mock StarketTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5376C24200D491300B2E203 /* Mock_StarketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketTests.swift; sourceTree = "<group>"; };
-		D5376C26200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C2B200D491300B2E203 /* Mock StarketUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Mock StarketUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketUITests.swift; sourceTree = "<group>"; };
-		D5376C31200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		D5387995201D17D4001ECC44 /* NetworkObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkObjects.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 				D5376C3D200D4A9F00B2E203 /* Controllers */,
 				D5376C41200D4AB800B2E203 /* Views */,
 				D5376C0C200D491200B2E203 /* AppDelegate.swift */,
-				D5376C1B200D491200B2E203 /* Info.plist */,
+				D51F23C0202A76F400D8B8D5 /* Info.plist */,
 				D5376C16200D491200B2E203 /* Assets.xcassets */,
 				D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */,
 			);
@@ -163,7 +163,6 @@
 			isa = PBXGroup;
 			children = (
 				D5376C24200D491300B2E203 /* Mock_StarketTests.swift */,
-				D5376C26200D491300B2E203 /* Info.plist */,
 			);
 			path = "Mock StarketTests";
 			sourceTree = "<group>";
@@ -172,7 +171,6 @@
 			isa = PBXGroup;
 			children = (
 				D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */,
-				D5376C31200D491300B2E203 /* Info.plist */,
 			);
 			path = "Mock StarketUITests";
 			sourceTree = "<group>";
@@ -351,6 +349,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5B513FB202A78C70013FE9E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +357,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5B513FC202A78C80013FE9E /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

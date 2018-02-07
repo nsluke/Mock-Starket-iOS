@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import Mock_Starket
+//@testable import MockStarket
 
 class Mock_StarketTests: XCTestCase {
     
