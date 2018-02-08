@@ -19,8 +19,7 @@ class ChartViewController: UIViewController {
     private var socket:WebSocket = WebSocket(url: URL(string: "ws://159.203.244.103:8000/ws")!)
     private let writeSubject = PublishSubject<String>()
 
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,17 +27,39 @@ class ChartViewController: UIViewController {
         socket.delegate = self
         socket.connect()
         
-        Observable.just([])
-
+//        Observable.just([])
 
         // Do any additional setup after loading the view.
     }
     
 
+    
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+}
+
+extension ChartViewController: WebSocketDelegate {
     
+    
+    func websocketDidConnect(socket: WebSocketClient) {
+        
+        print("Connected")
+    }
+    
+    func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
+        
+    }
+    
+    func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+        
+    }
+    
+    func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
+        
+    }
 }
