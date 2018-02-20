@@ -11,7 +11,8 @@ target 'Mock Starket' do
   pod 'SwiftyJSON'
   pod 'Starscream'
   pod 'Charts'
-  
+  pod 'Alamofire'
+ 
 # Pods for Mock Starket
     target 'Mock StarketTests' do
         inherit! :search_paths

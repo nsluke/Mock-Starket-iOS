@@ -20,6 +20,8 @@
 		D5376C30200D491300B2E203 /* Mock_StarketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */; };
 		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
 		D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5387995201D17D4001ECC44 /* NetworkObjects.swift */; };
+		D56A4B84203BEF8D008BE5F2 /* Mukta_Vaani in Resources */ = {isa = PBXBuildFile; fileRef = D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */; };
+		D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -66,6 +68,8 @@
 		D5376C31200D491300B2E203 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		D5387995201D17D4001ECC44 /* NetworkObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkObjects.swift; sourceTree = "<group>"; };
+		D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mukta_Vaani; sourceTree = "<group>"; };
+		D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,6 +159,7 @@
 				D5376C1B200D491200B2E203 /* Info.plist */,
 				D5376C16200D491200B2E203 /* Assets.xcassets */,
 				D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */,
+				D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */,
 			);
 			path = "Mock Starket";
 			sourceTree = "<group>";
@@ -180,6 +185,7 @@
 		D5376C3D200D4A9F00B2E203 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */,
 				D5376C0E200D491200B2E203 /* ViewController.swift */,
 				D57567A22015C63000186CED /* ChartViewController.swift */,
 			);
@@ -344,6 +350,7 @@
 				D5376C1A200D491200B2E203 /* LaunchScreen.storyboard in Resources */,
 				D5376C17200D491200B2E203 /* Assets.xcassets in Resources */,
 				D5376C12200D491200B2E203 /* Main.storyboard in Resources */,
+				D56A4B84203BEF8D008BE5F2 /* Mukta_Vaani in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,6 +477,7 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Mock Starket/Pods-Mock Starket-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Charts/Charts.framework",
 				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
@@ -481,6 +489,7 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Charts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
@@ -537,6 +546,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */,
 				D5376C0F200D491200B2E203 /* ViewController.swift in Sources */,
 				D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */,
 				D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */,
