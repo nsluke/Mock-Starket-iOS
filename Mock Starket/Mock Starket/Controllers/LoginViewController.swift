@@ -42,9 +42,10 @@ class LoginViewController: ViewController {
     }
     
     func sendLoginRequest(username:String, password:String) {
-        let message = "{\"action\": \"login\", \"value\": {\"username\": \(username), \"password\": \(password)}}"
+        let message = "{\"action\": \"login\", \"value\": {\"username\": \"\(username)\", \"password\": \"\(password)\" }}"
         
         socket.disableSSLCertValidation = true
+        print(message)
         socket.write(string: message)
     }
     
@@ -56,8 +57,6 @@ extension LoginViewController: WebSocketDelegate {
         print("Connected")
         
         loginButton.isUserInteractionEnabled = true
-
-//        socket.write(string: "{\"action\": \"login\", \"value\": {\"username\": \"username\", \"password\":\"password\"}}")
     }
     
     func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
