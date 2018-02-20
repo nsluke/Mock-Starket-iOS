@@ -30,9 +30,11 @@ struct Value {
         
         if self.type == "portfolio" {
             self.object = Portfolio.init(json: json["value"])
-        } else /* if self.type == "valuable" */ {
+        } else if self.type == "valuable" {
             self.object = Valuable.init(json: json["value"])
-        }
+        } else {
+            object = 0
+        } 
     }
 }
 
@@ -47,7 +49,7 @@ struct Portfolio {
         self.name = json["object"]["name"].stringValue
         self.uuid = json["object"]["uuid"].intValue
         self.wallet = json["object"]["net_worth"].floatValue
-        self.net_worth = json["object"]["net_worth"].floatValue
+        self.net_worth = 0
         self.ledger = Ledger.init(json: json["object"]["ledger"])
     }
 }
@@ -65,9 +67,23 @@ struct Valuable {
 }
 
 struct Ledger {
-    var ticker: [String : [String:Int]]
+    var ticker: Stock
     
     init(json: JSON) {
-        self.ticker = json as! [String: [String:Int]]
+//        for i in json {
+        self.ticker = Stock.init(name: json["name"].stringValue, value: json["amount"].doubleValue) // this part is gonna break
+//        }
     }
 }
+
+struct Stock {
+    var name: String
+    var value: Double
+    
+    init(name:String, value:Double) {
+        self.name = name
+        self.value = value
+    }
+    
+}
+
