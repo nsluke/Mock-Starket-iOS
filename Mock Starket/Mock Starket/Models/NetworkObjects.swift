@@ -14,7 +14,6 @@ struct Action {
     var type:String
     var value:Value
     
-    
     init(json:JSON) {
         self.type = json["action"].stringValue
         self.value = Value.init(json: json["action"]["value"])
