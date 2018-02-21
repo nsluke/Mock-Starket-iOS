@@ -22,6 +22,8 @@ class LoginViewController: ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        UIApplication.shared.statusBarStyle = .lightContent
+        
         loginButton.isUserInteractionEnabled = false
         
         socket.delegate = self
@@ -63,25 +65,38 @@ extension LoginViewController: WebSocketDelegate {
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         print(text)
         
-        let notificationView = UIView.init(frame: CGRect(x: 0,
-                                                         y: self.view.frame.height,
-                                                         width: self.loginButton.frame.width,
-                                                         height: self.loginButton.frame.height))
+        let notificationView = UIView.init(frame: CGRect(x: 25, y: self.view.frame.height, width: self.loginButton.frame.width, height: self.loginButton.frame.height))
+        notificationView.backgroundColor = UIColor.darkGray
+        notificationView.cornerRadius = 5
+        notificationView.shadowColor = UIColor.init(red: 1.0,
+                                                    green: 1.0,
+                                                    blue: 1.0,
+                                                    alpha: 0.1)
         
-        let notificationLabel = UILabel.init(frame: CGRect(x: notificationView.frame.midX,
-                                                           y: notificationView.frame.minY,
-                                                           width: self.loginButton.frame.width,
-                                                           height: self.loginButton.frame.height))
-        notificationLabel.text = "Login Succesful"
+        let rect = CGRect(x: notificationView.frame.midX,
+                          y: notificationView.frame.midY,
+                          width: self.loginButton.frame.width,
+                          height: self.loginButton.frame.height)
+        let notificationLabel = UILabel.init(frame: rect)
         
-//        UIView.animate(withDuration: 0.5, animations: {
-//
-//
-//
-//        }) { in
+        notificationLabel.centerXAnchor.constraint(equalTo: notificationView.centerXAnchor).isActive = true
+        notificationLabel.centerYAnchor.constraint(equalTo: notificationView.centerYAnchor).isActive = true
+        
+        notificationLabel.text = "Login Succesful!"
+        notificationLabel.font = UIFont.init(name: "MuktaVaani", size: 20.0)
+        notificationLabel.textColor = UIColor.white
+        
+        notificationView.addSubview(notificationLabel)
+        self.view.addSubview(notificationView)
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            notificationView.frame = CGRect.init(x: 25, y: self.loginButton.frame.minY - 40, width: self.loginButton.frame.width, height: self.loginButton.frame.height)
+            
+        }) { (bool) in
+            sleep(1)
 //            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
-//
-//        }
+        }
+        
         
         
     }

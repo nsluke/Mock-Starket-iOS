@@ -1,9 +1,14 @@
 PODS:
   - Alamofire (4.6.0)
+  - Answers (1.3.6):
+    - Fabric (~> 1.6.3)
   - Charts (3.0.5):
     - Charts/Core (= 3.0.5)
   - Charts/Core (3.0.5)
+  - Crashlytics (3.8.6):
+    - Fabric (~> 1.6.3)
   - Differentiator (3.0.2)
+  - Fabric (1.6.13)
   - Nimble (7.0.3)
   - Quick (1.2.0)
   - RxCocoa (4.1.2):
@@ -23,7 +28,10 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - Answers
   - Charts
+  - Crashlytics
+  - Fabric
   - Nimble
   - Quick
   - RxCocoa
@@ -36,8 +44,11 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  Answers: ef6af16bc75366334db6323a87f37ea54e2dab71
   Charts: 45cdc985b764c838b35ee47eb1365d15735f6d1a
+  Crashlytics: 95d05f4e4c19a771250c4bd9ce344d996de32bbf
   Differentiator: a87be69eba49ec4ab460c7671143ee3a9eececfd
+  Fabric: 2fb5676bc811af011a04513451f463dac6803206
   Nimble: 7f5a9c447a33002645a071bddafbfb24ea70e0ac
   Quick: 58d203b1c5e27fff7229c4c1ae445ad7069a7a08
   RxCocoa: d88ba0f1f6abf040011a9eb4b539324fc426843a
@@ -48,6 +59,6 @@ SPEC CHECKSUMS:
   Starscream: f5da93fe6984c77b694366bf7299b7dc63a76f26
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: b97f33d80ac215c8f40bf51942d970b8e12e2cce
+PODFILE CHECKSUM: 8bc8655f6ae43b7d7e25773a107eb3b9655167d9
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0

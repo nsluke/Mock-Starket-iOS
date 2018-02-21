@@ -8,6 +8,7 @@
 
 import UIKit
 import SideMenu
+import Starscream
 
 class PortfolioViewController: UIViewController {
     
@@ -18,6 +19,8 @@ class PortfolioViewController: UIViewController {
     @IBOutlet weak var portfolioStampView: UIView!
     @IBOutlet weak var tableView: UITableView!
     
+    var socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,10 +28,13 @@ class PortfolioViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        self.setupHeader()
+        self.setupViews()
     }
     
-    func setupHeader() {
+    func setupViews() {
+        UIApplication.shared.statusBarStyle = .lightContent
+
+        
         let gradient = CAGradientLayer.init()
         gradient.colors = [UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 0.0), 
                            UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 1.0) ]
@@ -78,7 +84,26 @@ extension PortfolioViewController: UITableViewDataSource {
     }
 }
 
+extension PortfolioViewController: WebSocketDelegate {
+    func websocketDidConnect(socket: WebSocketClient) {
+        
+    }
+    
+    func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
+        
+    }
+    
+    func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+        print(text)
+        
+    }
+    
+    func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
+        print(data)
 
+    }
+
+}
 
 
 
