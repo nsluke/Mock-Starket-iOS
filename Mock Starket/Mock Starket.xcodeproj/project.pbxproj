@@ -23,7 +23,13 @@
 		D56A0DBE203CC48400499F00 /* PortfolioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */; };
 		D56A0DC0203D05EF00499F00 /* UILabel+Kerning.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */; };
 		D56A0DC3203D061D00499F00 /* PortfolioTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */; };
-		D56A4B84203BEF8D008BE5F2 /* Mukta_Vaani in Resources */ = {isa = PBXBuildFile; fileRef = D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */; };
+		D56A0DCB203D130300499F00 /* MuktaVaani-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC4203D12FB00499F00 /* MuktaVaani-ExtraBold.ttf */; };
+		D56A0DCC203D130300499F00 /* MuktaVaani-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC5203D12FD00499F00 /* MuktaVaani-Light.ttf */; };
+		D56A0DCD203D130300499F00 /* MuktaVaani-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC6203D12FE00499F00 /* MuktaVaani-Medium.ttf */; };
+		D56A0DCE203D130300499F00 /* MuktaVaani-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC7203D12FF00499F00 /* MuktaVaani-Regular.ttf */; };
+		D56A0DCF203D130300499F00 /* MuktaVaani-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC8203D130000499F00 /* MuktaVaani-Bold.ttf */; };
+		D56A0DD0203D130300499F00 /* MuktaVaani-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC9203D130100499F00 /* MuktaVaani-ExtraLight.ttf */; };
+		D56A0DD1203D130300499F00 /* MuktaVaani-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */; };
 		D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
 		D5B513FB202A78C70013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
@@ -74,7 +80,13 @@
 		D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioViewController.swift; sourceTree = "<group>"; };
 		D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Kerning.swift"; sourceTree = "<group>"; };
 		D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PortfolioTableViewCell.swift; path = "Mock Starket/PortfolioTableViewCell.swift"; sourceTree = SOURCE_ROOT; };
-		D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mukta_Vaani; sourceTree = "<group>"; };
+		D56A0DC4203D12FB00499F00 /* MuktaVaani-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-ExtraBold.ttf"; sourceTree = "<group>"; };
+		D56A0DC5203D12FD00499F00 /* MuktaVaani-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-Light.ttf"; sourceTree = "<group>"; };
+		D56A0DC6203D12FE00499F00 /* MuktaVaani-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-Medium.ttf"; sourceTree = "<group>"; };
+		D56A0DC7203D12FF00499F00 /* MuktaVaani-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-Regular.ttf"; sourceTree = "<group>"; };
+		D56A0DC8203D130000499F00 /* MuktaVaani-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-Bold.ttf"; sourceTree = "<group>"; };
+		D56A0DC9203D130100499F00 /* MuktaVaani-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-ExtraLight.ttf"; sourceTree = "<group>"; };
+		D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-SemiBold.ttf"; sourceTree = "<group>"; };
 		D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -166,7 +178,13 @@
 				D51F23C0202A76F400D8B8D5 /* Info.plist */,
 				D5376C16200D491200B2E203 /* Assets.xcassets */,
 				D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */,
-				D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */,
+				D56A0DC8203D130000499F00 /* MuktaVaani-Bold.ttf */,
+				D56A0DC4203D12FB00499F00 /* MuktaVaani-ExtraBold.ttf */,
+				D56A0DC9203D130100499F00 /* MuktaVaani-ExtraLight.ttf */,
+				D56A0DC5203D12FD00499F00 /* MuktaVaani-Light.ttf */,
+				D56A0DC6203D12FE00499F00 /* MuktaVaani-Medium.ttf */,
+				D56A0DC7203D12FF00499F00 /* MuktaVaani-Regular.ttf */,
+				D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */,
 			);
 			path = "Mock Starket";
 			sourceTree = "<group>";
@@ -363,9 +381,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5376C1A200D491200B2E203 /* LaunchScreen.storyboard in Resources */,
+				D56A0DCF203D130300499F00 /* MuktaVaani-Bold.ttf in Resources */,
+				D56A0DCD203D130300499F00 /* MuktaVaani-Medium.ttf in Resources */,
+				D56A0DCE203D130300499F00 /* MuktaVaani-Regular.ttf in Resources */,
+				D56A0DCB203D130300499F00 /* MuktaVaani-ExtraBold.ttf in Resources */,
 				D5376C17200D491200B2E203 /* Assets.xcassets in Resources */,
+				D56A0DD1203D130300499F00 /* MuktaVaani-SemiBold.ttf in Resources */,
 				D5376C12200D491200B2E203 /* Main.storyboard in Resources */,
-				D56A4B84203BEF8D008BE5F2 /* Mukta_Vaani in Resources */,
+				D56A0DD0203D130300499F00 /* MuktaVaani-ExtraLight.ttf in Resources */,
+				D56A0DCC203D130300499F00 /* MuktaVaani-Light.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
