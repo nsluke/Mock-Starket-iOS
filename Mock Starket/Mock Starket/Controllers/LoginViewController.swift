@@ -63,7 +63,26 @@ extension LoginViewController: WebSocketDelegate {
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         print(text)
         
-        self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+        let notificationView = UIView.init(frame: CGRect(x: 0,
+                                                         y: self.view.frame.height,
+                                                         width: self.loginButton.frame.width,
+                                                         height: self.loginButton.frame.height))
+        
+        let notificationLabel = UILabel.init(frame: CGRect(x: notificationView.frame.midX,
+                                                           y: notificationView.frame.minY,
+                                                           width: self.loginButton.frame.width,
+                                                           height: self.loginButton.frame.height))
+        notificationLabel.text = "Login Succesful"
+        
+//        UIView.animate(withDuration: 0.5, animations: {
+//
+//
+//
+//        }) { in
+//            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+//
+//        }
+        
         
     }
     

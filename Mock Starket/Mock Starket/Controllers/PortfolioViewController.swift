@@ -16,6 +16,7 @@ class PortfolioViewController: UIViewController {
     @IBOutlet weak var blueView: UIView!
     @IBOutlet weak var tableViewHeaderView: UIView!
     @IBOutlet weak var portfolioStampView: UIView!
+    @IBOutlet weak var tableView: UITableView!
     
     
     override func viewDidLoad() {
@@ -53,3 +54,43 @@ extension PortfolioViewController: UITabBarDelegate {
     }
 
 }
+
+extension PortfolioViewController: UITableViewDelegate {
+    
+}
+
+extension PortfolioViewController: UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath)
+        
+        cell.textLabel?.text = "Congrats, this is all the app does for now. Thanks for helping!"
+        
+        return cell
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
