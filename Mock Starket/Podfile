@@ -12,6 +12,7 @@ target 'Mock Starket' do
   pod 'Starscream'
   pod 'Charts'
   pod 'Alamofire'
+  pod 'SideMenu'
  
 # Pods for Mock Starket
     target 'Mock StarketTests' do

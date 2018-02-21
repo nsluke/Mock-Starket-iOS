@@ -17,6 +17,7 @@ PODS:
     - RxSwift (~> 4.0)
     - Starscream (~> 3.0)
   - RxSwift (4.1.2)
+  - SideMenu (3.1.5)
   - Starscream (3.0.4)
   - SwiftyJSON (4.0.0)
 
@@ -29,6 +30,7 @@ DEPENDENCIES:
   - RxDataSources
   - RxStarscream
   - RxSwift
+  - SideMenu
   - Starscream
   - SwiftyJSON
 
@@ -42,9 +44,10 @@ SPEC CHECKSUMS:
   RxDataSources: cb7c31e652a87ebb919da45f716bbb87b3765f6b
   RxStarscream: 4aef6751cdb8a3a2b28dabeea36a3b10b980ea42
   RxSwift: e49536837d9901277638493ea537394d4b55f570
+  SideMenu: 47dbf9e4d878062d8994aed43f6e4bf6c1fea30b
   Starscream: f5da93fe6984c77b694366bf7299b7dc63a76f26
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: de64a721fdec28325f012f77e71b63fa6a3807e2
+PODFILE CHECKSUM: b97f33d80ac215c8f40bf51942d970b8e12e2cce
 
 COCOAPODS: 1.4.0

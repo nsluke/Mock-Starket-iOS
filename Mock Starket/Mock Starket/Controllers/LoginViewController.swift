@@ -48,14 +48,11 @@ class LoginViewController: ViewController {
         print(message)
         socket.write(string: message)
     }
-    
 }
 
 extension LoginViewController: WebSocketDelegate {
-    
     func websocketDidConnect(socket: WebSocketClient) {
         print("Connected")
-        
         loginButton.isUserInteractionEnabled = true
     }
     
@@ -65,10 +62,12 @@ extension LoginViewController: WebSocketDelegate {
     
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         print(text)
+        
+        self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+        
     }
     
     func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
         print(data)
     }
-    
 }

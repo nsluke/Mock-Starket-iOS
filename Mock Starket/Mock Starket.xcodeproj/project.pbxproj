@@ -20,6 +20,9 @@
 		D5376C30200D491300B2E203 /* Mock_StarketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */; };
 		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
 		D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5387995201D17D4001ECC44 /* NetworkObjects.swift */; };
+		D56A0DBE203CC48400499F00 /* PortfolioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */; };
+		D56A0DC0203D05EF00499F00 /* UILabel+Kerning.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */; };
+		D56A0DC3203D061D00499F00 /* PortfolioTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */; };
 		D56A4B84203BEF8D008BE5F2 /* Mukta_Vaani in Resources */ = {isa = PBXBuildFile; fileRef = D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */; };
 		D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
@@ -68,6 +71,9 @@
 		D5376C2F200D491300B2E203 /* Mock_StarketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mock_StarketUITests.swift; sourceTree = "<group>"; };
 		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		D5387995201D17D4001ECC44 /* NetworkObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkObjects.swift; sourceTree = "<group>"; };
+		D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioViewController.swift; sourceTree = "<group>"; };
+		D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Kerning.swift"; sourceTree = "<group>"; };
+		D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PortfolioTableViewCell.swift; path = "Mock Starket/PortfolioTableViewCell.swift"; sourceTree = SOURCE_ROOT; };
 		D56A4B83203BEF8D008BE5F2 /* Mukta_Vaani */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mukta_Vaani; sourceTree = "<group>"; };
 		D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
@@ -155,6 +161,7 @@
 				D5376C3E200D4AA600B2E203 /* Models */,
 				D5376C3D200D4A9F00B2E203 /* Controllers */,
 				D5376C41200D4AB800B2E203 /* Views */,
+				D56A0DC1203D05F200499F00 /* Extensions */,
 				D5376C0C200D491200B2E203 /* AppDelegate.swift */,
 				D51F23C0202A76F400D8B8D5 /* Info.plist */,
 				D5376C16200D491200B2E203 /* Assets.xcassets */,
@@ -184,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */,
+				D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */,
 				D5376C0E200D491200B2E203 /* ViewController.swift */,
 				D57567A22015C63000186CED /* ChartViewController.swift */,
 			);
@@ -216,6 +224,7 @@
 		D5376C41200D4AB800B2E203 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -227,6 +236,14 @@
 				D5376C18200D491200B2E203 /* LaunchScreen.storyboard */,
 			);
 			path = IBFiles;
+			sourceTree = "<group>";
+		};
+		D56A0DC1203D05F200499F00 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -484,6 +501,7 @@
 				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
 				"${BUILT_PRODUCTS_DIR}/RxStarscream/RxStarscream.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SideMenu/SideMenu.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
@@ -496,6 +514,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxStarscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SideMenu.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
@@ -546,11 +565,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D56A0DC3203D061D00499F00 /* PortfolioTableViewCell.swift in Sources */,
 				D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */,
 				D5376C0F200D491200B2E203 /* ViewController.swift in Sources */,
 				D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */,
 				D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */,
+				D56A0DC0203D05EF00499F00 /* UILabel+Kerning.swift in Sources */,
 				D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */,
+				D56A0DBE203CC48400499F00 /* PortfolioViewController.swift in Sources */,
 				D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */,
 				D57567A32015C63000186CED /* ChartViewController.swift in Sources */,
 			);
