@@ -9,7 +9,6 @@
 import Foundation
 import Starscream
 import Crashlytics
-import Answers
 
 class LoginViewController: ViewController {
     
@@ -81,7 +80,7 @@ extension LoginViewController: WebSocketDelegate {
                           height: self.loginButton.frame.height)
         let notificationLabel = UILabel.init(frame: rect)
         notificationLabel.text = "Login Succesful!"
-        notificationLabel.font = UIFont.init(name: "MuktaVaani", size: 20.0)
+//        notificationLabel.font = UIFont.init(name: "MuktaVaani", size: 20.0)
         notificationLabel.textColor = UIColor.white
         
         notificationView.addSubview(notificationLabel)
@@ -93,7 +92,7 @@ extension LoginViewController: WebSocketDelegate {
 
         }) { (bool) in
             sleep(1)
-//            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
         }
         
         

@@ -15,7 +15,6 @@ target 'Mock Starket' do
   pod 'SideMenu'
   pod 'Fabric'
   pod 'Crashlytics'
-  pod 'Answers'
  
 # Pods for Mock Starket
     target 'Mock StarketTests' do

@@ -494,14 +494,6 @@ open class WebSocket : NSObject, StreamDelegate, WebSocketClient, WSStreamDelega
         isConnecting = true
         createHTTPRequest()
     }
-    
-    open func connect(completion: @escaping() -> Void) {
-        guard !isConnecting else { return }
-        didDisconnect = false
-        isConnecting = true
-        createHTTPRequest()
-        completion()
-    }
 
     /**
      Disconnect from the server. I send a Close control frame to the server, then expect the server to respond with a Close control frame and close the socket from its end. I notify my delegate once the socket has been closed.

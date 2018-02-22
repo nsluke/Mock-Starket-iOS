@@ -10,7 +10,6 @@ import UIKit
 import SideMenu
 import Starscream
 import Crashlytics
-import Answers
 
 
 class PortfolioViewController: UIViewController {

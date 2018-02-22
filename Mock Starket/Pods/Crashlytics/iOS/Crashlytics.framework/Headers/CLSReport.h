@@ -28,11 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The CLSReport exposes an interface to the phsyical report that Crashlytics has created. You can
  * use this class to get information about the event, and can also set some values after the
-<<<<<<< HEAD
  * event has occurred.
-=======
- * event has occured.
->>>>>>> a8d3ccc831bc0f2586e2c0125c6bd69c41a7bb90
  **/
 @interface CLSReport : NSObject <CLSCrashReport>
 
