@@ -9,7 +9,6 @@
 import Foundation
 import Starscream
 import Crashlytics
-
 import Answers
 
 class LoginViewController: ViewController {

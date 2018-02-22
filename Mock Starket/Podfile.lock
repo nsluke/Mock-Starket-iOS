@@ -1,5 +1,7 @@
 PODS:
   - Alamofire (4.6.0)
+  - Answers (1.0.0):
+    - Fabric
   - Charts (3.0.5):
     - Charts/Core (= 3.0.5)
   - Charts/Core (3.0.5)
@@ -26,6 +28,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - Answers
   - Charts
   - Crashlytics
   - Fabric
@@ -41,6 +44,7 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  Answers: 25f0d740e3e4384ed0d97a8bda6b5eea1842c3d3
   Charts: 45cdc985b764c838b35ee47eb1365d15735f6d1a
   Crashlytics: a989ef242b66605577a425733797f810bd2725eb
   Differentiator: a87be69eba49ec4ab460c7671143ee3a9eececfd
@@ -55,6 +59,6 @@ SPEC CHECKSUMS:
   Starscream: f5da93fe6984c77b694366bf7299b7dc63a76f26
   SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
 
-PODFILE CHECKSUM: 075b1a87d2069fafd86aeb723bef2fc047de9e11
+PODFILE CHECKSUM: 0a8dcf9d5a91eac3793538347f5b66d8975c95b5
 
 COCOAPODS: 1.4.0
