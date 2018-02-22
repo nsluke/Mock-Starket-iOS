@@ -8,6 +8,9 @@
 
 import Foundation
 import Starscream
+import Crashlytics
+
+import Answers
 
 class LoginViewController: ViewController {
     
@@ -78,10 +81,6 @@ extension LoginViewController: WebSocketDelegate {
                           width: self.loginButton.frame.width,
                           height: self.loginButton.frame.height)
         let notificationLabel = UILabel.init(frame: rect)
-        
-        notificationLabel.centerXAnchor.constraint(equalTo: notificationView.centerXAnchor).isActive = true
-        notificationLabel.centerYAnchor.constraint(equalTo: notificationView.centerYAnchor).isActive = true
-        
         notificationLabel.text = "Login Succesful!"
         notificationLabel.font = UIFont.init(name: "MuktaVaani", size: 20.0)
         notificationLabel.textColor = UIColor.white
@@ -91,7 +90,8 @@ extension LoginViewController: WebSocketDelegate {
         
         UIView.animate(withDuration: 0.5, animations: {
             notificationView.frame = CGRect.init(x: 25, y: self.loginButton.frame.minY - 40, width: self.loginButton.frame.width, height: self.loginButton.frame.height)
-            
+            Answers.logCustomEvent(withName: "LogInSuccessful", customAttributes: ["any":"something"])
+
         }) { (bool) in
             sleep(1)
 //            self.performSegue(withIdentifier: "loginSuccessful", sender: self)

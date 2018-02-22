@@ -9,6 +9,9 @@
 import UIKit
 import SideMenu
 import Starscream
+import Crashlytics
+import Answers
+
 
 class PortfolioViewController: UIViewController {
     
@@ -24,6 +27,12 @@ class PortfolioViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        let menuRightNavigationController = UISideMenuNavigationController(rootViewController: self)
+        SideMenuManager.default.menuRightNavigationController = menuRightNavigationController
+        SideMenuManager.default.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
+        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -34,16 +43,13 @@ class PortfolioViewController: UIViewController {
     func setupViews() {
         UIApplication.shared.statusBarStyle = .lightContent
 
-        
         let gradient = CAGradientLayer.init()
         gradient.colors = [UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 0.0), 
                            UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 1.0) ]
         gradient.startPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.minY)
         gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.minY)
         blueView.layer.addSublayer(gradient)
-        
     }
-    
     
     //handle button tap
     @IBAction func sideMenuButtonTapped(_ sender: Any) {
@@ -54,19 +60,13 @@ class PortfolioViewController: UIViewController {
 }
 
 extension PortfolioViewController: UITabBarDelegate {
-    
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         
     }
-
 }
 
-extension PortfolioViewController: UITableViewDelegate {
-    
-}
 
 extension PortfolioViewController: UITableViewDataSource {
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -77,7 +77,6 @@ extension PortfolioViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath)
-        
         cell.textLabel?.text = "Congrats, this is all the app does for now. Thanks for helping!"
         
         return cell
@@ -102,20 +101,4 @@ extension PortfolioViewController: WebSocketDelegate {
         print(data)
 
     }
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
