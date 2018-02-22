@@ -30,6 +30,7 @@
 		D56A0DCF203D130300499F00 /* MuktaVaani-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC8203D130000499F00 /* MuktaVaani-Bold.ttf */; };
 		D56A0DD0203D130300499F00 /* MuktaVaani-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DC9203D130100499F00 /* MuktaVaani-ExtraLight.ttf */; };
 		D56A0DD1203D130300499F00 /* MuktaVaani-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */; };
+		D56A0DD3203E055F00499F00 /* Group 9.png in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DD2203E055E00499F00 /* Group 9.png */; };
 		D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
 		D5B513FB202A78C70013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
@@ -87,6 +88,7 @@
 		D56A0DC8203D130000499F00 /* MuktaVaani-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-Bold.ttf"; sourceTree = "<group>"; };
 		D56A0DC9203D130100499F00 /* MuktaVaani-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-ExtraLight.ttf"; sourceTree = "<group>"; };
 		D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-SemiBold.ttf"; sourceTree = "<group>"; };
+		D56A0DD2203E055E00499F00 /* Group 9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Group 9.png"; sourceTree = "<group>"; };
 		D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -176,6 +178,7 @@
 				D56A0DC1203D05F200499F00 /* Extensions */,
 				D5376C0C200D491200B2E203 /* AppDelegate.swift */,
 				D51F23C0202A76F400D8B8D5 /* Info.plist */,
+				D56A0DD2203E055E00499F00 /* Group 9.png */,
 				D5376C16200D491200B2E203 /* Assets.xcassets */,
 				D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */,
 				D56A0DC8203D130000499F00 /* MuktaVaani-Bold.ttf */,
@@ -277,7 +280,11 @@
 				D5376C07200D491200B2E203 /* Resources */,
 				DE4D50AEF0153B23C6768F38 /* [CP] Embed Pods Frameworks */,
 				29630DA03A464CEE90636319 /* [CP] Copy Pods Resources */,
+<<<<<<< HEAD
 				D5B87BB6203E22B00071C7E2 /* ShellScript */,
+=======
+				D56A0DD4203E1C8900499F00 /* ShellScript */,
+>>>>>>> a8d3ccc831bc0f2586e2c0125c6bd69c41a7bb90
 			);
 			buildRules = (
 			);
@@ -384,6 +391,7 @@
 				D5376C1A200D491200B2E203 /* LaunchScreen.storyboard in Resources */,
 				D56A0DCF203D130300499F00 /* MuktaVaani-Bold.ttf in Resources */,
 				D56A0DCD203D130300499F00 /* MuktaVaani-Medium.ttf in Resources */,
+				D56A0DD3203E055F00499F00 /* Group 9.png in Resources */,
 				D56A0DCE203D130300499F00 /* MuktaVaani-Regular.ttf in Resources */,
 				D56A0DCB203D130300499F00 /* MuktaVaani-ExtraBold.ttf in Resources */,
 				D5376C17200D491200B2E203 /* Assets.xcassets in Resources */,
@@ -512,7 +520,11 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+<<<<<<< HEAD
 		D5B87BB6203E22B00071C7E2 /* ShellScript */ = {
+=======
+		D56A0DD4203E1C8900499F00 /* ShellScript */ = {
+>>>>>>> a8d3ccc831bc0f2586e2c0125c6bd69c41a7bb90
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (

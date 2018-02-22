@@ -72,7 +72,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param itemPriceOrNil         The purchased item's price.
  *  @param currencyOrNil          The ISO4217 currency code. Example: USD
+<<<<<<< HEAD
  *  @param purchaseSucceededOrNil Was the purchase successful or unsuccessful
+=======
+ *  @param purchaseSucceededOrNil Was the purchase succesful or unsuccesful
+>>>>>>> a8d3ccc831bc0f2586e2c0125c6bd69c41a7bb90
  *  @param itemNameOrNil          The human-readable form of the item's name. Example:
  *  @param itemTypeOrNil          The type, or genre of the item. Example: Song
  *  @param itemIdOrNil            The machine-readable, unique item identifier Example: SKU
@@ -100,7 +104,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param levelNameOrNil                 The name of the level completed, E.G. "1" or "Training"
  *  @param scoreOrNil                     The score the user completed the level with.
+<<<<<<< HEAD
  *  @param levelCompletedSuccesfullyOrNil A boolean representing whether or not the level was completed successfully.
+=======
+ *  @param levelCompletedSuccesfullyOrNil A boolean representing whether or not the level was completed succesfully.
+>>>>>>> a8d3ccc831bc0f2586e2c0125c6bd69c41a7bb90
  *  @param customAttributesOrNil          A dictionary of custom attributes to associate with this event.
  */
 + (void)logLevelEnd:(nullable NSString *)levelNameOrNil
@@ -189,7 +197,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param eventName             The human-readable name for the event.
  *  @param customAttributesOrNil A dictionary of custom attributes to associate with this event. Attribute keys
+<<<<<<< HEAD
  *                               must be <code>NSString</code> and values must be <code>NSNumber</code> or <code>NSString</code>.
+=======
+ *                               must be <code>NSString</code> and and values must be <code>NSNumber</code> or <code>NSString</code>.
+>>>>>>> a8d3ccc831bc0f2586e2c0125c6bd69c41a7bb90
  *  @discussion                  How we treat <code>NSNumbers</code>:
  *                               We will provide information about the distribution of values over time.
  *
