@@ -27,11 +27,11 @@ class PortfolioViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         let menuRightNavigationController = UISideMenuNavigationController(rootViewController: self)
         SideMenuManager.default.menuRightNavigationController = menuRightNavigationController
-        SideMenuManager.default.menuAddPanGestureToPresent(toView: self.navigationController!.navigationBar)
-        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+        SideMenuManager.default.menuAddPanGestureToPresent(toView: sideMenuButton)
+//        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
+        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.all)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -52,7 +52,7 @@ class PortfolioViewController: UIViewController {
     
     //handle button tap
     @IBAction func sideMenuButtonTapped(_ sender: Any) {
-        present(SideMenuManager.default.menuLeftNavigationController!, animated: true, completion: nil)
+        self.present(SideMenuManager.default.menuRightNavigationController!, animated: true, completion: nil)
         dismiss(animated: true, completion: nil)
     }
     
