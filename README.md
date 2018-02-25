@@ -10,7 +10,7 @@
 Mock Starket is an open-source iOS app that plans to be a learning tool for those who want to get into investing in stocks, but either don't have the initial money to do so, or who want to have fun without risking any money.
 
 
-![](header.png)
+![](Header.png)
 
 ## Features
 
