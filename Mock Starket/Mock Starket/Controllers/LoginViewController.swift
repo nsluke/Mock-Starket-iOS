@@ -10,6 +10,7 @@ import Foundation
 import Starscream
 import Crashlytics
 
+
 class LoginViewController: ViewController {
     
     //MARK: IBOutlets
@@ -23,7 +24,7 @@ class LoginViewController: ViewController {
 
     //MARK: Variables
     var activeTextField:UITextField!
-    var socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
+//    var socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
     var lastOffset: CGPoint!
     var keyboardHeight: CGFloat!
     
@@ -36,24 +37,39 @@ class LoginViewController: ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(enableLogin),
+                                               name: NetworkServiceNotification.SocketDidConnect.rawValue,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(loginSuccesful),
+                                               name: NetworkServiceNotification.SocketMessageReceived.rawValue,
+                                               object: nil)
         
-
-        loginButton.backgroundColor = UIColor.red
-        self.loginActivityIndicator.isHidden = true
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow(notification:)),
+                                               name: NSNotification.Name.UIKeyboardWillShow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide(notification:)),
+                                               name: NSNotification.Name.UIKeyboardWillHide,
+                                               object: nil)
         
-        socket.delegate = self
-        socket.disableSSLCertValidation = true
-        socket.connect()
+        NetworkService.connect()
     }
-    
+
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        
+        loginButton.backgroundColor = UIColor.red
+        self.loginActivityIndicator.isHidden = true
         self.setNeedsStatusBarAppearanceUpdate()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(true)
+    }
     
     //MARK: IBActions
     @IBAction func touchReceived(_ sender: Any) {
@@ -67,16 +83,19 @@ class LoginViewController: ViewController {
         guard let username = usernameTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         
-        let message = "{\"action\": \"login\", \"value\": {\"username\": \"\(username)\", \"password\": \"\(password)\" }}"
-        print(message)
         self.loginButton.titleLabel?.attributedText = NSAttributedString(string: "")
+        self.loginButton.titleLabel?.text = ""
         self.loginActivityIndicator.isHidden = false
         self.loginActivityIndicator.startAnimating()
         
-        socket.write(string: message)
+        
+        NetworkService.login(username: username, password: password)
     }
     
     @IBAction func createAccountButtonTapped(_ sender: Any) {
+        self.alertWithTitle("Not Available Yet", message: "Account creation is not yet available. For now, Log in as 'username' with the password 'password' to continue.", ViewController: self) { (action) -> (Void) in
+            
+        }
     }
     
     
@@ -158,6 +177,7 @@ class LoginViewController: ViewController {
         return true
     }
     
+    //MARK: AlertView Code
     func alertWithTitle(_ title: String!, message: String, ViewController: UIViewController, handler: @escaping (UIAlertAction) -> (Void)) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.cancel,handler: handler);
@@ -174,6 +194,21 @@ class LoginViewController: ViewController {
         ViewController.present(alert, animated: true, completion:nil)
     }
     
+    //MARK: WebSocket Handling
+    @objc func enableLogin () {
+        print("Connected")
+        loginButton.backgroundColor = UIColor.aquamarine
+    }
+    
+    @objc func loginSuccesful () {
+        self.loginActivityIndicator.stopAnimating()
+        self.loginActivityIndicator.isHidden = true
+        
+        Answers.logCustomEvent(withName: "LogInSuccessful", customAttributes: ["any":"something"])
+        alertWithTitle("Login Successful!", message: "", ViewController: self) { (alertAction) -> (Void) in
+            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+        }
+    }
 }
 
 extension LoginViewController: UITextFieldDelegate {
@@ -192,39 +227,14 @@ extension LoginViewController: UITextFieldDelegate {
         } else {
             let thereWereErrors = checkForErrors()
             if !thereWereErrors {
+                loginButton.titleLabel?.text = "Errors Detected"
+                loginButton.titleLabel?.attributedText = NSAttributedString(string: "Errors Detected")
                 loginButton.backgroundColor = UIColor.red
             } else {
-                loginButton.backgroundColor = UIColor(red: 26.0/255.0, green: 188.0/255.0, blue: 156.0/255.0, alpha: 1.0)
+                loginButton.backgroundColor = UIColor.aquamarine
             }
         }
         
         return true
-    }
-}
-
-extension LoginViewController: WebSocketDelegate {
-    func websocketDidConnect(socket: WebSocketClient) {
-        print("Connected")
-        loginButton.backgroundColor = UIColor(red: 26.0/255.0, green: 188.0/255.0, blue: 156.0/255.0, alpha: 1.0)
-    }
-    
-    func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
-        
-    }
-    
-    func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
-        print(text)
-        
-        self.loginActivityIndicator.stopAnimating()
-        self.loginActivityIndicator.isHidden = true
-        
-        Answers.logCustomEvent(withName: "LogInSuccessful", customAttributes: ["any":"something"])
-        alertWithTitle("Login Successful!", message: "", ViewController: self) { (alertAction) -> (Void) in
-            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
-        }
-    }
-    
-    func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
-        print(data)
     }
 }

@@ -10,6 +10,7 @@ import UIKit
 import SideMenu
 import Starscream
 import Crashlytics
+import SwiftyJSON
 
 
 class PortfolioViewController: UIViewController {
@@ -92,7 +93,9 @@ extension PortfolioViewController: WebSocketDelegate {
     }
     
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
-        print(text)
+        
+        let action = Action.init(json: JSON.parse(text))
+        print(action)
         
     }
     
