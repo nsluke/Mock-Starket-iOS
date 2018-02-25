@@ -27,12 +27,17 @@ class LoginViewController: ViewController {
     var lastOffset: CGPoint!
     var keyboardHeight: CGFloat!
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     
     //MARK: View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        UIApplication.shared.statusBarStyle = .lightContent
+        
+
         loginButton.backgroundColor = UIColor.red
         self.loginActivityIndicator.isHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -42,6 +47,13 @@ class LoginViewController: ViewController {
         socket.disableSSLCertValidation = true
         socket.connect()
     }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+    
     
     //MARK: IBActions
     @IBAction func touchReceived(_ sender: Any) {
