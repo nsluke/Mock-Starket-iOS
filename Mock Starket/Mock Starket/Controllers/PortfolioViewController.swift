@@ -22,17 +22,21 @@ class PortfolioViewController: UIViewController {
     @IBOutlet weak var portfolioStampView: UIView!
     @IBOutlet weak var tableView: UITableView!
     
-    var socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
+    var portfolioArray = [Stock]()
+    var mutableSet = NSMutableOrderedSet()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let menuRightNavigationController = UISideMenuNavigationController(rootViewController: self)
-        SideMenuManager.default.menuRightNavigationController = menuRightNavigationController
-        SideMenuManager.default.menuAddPanGestureToPresent(toView: sideMenuButton)
-//        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view)
-        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.all)
+//        let menuLeftNavigationController = storyboard!.instantiateViewController(withIdentifier: "LeftMenuNavigationController") as! UISideMenuNavigationController
+//        let menuRightNavigationController = storyboard!.instantiateViewController(withIdentifier: "RightMenuNavigationController") as! UISideMenuNavigationController
+//        SideMenuManager.default.menuLeftNavigationController = menuLeftNavigationController
+//        SideMenuManager.default.menuRightNavigationController = menuRightNavigationController
+//        SideMenuManager.default.menuAddPanGestureToPresent(toView: sideMenuButton)
+//        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.all)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)), name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -47,8 +51,43 @@ class PortfolioViewController: UIViewController {
         gradient.colors = [UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 0.0), 
                            UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 1.0) ]
         gradient.startPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.minY)
-        gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.minY)
+        gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.maxY)
         blueView.layer.addSublayer(gradient)
+    }
+    
+    @objc func update(_ notification:NSNotification) {
+        guard let response = notification.userInfo?["actionArray"] as? [ResponseAction] else {
+            return
+        }
+        
+        // Array for initial objects
+        // Set for knowing if the string is there < if we don't use a stock we can just use ordered
+        // Ordered Set for knowing the index
+        
+        
+        for action in response {
+            if action.action == "update" && action.type == "stock"{
+                for change in  action.changes {
+                    if change.field == "current_price" {
+                        let stock = Stock.init(name: action.id, value: change.value)
+                        
+                        if mutableSet.contains(stock.name) {
+                            let index = mutableSet.index(of: stock.name)
+                            portfolioArray.remove(at: index)
+                            portfolioArray.insert(stock, at: index)
+                        } else {
+                            mutableSet.add(stock.name)
+                            portfolioArray.append(stock)
+                        }
+
+                        self.tableView.reloadData()
+                    } else {
+                        print("New Field!" + change.field)
+                    }
+                }
+            }
+        }
+        
     }
     
     //handle button tap
@@ -61,46 +100,26 @@ class PortfolioViewController: UIViewController {
 
 extension PortfolioViewController: UITabBarDelegate {
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        
+        // Code for cool animation goes here
     }
 }
 
-
 extension PortfolioViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return self.mutableSet.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath)
-        cell.textLabel?.text = "Congrats, this is all the app does for now. Thanks for helping!"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath) as? PortfolioTableViewCell
         
-        return cell
+        cell?.tickerLabel.text = portfolioArray[indexPath.row].name
+        cell?.costLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].value)
+        cell?.recordLabel.text = ""
+        cell?.changeLabel.text = ""
+        cell?.nameLabel.text = ""
+        
+        return cell!
     }
 }
 
-extension PortfolioViewController: WebSocketDelegate {
-    func websocketDidConnect(socket: WebSocketClient) {
-        
-    }
-    
-    func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
-        
-    }
-    
-    func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
-        
-        let action = Action.init(json: JSON.parse(text))
-        print(action)
-        
-    }
-    
-    func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
-        print(data)
 
-    }
-}

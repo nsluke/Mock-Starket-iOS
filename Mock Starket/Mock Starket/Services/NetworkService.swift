@@ -8,6 +8,8 @@
 
 import Foundation
 import Starscream
+import SwiftyJSON
+
 
 final class NetworkService: NSObject {
     public static let sharedInstance = NetworkService()
@@ -34,7 +36,6 @@ final class NetworkService: NSObject {
         
     }
 }
-
 extension NetworkService: WebSocketDelegate {
     func websocketDidConnect(socket: WebSocketClient) {
         print("Connected")
@@ -51,9 +52,18 @@ extension NetworkService: WebSocketDelegate {
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         debugPrint(text, separator: "/n")
         
+        let json = JSON.init(parseJSON: text)
+        var actionArray = [ResponseAction]()
+        
+        for i in json.arrayValue {
+           actionArray.append(ResponseAction.init(json: i))
+        }
+        
+        print(actionArray)
+        
         NotificationCenter.default.post(name: NetworkServiceNotification.SocketMessageReceived.rawValue,
                                         object: text,
-                                        userInfo: ["text":text])
+                                        userInfo: ["actionArray" : actionArray])
     }
     
     func websocketDidReceiveData(socket: WebSocketClient, data: Data) {

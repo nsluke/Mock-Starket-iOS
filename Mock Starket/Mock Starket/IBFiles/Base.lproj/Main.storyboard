@@ -667,7 +667,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="changeLabel" destination="JS3-Md-ff0" id="kkj-77-4vW"/>
-                                            <outlet property="costLabel" destination="3JB-b4-MNF" id="c29-3b-cHz"/>
+                                            <outlet property="costLabel" destination="ERd-Hy-RK6" id="5Jc-9A-stH"/>
                                             <outlet property="nameLabel" destination="vFA-vH-dSy" id="Qrt-iw-HZ3"/>
                                             <outlet property="recordLabel" destination="GTr-Tc-LZb" id="Ups-Tm-Skj"/>
                                             <outlet property="tickerLabel" destination="yhY-yv-hvT" id="xCk-um-cJV"/>

@@ -34,6 +34,7 @@
 		D56A0DD3203E055F00499F00 /* Group 9.png in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DD2203E055E00499F00 /* Group 9.png */; };
 		D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */; };
 		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
+		D577E0432043E18B007AC8D1 /* OrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D577E0422043E18B007AC8D1 /* OrderedSet.swift */; };
 		D5B513FB202A78C70013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
 		D5B513FC202A78C80013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
 /* End PBXBuildFile section */
@@ -93,6 +94,7 @@
 		D56A0DD2203E055E00499F00 /* Group 9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Group 9.png"; sourceTree = "<group>"; };
 		D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
+		D577E0422043E18B007AC8D1 /* OrderedSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +266,7 @@
 		D56A0DC1203D05F200499F00 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				D577E0422043E18B007AC8D1 /* OrderedSet.swift */,
 				D54E2E8C2043652B000240C6 /* UIColor+Extensions.swift */,
 				D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */,
 			);
@@ -610,6 +613,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D577E0432043E18B007AC8D1 /* OrderedSet.swift in Sources */,
 				D56A0DC3203D061D00499F00 /* PortfolioTableViewCell.swift in Sources */,
 				D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */,
 				D5376C0F200D491200B2E203 /* ViewController.swift in Sources */,

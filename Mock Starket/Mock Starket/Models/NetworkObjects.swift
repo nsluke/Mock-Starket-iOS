@@ -16,7 +16,7 @@ struct Action {
     
     init(json:JSON) {
         self.type = json["action"].stringValue
-        self.value = Value.init(json: json["action"]["value"])
+        self.value = Value.init(json: json["msg"])
     }
 }
 
@@ -85,3 +85,66 @@ struct Stock {
     }
     
 }
+
+//Currently used code
+struct ResponseAction {
+    var action:String
+    var msg:[String:Any]
+    var type:String
+    var id:String
+    var changes:[ResponseChange]
+    
+    
+    init(json:JSON) {
+        self.action = json["action"].stringValue
+        self.msg = json["msg"].dictionaryValue
+        self.type = json["msg"]["type"].stringValue
+        self.id = json["msg"]["id"].stringValue
+        
+        self.changes = [ResponseChange]()
+        for i in json["msg"]["changes"].arrayValue {
+            self.changes.append(ResponseChange.init(i))
+        }
+        
+    }
+}
+
+
+struct ResponseChange {
+    var field:String
+    var value:Double
+    
+    
+    init(_ json:JSON) {
+        self.field = json["field"].stringValue
+        self.value = json["value"].doubleValue
+    }
+    
+}
+
+
+/*
+ 
+ [
+    {
+    "action":"update",
+    "msg":{
+        "type":"stock",
+        "id":"MOM",
+        "changes":
+            [
+                {
+                    "field":"current_price",
+                    "value":0.27989287590613976
+                }
+            ]
+        }
+    }
+]
+ 
+ */
+
+
+
+
+

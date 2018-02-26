@@ -69,6 +69,12 @@ class LoginViewController: ViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(true)
+        
+        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketDidConnect.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+
     }
     
     //MARK: IBActions
