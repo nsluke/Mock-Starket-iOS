@@ -45,6 +45,10 @@ class LoginViewController: ViewController {
                                                selector: #selector(loginSuccesful),
                                                name: NetworkServiceNotification.SocketMessageReceived.rawValue,
                                                object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(loginUnsuccesful),
+                                               name: NetworkServiceNotification.SocketDidDisconnect.rawValue,
+                                               object: nil)
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow(notification:)),
@@ -212,6 +216,17 @@ class LoginViewController: ViewController {
         
         Answers.logCustomEvent(withName: "LogInSuccessful", customAttributes: ["any":"something"])
         alertWithTitle("Login Successful!", message: "", ViewController: self) { (alertAction) -> (Void) in
+            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+        }
+    }
+    
+    @objc func loginUnsuccesful () {
+        self.loginActivityIndicator.stopAnimating()
+        self.loginActivityIndicator.isHidden = true
+        
+        Answers.logCustomEvent(withName: "LogInUnsuccessful", customAttributes: ["any":"something"])
+        
+        alertWithTitle("Server Issue", message: "Try again later", ViewController: self) { (alertAction) -> (Void) in
             self.performSegue(withIdentifier: "loginSuccessful", sender: self)
         }
     }

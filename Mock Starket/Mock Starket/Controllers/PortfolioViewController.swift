@@ -35,7 +35,7 @@ class PortfolioViewController: UIViewController {
 //        SideMenuManager.default.menuRightNavigationController = menuRightNavigationController
 //        SideMenuManager.default.menuAddPanGestureToPresent(toView: sideMenuButton)
 //        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.all)
-
+        
         NotificationCenter.default.addObserver(self, selector: #selector(update(_:)), name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
     }
     
@@ -56,6 +56,8 @@ class PortfolioViewController: UIViewController {
     }
     
     @objc func update(_ notification:NSNotification) {
+        
+        
         guard let response = notification.userInfo?["actionArray"] as? [ResponseAction] else {
             return
         }
@@ -63,7 +65,6 @@ class PortfolioViewController: UIViewController {
         // Array for initial objects
         // Set for knowing if the string is there < if we don't use a stock we can just use ordered
         // Ordered Set for knowing the index
-        
         
         for action in response {
             if action.action == "update" && action.type == "stock"{
@@ -79,7 +80,7 @@ class PortfolioViewController: UIViewController {
                             mutableSet.add(stock.name)
                             portfolioArray.append(stock)
                         }
-
+                        
                         self.tableView.reloadData()
                     } else {
                         print("New Field!" + change.field)
@@ -87,6 +88,8 @@ class PortfolioViewController: UIViewController {
                 }
             }
         }
+        
+        
         
     }
     

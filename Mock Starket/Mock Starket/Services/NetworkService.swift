@@ -47,6 +47,10 @@ extension NetworkService: WebSocketDelegate {
     
     func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         print("Disconnected")
+        
+        NotificationCenter.default.post(name: NetworkServiceNotification.SocketDidDisconnect.rawValue,
+                                        object: nil,
+                                        userInfo: nil)
     }
     
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
@@ -75,6 +79,7 @@ extension NetworkService: WebSocketDelegate {
 enum NetworkServiceNotification: Notification.Name {
     case SocketMessageReceived = "SocketMessageReceived"
     case SocketDidConnect = "SocketDidConnect"
+    case SocketDidDisconnect = "SocketDidDisconnect"
 }
 
 extension Notification.Name: ExpressibleByStringLiteral {
