@@ -207,7 +207,7 @@ class LoginViewController: ViewController {
     //MARK: WebSocket Handling
     @objc func enableLogin () {
         print("Connected")
-        loginButton.backgroundColor = UIColor.aquamarine
+        loginButton.backgroundColor = UIColor.msAquamarine
     }
     
     @objc func loginSuccesful () {
@@ -252,7 +252,7 @@ extension LoginViewController: UITextFieldDelegate {
                 loginButton.titleLabel?.attributedText = NSAttributedString(string: "Errors Detected")
                 loginButton.backgroundColor = UIColor.red
             } else {
-                loginButton.backgroundColor = UIColor.aquamarine
+                loginButton.backgroundColor = UIColor.msAquamarine
             }
         }
         

@@ -59,11 +59,11 @@ extension NetworkService: WebSocketDelegate {
         let json = JSON.init(parseJSON: text)
         var actionArray = [ResponseAction]()
         
-        for i in json.arrayValue {
-           actionArray.append(ResponseAction.init(json: i))
+        for action in json.arrayValue { // run through the actionArray
+            actionArray.append(ResponseAction.init(json: action))
         }
         
-        print(actionArray)
+        debugPrint("actionArray: \(actionArray)", separator: "/n")
         
         NotificationCenter.default.post(name: NetworkServiceNotification.SocketMessageReceived.rawValue,
                                         object: text,
@@ -94,4 +94,21 @@ extension Notification.Name: ExpressibleByStringLiteral {
     public init(unicodeScalarLiteral value: String) {
         self.init(value)
     }
+}
+
+enum StockNames: String {
+    case CHUNT = "Chunt's Hats"
+    case KING = "Paddle King"
+    case CBIO = "Sebio's Streaming Services"
+    case OW = "Overwatch"
+    case SCOTT = "Michael Scott Paper Company"
+    case DM = "Dunder Milf"
+    case GWEN = "Gwent"
+    case CHU = "Chu Supply"
+    case SWEET = "Sweet Sweet Tea"
+    case TRAP = "❤ Trap 4 Life"
+    case FIG = "Figgis Agency"
+    case ZONE = "Danger Zone"
+    case PLNX = "Planet Express"
+    case MOM = "Mom's Friendly Robot Company"
 }

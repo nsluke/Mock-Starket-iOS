@@ -77,16 +77,55 @@ struct Ledger {
 
 struct Stock {
     var name: String
+    var fullname: String
     var value: Double
+    var recordValue: Double
+    var percentChange: Double
     
     init(name:String, value:Double) {
         self.name = name
+        
+        switch name {
+        case "CHUNT":
+            self.fullname = StockNames.CHUNT.rawValue
+        case "KING":
+            self.fullname = StockNames.KING.rawValue
+        case "CBIO":
+            self.fullname = StockNames.CBIO.rawValue
+        case "OW":
+            self.fullname = StockNames.OW.rawValue
+        case "SCOTT":
+            self.fullname = StockNames.SCOTT.rawValue
+        case "DM":
+            self.fullname = StockNames.DM.rawValue
+        case "GWEN":
+            self.fullname = StockNames.GWEN.rawValue
+        case "CHU":
+            self.fullname = StockNames.CHU.rawValue
+        case "SWEET":
+            self.fullname = StockNames.SWEET.rawValue
+        case "TRAP":
+            self.fullname = StockNames.TRAP.rawValue
+        case "FIG":
+            self.fullname = StockNames.FIG.rawValue
+        case "ZONE":
+            self.fullname = StockNames.ZONE.rawValue
+        case "PLNX":
+            self.fullname = StockNames.PLNX.rawValue
+        case "MOM":
+            self.fullname = StockNames.MOM.rawValue
+        default:
+            self.fullname = ""
+        }
+        
         self.value = value
+        self.recordValue = value
+        self.percentChange = 0.0
     }
     
 }
 
-//Currently used code
+// ======================== Currently used code ======================== //
 struct ResponseAction {
     var action:String
     var msg:[String:Any]
@@ -96,6 +135,7 @@ struct ResponseAction {
     
     
     init(json:JSON) {
+        
         self.action = json["action"].stringValue
         self.msg = json["msg"].dictionaryValue
         self.type = json["msg"]["type"].stringValue
@@ -108,7 +148,6 @@ struct ResponseAction {
         
     }
 }
-
 
 struct ResponseChange {
     var field:String
@@ -128,7 +167,8 @@ struct ResponseChange {
  [
     {
     "action":"update",
-    "msg":{
+    "msg":
+    {
         "type":"stock",
         "id":"MOM",
         "changes":
@@ -141,6 +181,57 @@ struct ResponseChange {
         }
     }
 ]
+ 
+ 
+ //multiple actions
+ [
+    {
+    "action": "update",
+    "msg":
+        {
+        "type": "portfolio",
+        "id": "1",
+        "changes":
+            [
+                {
+                    "field": "net_worth",
+                    "value": 975.8466267343033
+                }
+            ]
+        }//msg
+ 
+    },
+    {
+        "action": "update",
+        "msg":
+            {
+            "type": "stock",
+            "id": "ZONE",
+            "changes":
+                [
+                    {
+                        "field": "current_price",
+                        "value": 3.6017010871136033
+                    }
+                ]
+            }
+    },
+    {
+        "action": "update",
+        "msg":
+            {
+                "type": "stock",
+                "id": "KING",
+                "changes":
+                    [
+                        {
+                            "field": "current_price",
+                            "value": 6.170150884875956
+                        }
+                    ]
+            }
+        }
+    ]
  
  */
 

@@ -5,6 +5,7 @@
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -427,7 +428,7 @@
                                             <constraint firstAttribute="height" constant="21" id="e7P-8Q-MZC"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="MuktaVaani-Medium" family="Mukta Vaani" pointSize="17"/>
-                                        <color key="textColor" red="0.098039215686274508" green="0.74117647058823533" blue="0.60784313725490191" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="textColor" red="0.95686274509803915" green="0.2627450980392157" blue="0.21176470588235294" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="net worth" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i2R-op-H2x">
@@ -443,6 +444,9 @@
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bVu-Dt-Jar">
                                         <rect key="frame" x="293.66666666666669" y="54.666666666666671" width="9" height="18.333333333333329"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="18.329999999999998" id="xs7-uD-4WA"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" name="MuktaVaani-Medium" family="Mukta Vaani" pointSize="11"/>
                                         <color key="textColor" red="0.098039215690000001" green="0.74117647060000003" blue="0.60784313729999995" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -456,20 +460,27 @@
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" semanticContentAttribute="forceLeftToRight" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="uptriangle" translatesAutoresizingMaskIntoConstraints="NO" id="TLE-U4-sgh">
+                                        <rect key="frame" x="306" y="54.666666666666671" width="10" height="18.333333333333329"/>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" red="0.078431372549019607" green="0.11764705882352941" blue="0.18823529411764706" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="i2R-op-H2x" firstAttribute="centerX" secondItem="g8f-fL-6AM" secondAttribute="centerX" id="04i-aJ-GJq"/>
+                                    <constraint firstItem="TLE-U4-sgh" firstAttribute="leading" secondItem="bVu-Dt-Jar" secondAttribute="trailing" constant="3" id="3Lw-l3-1f9"/>
+                                    <constraint firstItem="TLE-U4-sgh" firstAttribute="bottom" secondItem="bVu-Dt-Jar" secondAttribute="bottom" id="81n-fk-fwf"/>
                                     <constraint firstItem="bVu-Dt-Jar" firstAttribute="leading" secondItem="oz3-R4-EY2" secondAttribute="trailing" id="88g-ZO-Xe2"/>
                                     <constraint firstItem="bVu-Dt-Jar" firstAttribute="bottom" secondItem="oz3-R4-EY2" secondAttribute="bottom" id="CeU-Q1-kF4"/>
                                     <constraint firstItem="MiH-Iv-Ar7" firstAttribute="top" secondItem="g8f-fL-6AM" secondAttribute="top" constant="40" id="LKn-V4-BuM"/>
                                     <constraint firstItem="i2R-op-H2x" firstAttribute="top" secondItem="MiH-Iv-Ar7" secondAttribute="bottom" constant="8" id="TfE-CF-5NH"/>
+                                    <constraint firstItem="TLE-U4-sgh" firstAttribute="top" secondItem="bVu-Dt-Jar" secondAttribute="top" id="TvD-6m-wwx"/>
                                     <constraint firstItem="oz3-R4-EY2" firstAttribute="leading" secondItem="MiH-Iv-Ar7" secondAttribute="trailing" constant="12" id="ZWZ-Vp-90K"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="bVu-Dt-Jar" secondAttribute="trailing" constant="20" symbolic="YES" id="dXU-MP-lnX"/>
                                     <constraint firstItem="x7N-U8-i0x" firstAttribute="top" secondItem="MiH-Iv-Ar7" secondAttribute="top" id="gRV-38-FJh"/>
                                     <constraint firstItem="oz3-R4-EY2" firstAttribute="centerY" secondItem="MiH-Iv-Ar7" secondAttribute="centerY" id="hII-Ss-Q9L"/>
                                     <constraint firstAttribute="height" constant="200" id="hnf-l8-s7m"/>
                                     <constraint firstItem="MiH-Iv-Ar7" firstAttribute="centerX" secondItem="g8f-fL-6AM" secondAttribute="centerX" id="np4-Ru-OBL"/>
+                                    <constraint firstItem="TLE-U4-sgh" firstAttribute="width" secondItem="oz3-R4-EY2" secondAttribute="height" multiplier="1:2.3" constant="1" id="pD4-Ts-mRt"/>
                                     <constraint firstItem="MiH-Iv-Ar7" firstAttribute="leading" secondItem="x7N-U8-i0x" secondAttribute="trailing" id="tI2-FB-q1L"/>
                                 </constraints>
                             </view>
@@ -707,7 +718,14 @@
                     </tabBarItem>
                     <connections>
                         <outlet property="blueView" destination="g8f-fL-6AM" id="akq-Yr-IK6"/>
+                        <outlet property="cashAmountLabel" destination="4Kr-Rd-rHA" id="yCy-m3-eaF"/>
                         <outlet property="headerView" destination="14B-Il-WAY" id="hO7-TD-idy"/>
+                        <outlet property="investmentsAmountLabel" destination="kF8-zI-ejb" id="Bvl-n0-HKB"/>
+                        <outlet property="netWorthArrowIcon" destination="TLE-U4-sgh" id="lth-XF-CQn"/>
+                        <outlet property="netWorthDollarSignLabel" destination="x7N-U8-i0x" id="erP-nV-Py0"/>
+                        <outlet property="netWorthLabel" destination="MiH-Iv-Ar7" id="2mE-6a-mTk"/>
+                        <outlet property="netWorthPercentSignLabel" destination="bVu-Dt-Jar" id="3vB-nX-4Bq"/>
+                        <outlet property="netWorthPercentageChangeLabel" destination="oz3-R4-EY2" id="5zm-uX-hnI"/>
                         <outlet property="portfolioStampView" destination="zzI-7v-jV9" id="0t1-sb-wSf"/>
                         <outlet property="sideMenuButton" destination="pmw-Yn-cSG" id="F8m-Wp-0Bb"/>
                         <outlet property="tableView" destination="XRA-XR-whc" id="hM0-FO-TAm"/>
@@ -716,7 +734,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9BS-6y-wBd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3161" y="-1343"/>
+            <point key="canvasLocation" x="3160.8000000000002" y="-1343.3497536945813"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="KRB-SC-INo">
@@ -756,5 +774,6 @@
         <image name="Group 9.png" width="1500" height="932"/>
         <image name="portfolio" width="20" height="18"/>
         <image name="rightmenu" width="14" height="10"/>
+        <image name="uptriangle" width="39" height="37"/>
     </resources>
 </document>
