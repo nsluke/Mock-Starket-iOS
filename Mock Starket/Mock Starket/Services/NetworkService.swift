@@ -13,7 +13,10 @@ import SwiftyJSON
 
 final class NetworkService: NSObject {
     public static let sharedInstance = NetworkService()
-    public static let socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
+    
+    public static let socket = WebSocket(url: URL(string: "ws://localhost:8000/ws")!)
+
+//    public static let socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
     
     private override init() {
         super.init()
@@ -54,16 +57,16 @@ extension NetworkService: WebSocketDelegate {
     }
     
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
-        debugPrint(text, separator: "/n")
+        debugPrint(text, separator: "%n")
         
         let json = JSON.init(parseJSON: text)
-        var actionArray = [ResponseAction]()
+        var actionArray = [Action]()
         
         for action in json.arrayValue { // run through the actionArray
-            actionArray.append(ResponseAction.init(json: action))
+            actionArray.append(Action.init(json: action))
         }
         
-        debugPrint("actionArray: \(actionArray)", separator: "/n")
+        debugPrint("actionArray: \(actionArray)", separator: "%n")
         
         NotificationCenter.default.post(name: NetworkServiceNotification.SocketMessageReceived.rawValue,
                                         object: text,

@@ -16,24 +16,23 @@ struct Action {
     
     init(json:JSON) {
         self.type = json["action"].stringValue
-        self.value = Value.init(json: json["msg"])
+        self.value = Value.init(json: json["value"])
     }
 }
 
 struct Value {
     var type:String
-    var object:Any
+    var portfolio:Portfolio!
+    var valuable:Valuable!
     
     init(json: JSON) {
         self.type = json["type"].stringValue
         
         if self.type == "portfolio" {
-            self.object = Portfolio.init(json: json["value"])
+            self.portfolio = Portfolio.init(json: json["object"])
         } else if self.type == "valuable" {
-            self.object = Valuable.init(json: json["value"])
-        } else {
-            object = 0
-        } 
+            self.valuable = Valuable.init(json: json["object"])
+        }
     }
 }
 
@@ -56,12 +55,17 @@ struct Portfolio {
 struct Valuable {
     var name:String
     var tickerID:String
-    var current_price:Float
+    var current_price:Double
+    var recordValue: Double
+    var amountChanged: Double
     
     init(json:JSON) {
         self.name = json["name"].stringValue
         self.tickerID = json["ticker_id"].stringValue
-        self.current_price = json["current_price"].floatValue
+        self.current_price = json["current_price"].doubleValue
+        
+        self.recordValue = current_price
+        self.amountChanged = 0.0
     }
 }
 
@@ -80,7 +84,7 @@ struct Stock {
     var fullname: String
     var value: Double
     var recordValue: Double
-    var percentChange: Double
+    var amountChanged: Double
     
     init(name:String, value:Double) {
         self.name = name
@@ -120,9 +124,8 @@ struct Stock {
         
         self.value = value
         self.recordValue = value
-        self.percentChange = 0.0
+        self.amountChanged = 0.0
     }
-    
 }
 
 // ======================== Currently used code ======================== //
@@ -233,7 +236,37 @@ struct ResponseChange {
         }
     ]
  
- */
+ 
+//////////////////
+ [
+    {
+        "action":"update",
+        "value":
+            {
+                "type":"valuable",
+                "object":
+                    {
+                        "name" : "Mom's Friendly Robot Company",
+                        "ticker_id" : "MOM",
+                        "current_price" : 46.70733623255994
+                    }
+            }
+    }
+ ]"
+ 
+ 
+ "actionArray:
+    [
+        Mock_Starket.ResponseAction(
+            action: "update",
+            msg: [:],
+            type: \"\",
+            id: \"\",
+            changes: []
+        )
+    ]
+/////////////////
+*/
 
 
 

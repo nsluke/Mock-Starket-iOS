@@ -15,6 +15,8 @@ class PortfolioTableViewCell: UITableViewCell {
     @IBOutlet weak var recordLabel: UILabel!
     @IBOutlet weak var changeLabel: UILabel!
     @IBOutlet weak var costLabel: UILabel!
+    @IBOutlet weak var changeImageView: UIImageView!
+    
     
     
     override func awakeFromNib() {

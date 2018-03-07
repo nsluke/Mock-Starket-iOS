@@ -65,7 +65,7 @@ class PortfolioViewController: UIViewController {
         Stock.init(name: "CHU", value: 0.0),
         Stock.init(name: "SWEET", value: 0.0),
         Stock.init(name: "TRAP", value: 0.0),
-          
+        
         Stock.init(name: "FIG", value: 0.0),
         Stock.init(name: "ZONE", value: 0.0),
         Stock.init(name: "PLNX", value: 0.0),
@@ -91,7 +91,12 @@ class PortfolioViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
+        
         self.setupViews()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
     }
     
     //MARK: View Setup Functions
@@ -99,8 +104,8 @@ class PortfolioViewController: UIViewController {
         UIApplication.shared.statusBarStyle = .lightContent
 
         let gradient = CAGradientLayer.init()
-        gradient.colors = [UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 0.0), 
-                           UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 1.0) ]
+        gradient.colors = [UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 0.0),
+                           UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 1.0)]
         gradient.startPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.minY)
         gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.maxY)
         blueView.layer.addSublayer(gradient)
@@ -111,20 +116,18 @@ class PortfolioViewController: UIViewController {
         self.netWorthArrowIcon.isHidden = true
         self.netWorthDollarSignLabel.isHidden = true
         
-        self.cashAmountLabel.text = "Coming soon..."
-        self.investmentsAmountLabel.text = "Coming soon..."
+        self.cashAmountLabel.text = "Loading..."
+        self.investmentsAmountLabel.text = "Loading..."
         
         for i in portfolioArray {
             mutableSet.add(i.name)
         }
         
-        
-        
+        tableView.reloadData()
     }
     
     //MARK: NotificationHandling
     @objc func update(_ notification:NSNotification) {
-        
         guard let actionArray = notification.userInfo?["actionArray"] as? [ResponseAction] else {
             return
         }
@@ -139,10 +142,12 @@ class PortfolioViewController: UIViewController {
                     if change.field == "current_price" {
                         let stock = Stock.init(name: action.id, value: change.value)
                         let index = mutableSet.index(of: stock.name)
+                        var amountChanged = 0.0
                         
-                        let percentChange = round((((change.value - portfolioArray[index].value) / portfolioArray[index].value) * 100 ) * 100) / 100
+                        if change.value != 0 && portfolioArray[index].value != 0 {
+                             amountChanged = change.value - portfolioArray[index].value
+                        }
                         
-
                         if mutableSet.contains(stock.name) {
                             portfolioArray.remove(at: index)
                             portfolioArray.insert(stock, at: index)
@@ -150,7 +155,7 @@ class PortfolioViewController: UIViewController {
                                 portfolioArray[index].recordValue = stock.value
                             }
                             
-                            portfolioArray[index].percentChange = percentChange
+                            portfolioArray[index].amountChanged = amountChanged
                         } else {
                             mutableSet.add(stock.name)
                             portfolioArray.append(stock)
@@ -211,17 +216,12 @@ class PortfolioViewController: UIViewController {
                             self.netWorthArrowIcon.isHidden = false
                             self.netWorthArrowIcon.image = UIImage.init(imageLiteralResourceName: "downtriangle")
                         }
-                        
-
                         self.netWorth = change.value
                     }
                 }
             
             }
         }
-        
-        
-        
     }
     
     //Mark: IBActions
@@ -247,10 +247,38 @@ extension PortfolioViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath) as? PortfolioTableViewCell
         
         cell?.tickerLabel.text = portfolioArray[indexPath.row].name
-        cell?.costLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].value)
-        cell?.recordLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].recordValue)
-        cell?.changeLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].percentChange)
         cell?.nameLabel.text = portfolioArray[indexPath.row].fullname
+
+        if portfolioArray[indexPath.row].value <= 0 {
+            cell?.costLabel.text = ""
+        } else {
+            cell?.costLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].value)
+        }
+        
+        if portfolioArray[indexPath.row].value <= 0 {
+            cell?.recordLabel.text = ""
+        } else {
+            cell?.recordLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].recordValue)
+        }
+        
+        let amountChanged = portfolioArray[indexPath.row].amountChanged
+        cell?.changeLabel.text = String(format: "%.2f", amountChanged)
+
+        if amountChanged < 0 {
+            cell?.changeLabel.textColor = UIColor.msFlatRed
+            cell?.changeImageView.isHidden = false
+            cell?.changeImageView.image = #imageLiteral(resourceName: "downtriangle")
+        } else if amountChanged == 0.0 {
+            cell?.changeLabel.text = ""
+            cell?.changeLabel.textColor = UIColor.msLightGray
+            cell?.changeImageView.isHidden = true
+        } else if amountChanged > 0 {
+            cell?.changeLabel.textColor = UIColor.msAquamarine
+            cell?.changeImageView.isHidden = false
+            cell?.changeImageView.image = #imageLiteral(resourceName: "uptriangle")
+        }
+        
+        
         
         return cell!
     }
