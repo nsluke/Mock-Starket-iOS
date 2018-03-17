@@ -11,7 +11,6 @@
 		AF439200B97883279F80A6AB /* Pods_Mock_StarketTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AE3860D95B2E4094C621CB3 /* Pods_Mock_StarketTests.framework */; };
 		D1EF8EE75CC1CC126D857A20 /* Pods_Mock_Starket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */; };
 		D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C0C200D491200B2E203 /* AppDelegate.swift */; };
-		D5376C0F200D491200B2E203 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C0E200D491200B2E203 /* ViewController.swift */; };
 		D5376C12200D491200B2E203 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5376C10200D491200B2E203 /* Main.storyboard */; };
 		D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D5376C13200D491200B2E203 /* Mock_Starket.xcdatamodeld */; };
 		D5376C17200D491200B2E203 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5376C16200D491200B2E203 /* Assets.xcassets */; };
@@ -23,6 +22,7 @@
 		D54E2E8D2043652B000240C6 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E2E8C2043652B000240C6 /* UIColor+Extensions.swift */; };
 		D56304FE204F998C00A66179 /* MarketViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56304FD204F998C00A66179 /* MarketViewController.swift */; };
 		D5630500204F9A8D00A66179 /* StockTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56304FF204F9A8D00A66179 /* StockTableView.swift */; };
+		D5630502205B53E200A66179 /* ObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5630501205B53E200A66179 /* ObjectHandler.swift */; };
 		D56A0DBE203CC48400499F00 /* PortfolioViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */; };
 		D56A0DC0203D05EF00499F00 /* UILabel+Kerning.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */; };
 		D56A0DC3203D061D00499F00 /* PortfolioTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */; };
@@ -35,7 +35,6 @@
 		D56A0DD1203D130300499F00 /* MuktaVaani-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */; };
 		D56A0DD3203E055F00499F00 /* Group 9.png in Resources */ = {isa = PBXBuildFile; fileRef = D56A0DD2203E055E00499F00 /* Group 9.png */; };
 		D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */; };
-		D57567A32015C63000186CED /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D57567A22015C63000186CED /* ChartViewController.swift */; };
 		D577E0432043E18B007AC8D1 /* OrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D577E0422043E18B007AC8D1 /* OrderedSet.swift */; };
 		D5B513FB202A78C70013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
 		D5B513FC202A78C80013FE9E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D51F23C0202A76F400D8B8D5 /* Info.plist */; };
@@ -71,7 +70,6 @@
 		D51F23C0202A76F400D8B8D5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D5376C09200D491200B2E203 /* Mock Starket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Mock Starket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5376C0C200D491200B2E203 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D5376C0E200D491200B2E203 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		D5376C11200D491200B2E203 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D5376C14200D491200B2E203 /* Mock_Starket.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Mock_Starket.xcdatamodel; sourceTree = "<group>"; };
 		D5376C16200D491200B2E203 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -85,6 +83,7 @@
 		D54E2E8C2043652B000240C6 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		D56304FD204F998C00A66179 /* MarketViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketViewController.swift; sourceTree = "<group>"; };
 		D56304FF204F9A8D00A66179 /* StockTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockTableView.swift; sourceTree = "<group>"; };
+		D5630501205B53E200A66179 /* ObjectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectHandler.swift; sourceTree = "<group>"; };
 		D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioViewController.swift; sourceTree = "<group>"; };
 		D56A0DBF203D05EF00499F00 /* UILabel+Kerning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Kerning.swift"; sourceTree = "<group>"; };
 		D56A0DC2203D061D00499F00 /* PortfolioTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PortfolioTableViewCell.swift; path = "Mock Starket/PortfolioTableViewCell.swift"; sourceTree = SOURCE_ROOT; };
@@ -97,7 +96,6 @@
 		D56A0DCA203D130200499F00 /* MuktaVaani-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MuktaVaani-SemiBold.ttf"; sourceTree = "<group>"; };
 		D56A0DD2203E055E00499F00 /* Group 9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Group 9.png"; sourceTree = "<group>"; };
 		D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
-		D57567A22015C63000186CED /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 		D577E0422043E18B007AC8D1 /* OrderedSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSet.swift; sourceTree = "<group>"; };
 		D579900F20464DB20094F6F0 /* MockStarketDistributionlatest.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = MockStarketDistributionlatest.mobileprovision; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -224,8 +222,6 @@
 				D56A4B85203BF12F008BE5F2 /* LoginViewController.swift */,
 				D56A0DBD203CC48400499F00 /* PortfolioViewController.swift */,
 				D56304FD204F998C00A66179 /* MarketViewController.swift */,
-				D5376C0E200D491200B2E203 /* ViewController.swift */,
-				D57567A22015C63000186CED /* ChartViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -248,6 +244,7 @@
 		D5376C40200D4AB100B2E203 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D5630501205B53E200A66179 /* ObjectHandler.swift */,
 				D5376C43200D4B8200B2E203 /* NetworkService.swift */,
 			);
 			path = Services;
@@ -624,7 +621,6 @@
 				D577E0432043E18B007AC8D1 /* OrderedSet.swift in Sources */,
 				D56A0DC3203D061D00499F00 /* PortfolioTableViewCell.swift in Sources */,
 				D56A4B86203BF12F008BE5F2 /* LoginViewController.swift in Sources */,
-				D5376C0F200D491200B2E203 /* ViewController.swift in Sources */,
 				D5630500204F9A8D00A66179 /* StockTableView.swift in Sources */,
 				D56304FE204F998C00A66179 /* MarketViewController.swift in Sources */,
 				D5376C15200D491200B2E203 /* Mock_Starket.xcdatamodeld in Sources */,
@@ -634,7 +630,7 @@
 				D56A0DBE203CC48400499F00 /* PortfolioViewController.swift in Sources */,
 				D54E2E8D2043652B000240C6 /* UIColor+Extensions.swift in Sources */,
 				D5376C0D200D491200B2E203 /* AppDelegate.swift in Sources */,
-				D57567A32015C63000186CED /* ChartViewController.swift in Sources */,
+				D5630502205B53E200A66179 /* ObjectHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

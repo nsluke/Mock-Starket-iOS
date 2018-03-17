@@ -9,31 +9,136 @@
 import Foundation
 import SwiftyJSON
 
-
-struct Action {
+// ======================== Actions ======================== //
+struct Update {
     var type:String
-    var value:Value
+    var id:String
+    var changes:[Change]
     
-    init(json:JSON) {
-        self.type = json["action"].stringValue
-        self.value = Value.init(json: json["value"])
+    init(json: JSON) {
+        self.id = json["id"].stringValue
+        self.type = json["type"].stringValue
+        
+        var changeArray = [Change]()
+        for change in json["changes"].arrayValue {
+            changeArray.append(Change.init(json:change))
+        }
+        self.changes = changeArray
+    }
+    
+    init(id:String, type:String, changes:[Change]) {
+        self.id = id
+        self.type = type
+        self.changes = changes
     }
 }
 
-struct Value {
-    var type:String
-    var portfolio:Portfolio!
-    var valuable:Valuable!
+struct Chat {
+    var messageBody:String
+    var author:String
+    var timestamp:Int
     
     init(json: JSON) {
+        self.messageBody = json["message_body"].stringValue
+        self.author = json["author"].stringValue
+        self.timestamp = json["timestamp"].intValue
+    }
+    
+    init(messageBody: String, author: String, timestamp:Int) {
+        self.messageBody = messageBody
+        self.author = author
+        self.timestamp = timestamp
+    }
+}
+
+struct Alert {
+    var alert:String
+    var type:String
+    var timestamp:Int
+
+    init(json: JSON) {
+        self.alert = json["alert"].stringValue
         self.type = json["type"].stringValue
-        
-        if self.type == "portfolio" {
-            self.portfolio = Portfolio.init(json: json["object"])
-        } else if self.type == "valuable" {
-            self.valuable = Valuable.init(json: json["object"])
+        self.timestamp = json["timestamp"].intValue
+    }
+    
+    init(alert: String, type: String, timestamp:Int) {
+        self.alert = alert
+        self.type = type
+        self.timestamp = timestamp
+    }
+}
+
+// ======================== Messages ======================== //
+struct Message {
+    var changes:[Change]
+    
+    init(json:JSON) {
+        self.changes = [Change]()
+        for change in json["msg"]["changes"].arrayValue {
+            self.changes.append(Change.init(json: change))
         }
     }
+}
+
+// ======================== Changes ======================== //
+struct Change {
+    var field:String
+    var value:Any
+    
+    init(json:JSON) {
+        self.field = json["field"].stringValue
+        
+        if self.field == "ledger" {
+            
+        }
+        
+        self.value = json["value"].doubleValue
+    }
+}
+
+// ======================== Models ======================== //
+
+struct Exchange {
+    var name:String
+    var ledger: [String : LedgerEntry]
+    
+}
+
+struct LedgerEntry {
+    var exchangeName:String
+    var name:String
+    var holders:[String:Int] // The string is the username
+    var openShares:Int
+    
+    init(json:JSON) {
+        self.exchangeName = json["exchangeName"].stringValue
+        self.name = json["name"].stringValue
+        
+        var holderArray = [String:Int]()
+        for holder in json["holders"].arrayValue {
+            
+        }
+        self.holders = holderArray
+        
+        self.openShares = json["openShares"].intValue
+    }
+}
+
+struct User {
+    var id:String
+    var displayName:String
+    
+    init (json:JSON) {
+        self.id = json["id"].stringValue
+        self.displayName = json["displayName"].stringValue
+    }
+    
+    init (id:String, displayName:String) {
+        self.id = id
+        self.displayName = displayName
+    }
+    
 }
 
 struct Portfolio {
@@ -41,41 +146,12 @@ struct Portfolio {
     var uuid:Int
     var wallet:Float
     var net_worth:Float
-    var ledger:Ledger
     
-    init(json:JSON) {
+    init(_ json:JSON) {
         self.name = json["object"]["name"].stringValue
         self.uuid = json["object"]["uuid"].intValue
         self.wallet = json["object"]["net_worth"].floatValue
         self.net_worth = 0
-        self.ledger = Ledger.init(json: json["object"]["ledger"])
-    }
-}
-
-struct Valuable {
-    var name:String
-    var tickerID:String
-    var current_price:Double
-    var recordValue: Double
-    var amountChanged: Double
-    
-    init(json:JSON) {
-        self.name = json["name"].stringValue
-        self.tickerID = json["ticker_id"].stringValue
-        self.current_price = json["current_price"].doubleValue
-        
-        self.recordValue = current_price
-        self.amountChanged = 0.0
-    }
-}
-
-struct Ledger {
-    var ticker: Stock
-    
-    init(json: JSON) {
-//        for i in json {
-        self.ticker = Stock.init(name: json["name"].stringValue, value: json["amount"].doubleValue) // this part is gonna break
-//        }
     }
 }
 
@@ -128,147 +204,116 @@ struct Stock {
     }
 }
 
-// ======================== Currently used code ======================== //
-struct ResponseAction {
-    var action:String
-    var msg:[String:Any]
-    var type:String
-    var id:String
-    var changes:[ResponseChange]
-    
-    
-    init(json:JSON) {
-        
-        self.action = json["action"].stringValue
-        self.msg = json["msg"].dictionaryValue
-        self.type = json["msg"]["type"].stringValue
-        self.id = json["msg"]["id"].stringValue
-        
-        self.changes = [ResponseChange]()
-        for i in json["msg"]["changes"].arrayValue {
-            self.changes.append(ResponseChange.init(i))
-        }
-        
-    }
+enum StockNames: String {
+    case CHUNT = "Chunt's Hats"
+    case KING = "Paddle King"
+    case CBIO = "Sebio's Streaming Services"
+    case OW = "Overwatch"
+    case SCOTT = "Michael Scott Paper Company"
+    case DM = "Dunder Milf"
+    case GWEN = "Gwent"
+    case CHU = "Chu Supply"
+    case SWEET = "Sweet Sweet Tea"
+    case TRAP = "❤ Trap 4 Life"
+    case FIG = "Figgis Agency"
+    case ZONE = "Danger Zone"
+    case PLNX = "Planet Express"
+    case MOM = "Mom's Friendly Robot Company"
 }
-
-struct ResponseChange {
-    var field:String
-    var value:Double
-    
-    
-    init(_ json:JSON) {
-        self.field = json["field"].stringValue
-        self.value = json["value"].doubleValue
-    }
-    
-}
-
 
 /*
+guard let actionArray = notification.userInfo?["actionArray"] as? [ResponseAction] else {
+    return
+}
+
+// Array for initial objects
+// Set for knowing if the string is there < if we don't use a stock we can just use ordered
+// Ordered Set for knowing the index
+
+for action in actionArray {
+    if action.action == "update" && action.type == "stock"{
+        for change in action.changes {
+            if change.field == "current_price" {
+                let stock = Stock.init(name: action.id, value: change.value)
+                let index = mutableSet.index(of: stock.name)
+                var amountChanged = 0.0
  
- [
-    {
-    "action":"update",
-    "msg":
-    {
-        "type":"stock",
-        "id":"MOM",
-        "changes":
-            [
-                {
-                    "field":"current_price",
-                    "value":0.27989287590613976
+                if change.value != 0 && portfolioArray[index].value != 0 {
+                    amountChanged = change.value - portfolioArray[index].value
                 }
-            ]
-        }
-    }
-]
  
- 
- //multiple actions
- [
-    {
-    "action": "update",
-    "msg":
-        {
-        "type": "portfolio",
-        "id": "1",
-        "changes":
-            [
-                {
-                    "field": "net_worth",
-                    "value": 975.8466267343033
-                }
-            ]
-        }//msg
- 
-    },
-    {
-        "action": "update",
-        "msg":
-            {
-            "type": "stock",
-            "id": "ZONE",
-            "changes":
-                [
-                    {
-                        "field": "current_price",
-                        "value": 3.6017010871136033
+                if mutableSet.contains(stock.name) {
+                    portfolioArray.remove(at: index)
+                    portfolioArray.insert(stock, at: index)
+                    if portfolioArray[index].recordValue < stock.value {
+                        portfolioArray[index].recordValue = stock.value
                     }
-                ]
-            }
-    },
-    {
-        "action": "update",
-        "msg":
-            {
-                "type": "stock",
-                "id": "KING",
-                "changes":
-                    [
-                        {
-                            "field": "current_price",
-                            "value": 6.170150884875956
-                        }
-                    ]
+ 
+                    portfolioArray[index].amountChanged = amountChanged
+                } else {
+                    mutableSet.add(stock.name)
+                    portfolioArray.append(stock)
+ 
+ 
+                }
+ 
+                self.tableView.reloadData()
+            } else {
+                print("New Field!" + change.field)
             }
         }
-    ]
+    } else if action.action == "update" && action.type == "portfolio" && action.id == "1" {
+ 
+        for change in action.changes {
+            if change.field == "net_worth" {
+                //Handle net worth change
+                if self.netWorth == 0 {
+                    self.netWorth = change.value
+                    self.netWorthDollarSignLabel.isHidden = false
+                }
+ 
+                let percentChange = round((((change.value - self.netWorth) / self.netWorth) * 100 ) * 100) / 100
+                print(percentChange)
+ 
+                if percentChange > 0 {
+                    self.netWorthLabel.text = String(format: "%.2f", change.value)
+                    self.netWorthPercentageChangeLabel.text = String(format: "%.2f", percentChange)
+                    self.netWorthPercentSignLabel.text = "%"
+ 
+                    self.netWorthLabel.textColor = UIColor.msAquamarine
+                    self.netWorthPercentSignLabel.textColor = UIColor.msAquamarine
+                    self.netWorthPercentageChangeLabel.textColor = UIColor.msAquamarine
+                    self.netWorthArrowIcon.isHidden = false
+ 
+                    self.netWorthArrowIcon.image = UIImage.init(imageLiteralResourceName: "uptriangle")
  
  
-//////////////////
- [
-    {
-        "action":"update",
-        "value":
-            {
-                "type":"valuable",
-                "object":
-                    {
-                        "name" : "Mom's Friendly Robot Company",
-                        "ticker_id" : "MOM",
-                        "current_price" : 46.70733623255994
-                    }
+                } else if percentChange == 0 {
+                    self.netWorthLabel.text = String(format: "%.2f", change.value)
+                    self.netWorthPercentageChangeLabel.text = ""
+                    self.netWorthPercentSignLabel.text = ""
+ 
+                    self.netWorthLabel.textColor = UIColor.white
+                    self.netWorthPercentSignLabel.textColor = UIColor.white
+                    self.netWorthPercentageChangeLabel.textColor = UIColor.white
+ 
+                    self.netWorthArrowIcon.isHidden = true
+                } else if percentChange < 0 {
+                    self.netWorthLabel.text = String(format: "%.2f", change.value)
+                    self.netWorthPercentageChangeLabel.text = String(format: "%.2f", percentChange)
+                    self.netWorthPercentSignLabel.text = "%"
+ 
+                    self.netWorthLabel.textColor = UIColor.msFlatRed
+                    self.netWorthPercentSignLabel.textColor = UIColor.msFlatRed
+                    self.netWorthPercentageChangeLabel.textColor = UIColor.msFlatRed
+ 
+                    self.netWorthArrowIcon.isHidden = false
+                    self.netWorthArrowIcon.image = UIImage.init(imageLiteralResourceName: "downtriangle")
+                }
+                self.netWorth = change.value
             }
+        }
+ 
     }
- ]"
- 
- 
- "actionArray:
-    [
-        Mock_Starket.ResponseAction(
-            action: "update",
-            msg: [:],
-            type: \"\",
-            id: \"\",
-            changes: []
-        )
-    ]
-/////////////////
+}
 */
-
-
-
-
-

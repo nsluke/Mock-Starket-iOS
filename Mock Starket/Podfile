@@ -4,10 +4,6 @@
 target 'Mock Starket' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
-  pod 'RxSwift'
-  pod 'RxCocoa'
-  pod 'RxStarscream'
-  pod 'RxDataSources'
   pod 'SwiftyJSON'
   pod 'Starscream'
   pod 'Charts'
@@ -15,7 +11,8 @@ target 'Mock Starket' do
   pod 'SideMenu'
   pod 'Fabric'
   pod 'Crashlytics'
- 
+  pod 'Disk'
+  
 # Pods for Mock Starket
     target 'Mock StarketTests' do
         inherit! :search_paths

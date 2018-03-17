@@ -30,49 +30,9 @@ class PortfolioViewController: UIViewController {
     @IBOutlet weak var netWorthArrowIcon: UIImageView!
     @IBOutlet weak var netWorthDollarSignLabel: UILabel!
     
-    
     //portfolio stamp files
     @IBOutlet weak var cashAmountLabel: UILabel!
     @IBOutlet weak var investmentsAmountLabel: UILabel!
-    
-    
-//    case CHUNT = "Chunt's Hats"
-//    case KING = "Paddle King"
-//    case CBIO = "Sebio's Streaming Services"
-//    case OW = "Overwatch"
-//    case SCOTT = "Michael Scott Paper Company"
-    
-//    case DM = "Dunder Milf"
-//    case GWEN = "Gwent"
-//    case CHU = "Chu Supply"
-//    case SWEET = "Sweet Sweet Tea"
-//    case TRAP = "❤ Trap 4 Life"
-    
-//    case FIG = "Figgis Agency"
-//    case ZONE = "Danger Zone"
-//    case PLNX = "Planet Express"
-//    case MOM = "Mom's Friendly Robot Company"
-    
-    var portfolioArray = [
-        Stock.init(name: "CHUNT", value: 0.0),
-        Stock.init(name: "KING", value: 0.0),
-        Stock.init(name: "CBIO", value: 0.0),
-        Stock.init(name: "OW", value: 0.0),
-        Stock.init(name: "SCOTT", value: 0.0),
-        
-        Stock.init(name: "DM", value: 0.0),
-        Stock.init(name: "GWEN", value: 0.0),
-        Stock.init(name: "CHU", value: 0.0),
-        Stock.init(name: "SWEET", value: 0.0),
-        Stock.init(name: "TRAP", value: 0.0),
-        
-        Stock.init(name: "FIG", value: 0.0),
-        Stock.init(name: "ZONE", value: 0.0),
-        Stock.init(name: "PLNX", value: 0.0),
-        Stock.init(name: "MOM", value: 0.0)
-        ]
-    var mutableSet = NSMutableOrderedSet()
-    var netWorth = Double()
     
     
     //MARK: View Lifecycle
@@ -86,7 +46,19 @@ class PortfolioViewController: UIViewController {
 //        SideMenuManager.default.menuAddPanGestureToPresent(toView: sideMenuButton)
 //        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.all)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)), name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(update(_:)),
+                                               name: ObjectServiceNotification.ActionUpdatePortfolioWallet.rawValue,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)),
+                                               name: ObjectServiceNotification.ActionUpdatePortfolioNetWorth.rawValue,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)),
+                                               name: ObjectServiceNotification.ActionUpdatePortfolioLedger.rawValue,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)),
+                                               name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
+                                               object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -119,109 +91,12 @@ class PortfolioViewController: UIViewController {
         self.cashAmountLabel.text = "Loading..."
         self.investmentsAmountLabel.text = "Loading..."
         
-        for i in portfolioArray {
-            mutableSet.add(i.name)
-        }
-        
         tableView.reloadData()
     }
     
     //MARK: NotificationHandling
     @objc func update(_ notification:NSNotification) {
-        guard let actionArray = notification.userInfo?["actionArray"] as? [ResponseAction] else {
-            return
-        }
         
-        // Array for initial objects
-        // Set for knowing if the string is there < if we don't use a stock we can just use ordered
-        // Ordered Set for knowing the index
-        
-        for action in actionArray {
-            if action.action == "update" && action.type == "stock"{
-                for change in action.changes {
-                    if change.field == "current_price" {
-                        let stock = Stock.init(name: action.id, value: change.value)
-                        let index = mutableSet.index(of: stock.name)
-                        var amountChanged = 0.0
-                        
-                        if change.value != 0 && portfolioArray[index].value != 0 {
-                             amountChanged = change.value - portfolioArray[index].value
-                        }
-                        
-                        if mutableSet.contains(stock.name) {
-                            portfolioArray.remove(at: index)
-                            portfolioArray.insert(stock, at: index)
-                            if portfolioArray[index].recordValue < stock.value {
-                                portfolioArray[index].recordValue = stock.value
-                            }
-                            
-                            portfolioArray[index].amountChanged = amountChanged
-                        } else {
-                            mutableSet.add(stock.name)
-                            portfolioArray.append(stock)
-                            
-                            
-                        }
-                        
-                        self.tableView.reloadData()
-                    } else {
-                        print("New Field!" + change.field)
-                    }
-                }
-            } else if action.action == "update" && action.type == "portfolio" && action.id == "1" {
-                
-                for change in action.changes {
-                    if change.field == "net_worth" {
-                        //Handle net worth change
-                        if self.netWorth == 0 {
-                            self.netWorth = change.value
-                            self.netWorthDollarSignLabel.isHidden = false
-                        }
-                        
-                        let percentChange = round((((change.value - self.netWorth) / self.netWorth) * 100 ) * 100) / 100
-                        print(percentChange)
-                        
-                        if percentChange > 0 {
-                            self.netWorthLabel.text = String(format: "%.2f", change.value)
-                            self.netWorthPercentageChangeLabel.text = String(format: "%.2f", percentChange)
-                            self.netWorthPercentSignLabel.text = "%"
-                            
-                            self.netWorthLabel.textColor = UIColor.msAquamarine
-                            self.netWorthPercentSignLabel.textColor = UIColor.msAquamarine
-                            self.netWorthPercentageChangeLabel.textColor = UIColor.msAquamarine
-                            self.netWorthArrowIcon.isHidden = false
-                            
-                            self.netWorthArrowIcon.image = UIImage.init(imageLiteralResourceName: "uptriangle")
-                            
-                            
-                        } else if percentChange == 0 {
-                            self.netWorthLabel.text = String(format: "%.2f", change.value)
-                            self.netWorthPercentageChangeLabel.text = ""
-                            self.netWorthPercentSignLabel.text = ""
-                            
-                            self.netWorthLabel.textColor = UIColor.white
-                            self.netWorthPercentSignLabel.textColor = UIColor.white
-                            self.netWorthPercentageChangeLabel.textColor = UIColor.white
-                            
-                            self.netWorthArrowIcon.isHidden = true
-                        } else if percentChange < 0 {
-                            self.netWorthLabel.text = String(format: "%.2f", change.value)
-                            self.netWorthPercentageChangeLabel.text = String(format: "%.2f", percentChange)
-                            self.netWorthPercentSignLabel.text = "%"
-                            
-                            self.netWorthLabel.textColor = UIColor.msFlatRed
-                            self.netWorthPercentSignLabel.textColor = UIColor.msFlatRed
-                            self.netWorthPercentageChangeLabel.textColor = UIColor.msFlatRed
-                            
-                            self.netWorthArrowIcon.isHidden = false
-                            self.netWorthArrowIcon.image = UIImage.init(imageLiteralResourceName: "downtriangle")
-                        }
-                        self.netWorth = change.value
-                    }
-                }
-            
-            }
-        }
     }
     
     //Mark: IBActions

@@ -56,45 +56,45 @@ class MarketViewController: ViewController {
     
     
     @objc func update(_ notification:NSNotification) {
-        guard let actionArray = notification.userInfo?["actionArray"] as? [Action] else {
-            return
-        }
-        
-        for action in actionArray {
-            if action.type == "update" {
-                if let valuable = action.value.valuable {
-                    let stock = Stock.init(name: valuable.tickerID, value: valuable.current_price)
-                    let index = mutableStockSet.index(of: valuable.tickerID)
-                    var amountChanged = 0.0
-                    
-                    if valuable.current_price != 0 && stockArray[index].value != 0 {
-                        amountChanged = valuable.current_price - stockArray[index].value
-                    }
-                    
-                    if mutableStockSet.contains(stock.name) {
-                        stockArray.remove(at: index)
-                        stockArray.insert(stock, at: index)
-                        if stockArray[index].recordValue < stock.value {
-                            stockArray[index].recordValue = stock.value
-                        }
-                        
-                        stockArray[index].amountChanged = amountChanged
-                    } else {
-                        mutableStockSet.add(stock.name)
-                        stockArray.append(stock)
-                        print("New Field!" + stock.name)
-                    }
-                }
-
-                if let portfolio = action.value.portfolio {
-                    
-                }
-                
-                self.tableView.reloadData()
-
-            }
-        }
-    }
+//        guard let actionArray = notification.userInfo?["actionArray"] as? [Action] else {
+//            return
+//        }
+//        
+//        for action in actionArray {
+//            if action.type == "update" {
+//                if let valuable = action.value.valuable {
+//                    let stock = Stock.init(name: valuable.tickerID, value: valuable.current_price)
+//                    let index = mutableStockSet.index(of: valuable.tickerID)
+//                    var amountChanged = 0.0
+//                    
+//                    if valuable.current_price != 0 && stockArray[index].value != 0 {
+//                        amountChanged = valuable.current_price - stockArray[index].value
+//                    }
+//                    
+//                    if mutableStockSet.contains(stock.name) {
+//                        stockArray.remove(at: index)
+//                        stockArray.insert(stock, at: index)
+//                        if stockArray[index].recordValue < stock.value {
+//                            stockArray[index].recordValue = stock.value
+//                        }
+//                        
+//                        stockArray[index].amountChanged = amountChanged
+//                    } else {
+//                        mutableStockSet.add(stock.name)
+//                        stockArray.append(stock)
+//                        print("New Field!" + stock.name)
+//                    }
+//                }
+//
+//                if let portfolio = action.value.portfolio {
+//                    
+//                }
+//                
+//                self.tableView.reloadData()
+//
+//            }
+//        }
+//    }
     
 }
 extension MarketViewController: UITableViewDelegate, UITableViewDataSource {

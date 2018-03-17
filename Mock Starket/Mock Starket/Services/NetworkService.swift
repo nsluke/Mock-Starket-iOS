@@ -15,7 +15,6 @@ final class NetworkService: NSObject {
     public static let sharedInstance = NetworkService()
     
     public static let socket = WebSocket(url: URL(string: "ws://localhost:8000/ws")!)
-
 //    public static let socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
     
     private override init() {
@@ -59,18 +58,14 @@ extension NetworkService: WebSocketDelegate {
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         debugPrint(text, separator: "%n")
         
+        // Parse the socket response from a string into JSON, then send it
+        // to the ObjectHandler to be routed
         let json = JSON.init(parseJSON: text)
-        var actionArray = [Action]()
         
-        for action in json.arrayValue { // run through the actionArray
-            actionArray.append(Action.init(json: action))
-        }
         
-        debugPrint("actionArray: \(actionArray)", separator: "%n")
+        ObjectHandler.sharedInstance.actionRouter(json: json)
         
-        NotificationCenter.default.post(name: NetworkServiceNotification.SocketMessageReceived.rawValue,
-                                        object: text,
-                                        userInfo: ["actionArray" : actionArray])
+        
     }
     
     func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
@@ -97,21 +92,4 @@ extension Notification.Name: ExpressibleByStringLiteral {
     public init(unicodeScalarLiteral value: String) {
         self.init(value)
     }
-}
-
-enum StockNames: String {
-    case CHUNT = "Chunt's Hats"
-    case KING = "Paddle King"
-    case CBIO = "Sebio's Streaming Services"
-    case OW = "Overwatch"
-    case SCOTT = "Michael Scott Paper Company"
-    case DM = "Dunder Milf"
-    case GWEN = "Gwent"
-    case CHU = "Chu Supply"
-    case SWEET = "Sweet Sweet Tea"
-    case TRAP = "❤ Trap 4 Life"
-    case FIG = "Figgis Agency"
-    case ZONE = "Danger Zone"
-    case PLNX = "Planet Express"
-    case MOM = "Mom's Friendly Robot Company"
 }
