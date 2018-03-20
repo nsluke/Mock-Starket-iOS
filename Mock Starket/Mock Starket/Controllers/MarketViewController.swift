@@ -8,9 +8,7 @@
 
 import UIKit
 
-
-
-class MarketViewController: ViewController {
+class MarketViewController: UIViewController {
     
     //Mark: IBOutlets
     @IBOutlet weak var tableView: UITableView!
@@ -95,8 +93,9 @@ class MarketViewController: ViewController {
 //            }
 //        }
 //    }
-    
+    }
 }
+
 extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return stockArray.count

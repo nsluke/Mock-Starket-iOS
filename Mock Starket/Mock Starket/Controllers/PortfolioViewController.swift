@@ -47,18 +47,18 @@ class PortfolioViewController: UIViewController {
 //        SideMenuManager.default.menuAddScreenEdgePanGesturesToPresent(toView: self.navigationController!.view, forMenu: UIRectEdge.all)
         
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(update(_:)),
-                                               name: ObjectServiceNotification.ActionUpdatePortfolioWallet.rawValue,
+                                               selector: #selector(updateWallet(_:)),
+                                               name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioWallet.rawValue,
                                                object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)),
-                                               name: ObjectServiceNotification.ActionUpdatePortfolioNetWorth.rawValue,
+        NotificationCenter.default.addObserver(self, selector: #selector(updateNetWorth(_:)),
+                                               name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue,
                                                object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)),
-                                               name: ObjectServiceNotification.ActionUpdatePortfolioLedger.rawValue,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)),
+        NotificationCenter.default.addObserver(self, selector: #selector(updateStockPrice(_:)),
                                                name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
                                                object: nil)
+        self.setupData()
+    
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -72,6 +72,22 @@ class PortfolioViewController: UIViewController {
     }
     
     //MARK: View Setup Functions
+    func setupData() {
+        
+        if ObjectHandler.sharedInstance.netWorth != 0 {
+            self.netWorthLabel.text = "Loading..."
+        }
+        
+        self.netWorthPercentageChangeLabel.text = ""
+        self.netWorthPercentSignLabel.text = ""
+        self.netWorthArrowIcon.isHidden = true
+        self.netWorthDollarSignLabel.isHidden = true
+        
+        self.cashAmountLabel.text = "Loading..."
+        self.investmentsAmountLabel.text = "Loading..."
+        
+    }
+    
     func setupViews() {
         UIApplication.shared.statusBarStyle = .lightContent
 
@@ -82,21 +98,25 @@ class PortfolioViewController: UIViewController {
         gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.maxY)
         blueView.layer.addSublayer(gradient)
         
-        self.netWorthLabel.text = "Loading..."
-        self.netWorthPercentageChangeLabel.text = ""
-        self.netWorthPercentSignLabel.text = ""
-        self.netWorthArrowIcon.isHidden = true
-        self.netWorthDollarSignLabel.isHidden = true
-        
-        self.cashAmountLabel.text = "Loading..."
-        self.investmentsAmountLabel.text = "Loading..."
-        
         tableView.reloadData()
     }
     
     //MARK: NotificationHandling
-    @objc func update(_ notification:NSNotification) {
-        
+    @objc func updateWallet(_ notification:NSNotification) {
+        self.cashAmountLabel.text = String(ObjectHandler.sharedInstance.wallet)
+
+    }
+    
+    @objc func updateNetWorth(_ notification:NSNotification) {
+        self.netWorthLabel.text = String(ObjectHandler.sharedInstance.netWorth)
+    }
+    
+    @objc func updateLedger(_ notification:NSNotification) {
+        //TODO:
+    }
+    
+    @objc func updateStockPrice(_ notification:NSNotification) {
+        tableView.reloadData()
     }
     
     //Mark: IBActions
@@ -115,28 +135,28 @@ extension PortfolioViewController: UITabBarDelegate {
 
 extension PortfolioViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.mutableSet.count
+        return ObjectHandler.sharedInstance.stockSet.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath) as? PortfolioTableViewCell
         
-        cell?.tickerLabel.text = portfolioArray[indexPath.row].name
-        cell?.nameLabel.text = portfolioArray[indexPath.row].fullname
+        cell?.tickerLabel.text = ObjectHandler.sharedInstance.stockArray[indexPath.row].name  // portfolioArray[indexPath.row].name
+        cell?.nameLabel.text = ObjectHandler.sharedInstance.stockArray[indexPath.row].fullname // portfolioArray[indexPath.row].fullname
 
-        if portfolioArray[indexPath.row].value <= 0 {
+        if ObjectHandler.sharedInstance.stockArray[indexPath.row].value <= 0 {
             cell?.costLabel.text = ""
         } else {
-            cell?.costLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].value)
+            cell?.costLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.stockArray[indexPath.row].value)
         }
         
-        if portfolioArray[indexPath.row].value <= 0 {
+        if ObjectHandler.sharedInstance.stockArray[indexPath.row].value <= 0 {
             cell?.recordLabel.text = ""
         } else {
-            cell?.recordLabel.text = String(format: "%.2f", portfolioArray[indexPath.row].recordValue)
+            cell?.recordLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.stockArray[indexPath.row].recordValue)
         }
         
-        let amountChanged = portfolioArray[indexPath.row].amountChanged
+        let amountChanged = ObjectHandler.sharedInstance.stockArray[indexPath.row].amountChanged
         cell?.changeLabel.text = String(format: "%.2f", amountChanged)
 
         if amountChanged < 0 {

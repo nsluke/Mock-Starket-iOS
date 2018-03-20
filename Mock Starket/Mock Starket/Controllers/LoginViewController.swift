@@ -9,9 +9,9 @@
 import Foundation
 import Starscream
 import Crashlytics
+import UIKit
 
-
-class LoginViewController: ViewController {
+class LoginViewController: UIViewController {
     
     //MARK: IBOutlets
     @IBOutlet weak var scrollView: UIScrollView!
@@ -41,13 +41,15 @@ class LoginViewController: ViewController {
                                                selector: #selector(enableLogin),
                                                name: NetworkServiceNotification.SocketDidConnect.rawValue,
                                                object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(loginSuccesful),
-                                               name: NetworkServiceNotification.SocketMessageReceived.rawValue,
-                                               object: nil)
+
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(loginUnsuccesful),
                                                name: NetworkServiceNotification.SocketDidDisconnect.rawValue,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(loginSuccesful),
+                                               name: NetworkServiceNotification.SocketMessageReceived.rawValue,
                                                object: nil)
         
         NotificationCenter.default.addObserver(self,
@@ -76,6 +78,8 @@ class LoginViewController: ViewController {
         
         NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketDidConnect.rawValue, object: nil)
         NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketDidDisconnect.rawValue, object: nil)
+
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
 
@@ -97,7 +101,6 @@ class LoginViewController: ViewController {
         self.loginButton.titleLabel?.text = ""
         self.loginActivityIndicator.isHidden = false
         self.loginActivityIndicator.startAnimating()
-        
         
         NetworkService.login(username: username, password: password)
     }
@@ -213,6 +216,8 @@ class LoginViewController: ViewController {
     @objc func loginSuccesful () {
         self.loginActivityIndicator.stopAnimating()
         self.loginActivityIndicator.isHidden = true
+        
+        ObjectHandler.sharedInstance.displayName = self.usernameTextField.text!
         
         Answers.logCustomEvent(withName: "LogInSuccessful", customAttributes: ["any":"something"])
         alertWithTitle("Login Successful!", message: "", ViewController: self) { (alertAction) -> (Void) in

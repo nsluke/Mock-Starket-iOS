@@ -521,7 +521,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JS3-Md-ff0">
-                                                    <rect key="frame" x="237.66666666666666" y="6" width="19.333333333333343" height="39"/>
+                                                    <rect key="frame" x="237.66666666666666" y="14" width="19.333333333333343" height="23"/>
                                                     <fontDescription key="fontDescription" name="MyanmarSangamMN" family="Myanmar Sangam MN" pointSize="17"/>
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -535,13 +535,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="83B-zD-vtB">
                                                     <rect key="frame" x="0.0" y="5" width="131.66666666666666" height="39.666666666666664"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="KING" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yhY-yv-hvT">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="KING" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yhY-yv-hvT">
                                                             <rect key="frame" x="0.0" y="0.0" width="131.66666666666666" height="26"/>
                                                             <fontDescription key="fontDescription" name="MyanmarSangamMN" family="Myanmar Sangam MN" pointSize="18"/>
                                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Michael Scott Paper Company" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vFA-vH-dSy">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Michael Scott Paper Company" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vFA-vH-dSy">
                                                             <rect key="frame" x="0.0" y="26.000000000000004" width="131.66666666666666" height="13.666666666666668"/>
                                                             <fontDescription key="fontDescription" name="MyanmarSangamMN" family="Myanmar Sangam MN" pointSize="10"/>
                                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -555,24 +555,25 @@
                                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="downtriangle" translatesAutoresizingMaskIntoConstraints="NO" id="Fxq-aP-dIB">
-                                                    <rect key="frame" x="257" y="6" width="39" height="39"/>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="downtriangle" translatesAutoresizingMaskIntoConstraints="NO" id="Fxq-aP-dIB">
+                                                    <rect key="frame" x="257" y="11" width="12" height="34"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="12" id="Y4j-si-zWj"/>
+                                                    </constraints>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="JS3-Md-ff0" firstAttribute="centerY" secondItem="8i7-Ej-kUc" secondAttribute="centerY" id="029-QV-Ojc"/>
                                                 <constraint firstItem="ERd-Hy-RK6" firstAttribute="centerY" secondItem="8i7-Ej-kUc" secondAttribute="centerY" id="3JB-b4-MNF"/>
                                                 <constraint firstItem="Fxq-aP-dIB" firstAttribute="leading" secondItem="JS3-Md-ff0" secondAttribute="trailing" id="87S-9S-JEk"/>
-                                                <constraint firstItem="Fxq-aP-dIB" firstAttribute="width" secondItem="JS3-Md-ff0" secondAttribute="height" multiplier="1:1" id="8ov-qH-SQa"/>
                                                 <constraint firstItem="83B-zD-vtB" firstAttribute="leading" secondItem="8i7-Ej-kUc" secondAttribute="leading" id="9m5-LA-Via"/>
-                                                <constraint firstItem="Fxq-aP-dIB" firstAttribute="top" secondItem="JS3-Md-ff0" secondAttribute="top" id="HTV-5z-Sbd"/>
                                                 <constraint firstAttribute="trailing" secondItem="JS3-Md-ff0" secondAttribute="trailing" constant="68" id="MV8-rV-1SC"/>
-                                                <constraint firstItem="Fxq-aP-dIB" firstAttribute="bottom" secondItem="JS3-Md-ff0" secondAttribute="bottom" id="V9Y-v3-LvI"/>
                                                 <constraint firstItem="83B-zD-vtB" firstAttribute="top" secondItem="8i7-Ej-kUc" secondAttribute="top" constant="5" id="Xjk-AK-7SP"/>
                                                 <constraint firstItem="GTr-Tc-LZb" firstAttribute="centerY" secondItem="8i7-Ej-kUc" secondAttribute="centerY" id="a0H-oA-nSm"/>
                                                 <constraint firstItem="GTr-Tc-LZb" firstAttribute="leading" secondItem="8i7-Ej-kUc" secondAttribute="leading" constant="130" id="bhp-5m-XQO"/>
                                                 <constraint firstAttribute="trailing" secondItem="ERd-Hy-RK6" secondAttribute="trailing" id="buA-qd-8mO"/>
                                                 <constraint firstAttribute="bottom" secondItem="83B-zD-vtB" secondAttribute="bottom" constant="5" id="djp-i0-QmY"/>
+                                                <constraint firstItem="Fxq-aP-dIB" firstAttribute="centerY" secondItem="JS3-Md-ff0" secondAttribute="centerY" constant="2" id="wbg-gb-1IQ"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
@@ -634,7 +635,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9BS-6y-wBd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3209" y="-1835"/>
+            <point key="canvasLocation" x="3208.8000000000002" y="-1835.4679802955666"/>
         </scene>
         <!--Market-->
         <scene sceneID="CPP-3V-sWY">

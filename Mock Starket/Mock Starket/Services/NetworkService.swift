@@ -41,7 +41,6 @@ final class NetworkService: NSObject {
 extension NetworkService: WebSocketDelegate {
     func websocketDidConnect(socket: WebSocketClient) {
         print("Connected")
-        
         NotificationCenter.default.post(name: NetworkServiceNotification.SocketDidConnect.rawValue,
                                         object: nil,
                                         userInfo: nil)
@@ -49,23 +48,24 @@ extension NetworkService: WebSocketDelegate {
     
     func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         print("Disconnected")
-        
         NotificationCenter.default.post(name: NetworkServiceNotification.SocketDidDisconnect.rawValue,
                                         object: nil,
                                         userInfo: nil)
     }
     
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
-        debugPrint(text, separator: "%n")
         
         // Parse the socket response from a string into JSON, then send it
         // to the ObjectHandler to be routed
-        let json = JSON.init(parseJSON: text)
         
+        let json = JSON.init(parseJSON: text)
+        dump(json)
+
+        NotificationCenter.default.post(name: NetworkServiceNotification.SocketMessageReceived.rawValue,
+                                        object: nil,
+                                        userInfo: nil)
         
         ObjectHandler.sharedInstance.actionRouter(json: json)
-        
-        
     }
     
     func websocketDidReceiveData(socket: WebSocketClient, data: Data) {

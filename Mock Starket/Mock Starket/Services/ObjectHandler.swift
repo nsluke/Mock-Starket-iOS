@@ -12,39 +12,48 @@ import SwiftyJSON
 final class ObjectHandler: NSObject {
     public static let sharedInstance = ObjectHandler()
     
-    public var stockArray = [
-        Stock.init(name: "CHUNT", value: 0.0),
-        Stock.init(name: "KING", value: 0.0),
-        Stock.init(name: "CBIO", value: 0.0),
-        Stock.init(name: "OW", value: 0.0),
-        Stock.init(name: "SCOTT", value: 0.0),
-
-        Stock.init(name: "DM", value: 0.0),
-        Stock.init(name: "GWEN", value: 0.0),
-        Stock.init(name: "CHU", value: 0.0),
-        Stock.init(name: "SWEET", value: 0.0),
-        Stock.init(name: "TRAP", value: 0.0),
-
-        Stock.init(name: "FIG", value: 0.0),
-        Stock.init(name: "ZONE", value: 0.0),
-        Stock.init(name: "PLNX", value: 0.0),
-        Stock.init(name: "MOM", value: 0.0)
-    ]
-    var stockSet = NSMutableOrderedSet()
+    public var stockArray = [Stock
+//        Stock.init(name: "CHUNT", value: 0.0),
+//        Stock.init(name: "KING", value: 0.0),
+//        Stock.init(name: "CBIO", value: 0.0),
+//        Stock.init(name: "OW", value: 0.0),
+//        Stock.init(name: "SCOTT", value: 0.0),
+//
+//        Stock.init(name: "DM", value: 0.0),
+//        Stock.init(name: "GWEN", value: 0.0),
+//        Stock.init(name: "CHU", value: 0.0),
+//        Stock.init(name: "SWEET", value: 0.0),
+//        Stock.init(name: "TRAP", value: 0.0),
+//
+//        Stock.init(name: "FIG", value: 0.0),
+//        Stock.init(name: "ZONE", value: 0.0),
+//        Stock.init(name: "PLNX", value: 0.0),
+//        Stock.init(name: "MOM", value: 0.0)
+    ]()
+    
+    var stockSet:NSMutableOrderedSet = NSMutableOrderedSet() //.addObjects(from: ObjectHandler.sharedInstance.stockArray) as! NSMutableOrderedSet
     
     // User info
     var currentUser:User
     var netWorth = Double()
-
+    var displayName = String()
+    var wallet = Double()
+    
     
     // ======================== init ======================== //
+    
     override init() {
-        for stock in stockArray {
-            stockSet.add(stock.name)
-        }
+        super.init()
+    }
+    
+    init(currentUser: User) {
+        super.init()
         
+        self.currentUser = currentUser
         
-        
+//        for stock in stockArray {
+//            stockSet.add(stock.name)
+//        }
     }
     
 
@@ -82,6 +91,7 @@ final class ObjectHandler: NSObject {
             let changeValue:Any
             
             if updateType == "user" {
+                
                 if changeType == "display_name" {
                     changeValue = change["value"].stringValue
                     NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateUsername.rawValue,
@@ -95,33 +105,66 @@ final class ObjectHandler: NSObject {
                                                     userInfo: ["id": updateID, "value": changeValue])
                 }
             } else if updateType == "portfolio" {
-                if changeType == "wallet" {
-                    changeValue = change["value"].doubleValue
-                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioWallet.rawValue,
-                                                    object: nil,
-                                                    userInfo: ["id": updateID, "value": changeValue])
-                } else if changeType == "net_worth" {
-                    changeValue = change["value"].doubleValue
-                    
-                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioNetWorth.rawValue,
-                                                    object: nil,
-                                                    userInfo: ["id": updateID, "value": changeValue])
-                } else if changeType == "ledger" {
-                    //TODO:
-//                    changeValue = change["value"]
-//
-//                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioLedger.rawValue,
-//                                                    object: nil,
-//                                                    userInfo: ["id": updateID, "value": changeValue])
+                
+                // ========================== //
+                // Update to the current user
+                // ========================== //
+                
+                if updateID == self.currentUser.id {
+                    if changeType == "wallet" {
+                        changeValue = change["value"].doubleValue
+                        self.wallet = changeValue as! Double
+                        
+                        NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioWallet.rawValue,
+                                                        object: nil,
+                                                        userInfo: ["id": updateID, "value": changeValue])
+                    } else if changeType == "net_worth" {
+                        changeValue = change["value"].doubleValue
+                        self.netWorth = changeValue as! Double
+                        
+                        NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue,
+                                                        object: nil,
+                                                        userInfo: ["id": updateID, "value": changeValue])
+                    } else if changeType == "ledger" {
+                        //TODO:
+                        //                        changeValue = change["value"]
+                        //
+                        //                        NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioLedger.rawValue,
+                        //                                                        object: nil,
+                        //                                                        userInfo: ["id": updateID, "value": changeValue])
+                    }
+                    // ========================== //
+                    // Update to other user
+                    // ========================== //
+                } else {
+                    if changeType == "wallet" {
+                        changeValue = change["value"].doubleValue
+                        NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioWallet.rawValue,
+                                                        object: nil,
+                                                        userInfo: ["id": updateID, "value": changeValue])
+                    } else if changeType == "net_worth" {
+                        changeValue = change["value"].doubleValue
+                        
+                        NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioNetWorth.rawValue,
+                                                        object: nil,
+                                                        userInfo: ["id": updateID, "value": changeValue])
+                    } else if changeType == "ledger" {
+                        //TODO:
+                        //                    changeValue = change["value"]
+                        //
+                        //                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioLedger.rawValue,
+                        //                                                    object: nil,
+                        //                                                    userInfo: ["id": updateID, "value": changeValue])
+                    }
                 }
             } else if updateType == "stock" {
-                changeValue = change["current_price"].doubleValue
+                changeValue = change["value"].doubleValue
                 
                 let stock = Stock.init(name: updateID, value: changeValue as! Double)
                 let index = stockSet.index(of: updateID)
                 var amountChanged = 0.0
                 
-                if changeValue as! Double != 0 && stockArray[index].value != 0 {
+                if changeValue as! Double != 0 && index <= stockArray.count - 1 && stockArray[index].value != 0 {
                     amountChanged = changeValue as! Double - stockArray[index].value
                 }
                 
@@ -144,10 +187,10 @@ final class ObjectHandler: NSObject {
             } else if updateType == "exchange_ledger" {
                 if changeType == "holders" {
                     //TODO:
-//                    changeValue = change["value"].doubleValue
-//                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateExchangeHolders.rawValue,
-//                                                    object: nil,
-//                                                    userInfo: ["id": updateID, "value": changeValue])
+                    //                    changeValue = change["value"].doubleValue
+                    //                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateExchangeHolders.rawValue,
+                    //                                                    object: nil,
+                    //                                                    userInfo: ["id": updateID, "value": changeValue])
                 } else if changeType == "open_shares" {
                     changeValue = change["value"].intValue
                     NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateExchangeOpenShares.rawValue,
@@ -183,6 +226,10 @@ enum ObjectServiceNotification: Notification.Name {
     //user updates
     case ActionUpdateUsername = "ActionUpdateUsername"
     case ActionUpdateUserActive = "ActionUpdateUserActive"
+    //currentUser updates
+    case ActionUpdateCurrentUserPortfolioWallet = "ActionUpdateCurrentUserPortfolioWallet"
+    case ActionUpdateCurrentUserPortfolioNetWorth = "ActionUpdateCurrentUserPortfolioNetWorth"
+    case ActionUpdateCurrentUserPortfolioLedger = "ActionUpdateCurrentUserPortfolioLedger"
     //portfolio updates
     case ActionUpdatePortfolioWallet = "ActionUpdatePortfolioWallet"
     case ActionUpdatePortfolioNetWorth = "ActionUpdatePortfolioNetWorth"
