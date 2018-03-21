@@ -15,111 +15,54 @@ class MarketViewController: UIViewController {
     
     
     //Mark: Variables
-    var stockArray = [
-        Stock.init(name: "CHUNT", value: 0.0),
-        Stock.init(name: "KING", value: 0.0),
-        Stock.init(name: "CBIO", value: 0.0),
-        Stock.init(name: "OW", value: 0.0),
-        Stock.init(name: "SCOTT", value: 0.0),
-        
-        Stock.init(name: "DM", value: 0.0),
-        Stock.init(name: "GWEN", value: 0.0),
-        Stock.init(name: "CHU", value: 0.0),
-        Stock.init(name: "SWEET", value: 0.0),
-        Stock.init(name: "TRAP", value: 0.0),
-        
-        Stock.init(name: "FIG", value: 0.0),
-        Stock.init(name: "ZONE", value: 0.0),
-        Stock.init(name: "PLNX", value: 0.0),
-        Stock.init(name: "MOM", value: 0.0)
-    ]
-    var mutableStockSet = NSMutableOrderedSet()
+    
 
     //Mark: View Lifecycle
     override func viewDidLoad() {
-        NotificationCenter.default.addObserver(self, selector: #selector(update(_:)), name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
-    }
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateStocks),
+                                               name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
+                                               object: nil)    }
     
     override func viewDidAppear(_ animated: Bool) {
-        for stock in stockArray {
-            mutableStockSet.add(stock.name)
-        }
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue, object: nil)
+    }
+    
+    @objc func updateStocks() {
+        self.tableView.reloadData()
     }
     
     //Mark: Functions
-    
-    
-    @objc func update(_ notification:NSNotification) {
-//        guard let actionArray = notification.userInfo?["actionArray"] as? [Action] else {
-//            return
-//        }
-//        
-//        for action in actionArray {
-//            if action.type == "update" {
-//                if let valuable = action.value.valuable {
-//                    let stock = Stock.init(name: valuable.tickerID, value: valuable.current_price)
-//                    let index = mutableStockSet.index(of: valuable.tickerID)
-//                    var amountChanged = 0.0
-//                    
-//                    if valuable.current_price != 0 && stockArray[index].value != 0 {
-//                        amountChanged = valuable.current_price - stockArray[index].value
-//                    }
-//                    
-//                    if mutableStockSet.contains(stock.name) {
-//                        stockArray.remove(at: index)
-//                        stockArray.insert(stock, at: index)
-//                        if stockArray[index].recordValue < stock.value {
-//                            stockArray[index].recordValue = stock.value
-//                        }
-//                        
-//                        stockArray[index].amountChanged = amountChanged
-//                    } else {
-//                        mutableStockSet.add(stock.name)
-//                        stockArray.append(stock)
-//                        print("New Field!" + stock.name)
-//                    }
-//                }
-//
-//                if let portfolio = action.value.portfolio {
-//                    
-//                }
-//                
-//                self.tableView.reloadData()
-//
-//            }
-//        }
-//    }
-    }
 }
 
 extension MarketViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return stockArray.count
+        return ObjectHandler.sharedInstance.marketArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "portfolioTableViewCell", for: indexPath) as? PortfolioTableViewCell
         
-        cell?.tickerLabel.text = stockArray[indexPath.row].name
-        cell?.nameLabel.text = stockArray[indexPath.row].fullname
+        cell?.tickerLabel.text = ObjectHandler.sharedInstance.marketArray[indexPath.row].name
+        cell?.nameLabel.text = ObjectHandler.sharedInstance.marketArray[indexPath.row].fullname
         
-        if stockArray[indexPath.row].value <= 0 {
+        if ObjectHandler.sharedInstance.marketArray[indexPath.row].value <= 0 {
             cell?.costLabel.text = ""
         } else {
-            cell?.costLabel.text = String(format: "%.2f", stockArray[indexPath.row].value)
+            cell?.costLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.marketArray[indexPath.row].value)
         }
         
-        if stockArray[indexPath.row].value <= 0 {
+        if ObjectHandler.sharedInstance.marketArray[indexPath.row].value <= 0 {
             cell?.recordLabel.text = ""
         } else {
-            cell?.recordLabel.text = String(format: "%.2f", stockArray[indexPath.row].recordValue)
+            cell?.recordLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.marketArray[indexPath.row].recordValue)
         }
         
-        let amountChanged = stockArray[indexPath.row].amountChanged
+        let amountChanged = ObjectHandler.sharedInstance.marketArray[indexPath.row].amountChanged
         cell?.changeLabel.text = String(format: "%.2f", amountChanged)
         
         if amountChanged < 0 {

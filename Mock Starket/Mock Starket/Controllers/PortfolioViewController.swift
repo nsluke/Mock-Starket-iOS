@@ -53,8 +53,9 @@ class PortfolioViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateNetWorth(_:)),
                                                name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue,
                                                object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateStockPrice(_:)),
-                                               name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateStockPrice(_:)),
+                                               name: ObjectServiceNotification.ActionUpdateCurrentUserStockPrice.rawValue,
                                                object: nil)
         self.setupData()
     
@@ -68,13 +69,17 @@ class PortfolioViewController: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioWallet.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserStockPrice.rawValue, object: nil)
     }
     
     //MARK: View Setup Functions
     func setupData() {
         
         if ObjectHandler.sharedInstance.netWorth != 0 {
+            self.netWorthLabel.text = String(ObjectHandler.sharedInstance.netWorth)
+        } else {
             self.netWorthLabel.text = "Loading..."
         }
         
@@ -83,14 +88,22 @@ class PortfolioViewController: UIViewController {
         self.netWorthArrowIcon.isHidden = true
         self.netWorthDollarSignLabel.isHidden = true
         
-        self.cashAmountLabel.text = "Loading..."
-        self.investmentsAmountLabel.text = "Loading..."
+        if ObjectHandler.sharedInstance.netWorth != 0 {
+            self.cashAmountLabel.text = String(ObjectHandler.sharedInstance.wallet)
+        } else {
+            self.cashAmountLabel.text = "Loading..."
+        }
         
+        if ObjectHandler.sharedInstance.netWorth != 0 && ObjectHandler.sharedInstance.wallet != 0 {
+            self.investmentsAmountLabel.text = String(ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
+        } else {
+            self.investmentsAmountLabel.text = "Loading..."
+        }
     }
     
     func setupViews() {
         UIApplication.shared.statusBarStyle = .lightContent
-
+        
         let gradient = CAGradientLayer.init()
         gradient.colors = [UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 0.0),
                            UIColor.init(red: 1.0/20.0, green: 1.0/30.0, blue: 1.0/48.0, alpha: 1.0)]
@@ -98,17 +111,21 @@ class PortfolioViewController: UIViewController {
         gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.maxY)
         blueView.layer.addSublayer(gradient)
         
+        
+        
+        
         tableView.reloadData()
     }
     
     //MARK: NotificationHandling
     @objc func updateWallet(_ notification:NSNotification) {
         self.cashAmountLabel.text = String(ObjectHandler.sharedInstance.wallet)
-
+        self.investmentsAmountLabel.text = String(ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
     }
     
     @objc func updateNetWorth(_ notification:NSNotification) {
         self.netWorthLabel.text = String(ObjectHandler.sharedInstance.netWorth)
+        self.investmentsAmountLabel.text = String(ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
     }
     
     @objc func updateLedger(_ notification:NSNotification) {
@@ -135,7 +152,7 @@ extension PortfolioViewController: UITabBarDelegate {
 
 extension PortfolioViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return ObjectHandler.sharedInstance.stockSet.count
+        return ObjectHandler.sharedInstance.stockArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

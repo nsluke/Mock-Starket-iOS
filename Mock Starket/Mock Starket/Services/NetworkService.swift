@@ -14,8 +14,8 @@ import SwiftyJSON
 final class NetworkService: NSObject {
     public static let sharedInstance = NetworkService()
     
-    public static let socket = WebSocket(url: URL(string: "ws://localhost:8000/ws")!)
-//    public static let socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
+//    public static let socket = WebSocket(url: URL(string: "ws://localhost:8000/ws")!)
+    public static let socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
     
     private override init() {
         super.init()
@@ -28,15 +28,12 @@ final class NetworkService: NSObject {
     }
     
     static func login(username: String, password: String) {
-        let message = "{\"action\": \"login\", \"value\": {\"username\": \"\(username)\", \"password\": \"\(password)\" }}"
+        let message = "{\"action\": \"login\", \"msg\": {\"username\": \"\(username)\", \"password\": \"\(password)\" }}"
         print(message)
         
         socket.write(string: message)
     }
 
-    static func receiveSocket () {
-        
-    }
 }
 extension NetworkService: WebSocketDelegate {
     func websocketDidConnect(socket: WebSocketClient) {
@@ -59,8 +56,9 @@ extension NetworkService: WebSocketDelegate {
         // to the ObjectHandler to be routed
         
         let json = JSON.init(parseJSON: text)
-        dump(json)
-
+//        dump(json)
+        print(json)
+        
         NotificationCenter.default.post(name: NetworkServiceNotification.SocketMessageReceived.rawValue,
                                         object: nil,
                                         userInfo: nil)
@@ -72,7 +70,6 @@ extension NetworkService: WebSocketDelegate {
         print(data)
     }
 }
-
 
 enum NetworkServiceNotification: Notification.Name {
     case SocketMessageReceived = "SocketMessageReceived"

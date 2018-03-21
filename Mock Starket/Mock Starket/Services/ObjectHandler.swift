@@ -12,36 +12,23 @@ import SwiftyJSON
 final class ObjectHandler: NSObject {
     public static let sharedInstance = ObjectHandler()
     
-    public var stockArray = [Stock
-//        Stock.init(name: "CHUNT", value: 0.0),
-//        Stock.init(name: "KING", value: 0.0),
-//        Stock.init(name: "CBIO", value: 0.0),
-//        Stock.init(name: "OW", value: 0.0),
-//        Stock.init(name: "SCOTT", value: 0.0),
-//
-//        Stock.init(name: "DM", value: 0.0),
-//        Stock.init(name: "GWEN", value: 0.0),
-//        Stock.init(name: "CHU", value: 0.0),
-//        Stock.init(name: "SWEET", value: 0.0),
-//        Stock.init(name: "TRAP", value: 0.0),
-//
-//        Stock.init(name: "FIG", value: 0.0),
-//        Stock.init(name: "ZONE", value: 0.0),
-//        Stock.init(name: "PLNX", value: 0.0),
-//        Stock.init(name: "MOM", value: 0.0)
-    ]()
+    public var stockArray = [Stock]()
     
     var stockSet:NSMutableOrderedSet = NSMutableOrderedSet() //.addObjects(from: ObjectHandler.sharedInstance.stockArray) as! NSMutableOrderedSet
     
+    public var marketArray = [Stock]()
+    var marketSet:NSMutableOrderedSet = NSMutableOrderedSet()
+    
+    
     // User info
-    var currentUser:User
+    var currentUserName:String?
+    var currentUserID:String?
     var netWorth = Double()
     var displayName = String()
     var wallet = Double()
     
     
     // ======================== init ======================== //
-    
     override init() {
         super.init()
     }
@@ -49,37 +36,98 @@ final class ObjectHandler: NSObject {
     init(currentUser: User) {
         super.init()
         
-        self.currentUser = currentUser
-        
 //        for stock in stockArray {
 //            stockSet.add(stock.name)
 //        }
     }
     
-
     // ======================== Action ======================== //
     func actionRouter (json: JSON) {
-        //actions come in as an array, so we parse through them to see what kind of action we're dealing with: Update, Alert, or Chat
-        for action in json.arrayValue {
-            let actionType = action["action"].stringValue
-            if actionType == "update" {
-                /* Messages on an update can either be a single message or an array, so we must check which we have by using an optional bind. If it's an array, send the update handler an array of update messages. If not, send the update handler only one. */
-                if let actionArray = action["msg"].array {
-                    for message in actionArray {
-                        updateHandler(message:message)
-                    }
-                } else {
-                    updateHandler(message:action["msg"])
-                }
-            } else if actionType == "alert" {
-                alertHandler(message:json["msg"])
-            } else if actionType == "chat" {
-                chatHandler(message:json["msg"])
+        /* actions can either be a single message or an array, so we must check which we have by using an optional bind. If it's an array, send the singleActionRout an array of actions. If not, send the rout only one. */
+        if let actionArray = json.array {
+            for action in actionArray {
+                singleActionRout(action:action)
             }
+        } else {
+            singleActionRout(action:json)
         }
     }
     
-    
+    func singleActionRout(action:JSON) {
+        let actionType = action["action"].stringValue
+        if actionType == "object" {
+            objectHandler(message: action["msg"])
+        } else if actionType == "update" {
+            /* Messages on an update can either be a single message or an array, so we must check which we have by using an optional bind. If it's an array, send the update handler an array of update messages. If not, send the update handler only one. */
+            if let messageArray = action["msg"].array {
+                for message in messageArray {
+                    updateHandler(message:message)
+                }
+            } else {
+                updateHandler(message:action["msg"])
+            }
+        } else if actionType == "alert" {
+            alertHandler(message:action["msg"])
+        } else if actionType == "chat" {
+            chatHandler(message:action["msg"])
+        } else if actionType == "login" {
+            loginHandler(message: action["msg"])
+        }
+    }
+    // ======================== Object ======================== //
+    func objectHandler (message: JSON) {
+        let objectType = message["type"].stringValue
+        let objectID = message["id"].stringValue
+        let object = message["object"]
+        
+        if objectType == "user" {
+
+            // TODO:
+            //            if objectID == self.currentUserID! {
+//                self.wallet = changeValue as! Double
+//                self.netWorth =
+//            }
+            
+            
+            
+        } else if objectType == "stock" {
+            
+            let stock = Stock.init(name: objectID, value: object["current_price"].doubleValue)
+            let index = marketSet.index(of: objectID)
+            var amountChanged = 0.0
+            
+            if index <= marketArray.count - 1 && marketArray[index].value != 0 {
+                amountChanged = changeValue as! Double - marketArray[index].value
+            }
+            
+            if self.marketSet.contains(updateID) {
+                marketArray.remove(at: index)
+                marketArray.insert(stock, at: index)
+                if marketArray[index].recordValue < stock.value {
+                    marketArray[index].recordValue = stock.value
+                }
+                marketArray[index].amountChanged = amountChanged
+            } else {
+                marketSet.add(stock.name)
+                marketArray.append(stock)
+            }
+            
+            NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
+                                            object: nil,
+                                            userInfo: ["id": updateID, "value": changeValue])
+            
+            
+            
+        } else if objectType == "portfolio" {
+            if objectID == self.currentUserID! {
+                self.wallet = object["wallet"].doubleValue
+                self.netWorth = object["net_worth"].doubleValue
+            } else {
+                //TODO:
+            }
+        }
+    }
+
     // ======================== Update ======================== //
     func updateHandler (message: JSON) {
         //Update come in one of four types, User, Portfolio, Stock, and Exchange, so we have to determine which we're receiving, and post the appropriate notification with that information.
@@ -90,6 +138,9 @@ final class ObjectHandler: NSObject {
             let changeType = change["field"].stringValue
             let changeValue:Any
             
+            // ========================== //
+            // Update user
+            // ========================== //
             if updateType == "user" {
                 
                 if changeType == "display_name" {
@@ -104,13 +155,15 @@ final class ObjectHandler: NSObject {
                                                     object: nil,
                                                     userInfo: ["id": updateID, "value": changeValue])
                 }
+            // ========================== //
+            // Update portfolio
+            // ========================== //
             } else if updateType == "portfolio" {
                 
                 // ========================== //
                 // Update to the current user
                 // ========================== //
-                
-                if updateID == self.currentUser.id {
+                if updateID == self.currentUserID! {
                     if changeType == "wallet" {
                         changeValue = change["value"].doubleValue
                         self.wallet = changeValue as! Double
@@ -133,9 +186,10 @@ final class ObjectHandler: NSObject {
                         //                                                        object: nil,
                         //                                                        userInfo: ["id": updateID, "value": changeValue])
                     }
-                    // ========================== //
-                    // Update to other user
-                    // ========================== //
+                
+                // ========================== //
+                // Update to other user
+                // ========================== //
                 } else {
                     if changeType == "wallet" {
                         changeValue = change["value"].doubleValue
@@ -157,12 +211,44 @@ final class ObjectHandler: NSObject {
                         //                                                    userInfo: ["id": updateID, "value": changeValue])
                     }
                 }
+            // ========================== //
+            // Update stock
+            // ========================== //
             } else if updateType == "stock" {
+                // ========================== //
+                // Update to the market
+                // ========================== //
                 changeValue = change["value"].doubleValue
                 
                 let stock = Stock.init(name: updateID, value: changeValue as! Double)
-                let index = stockSet.index(of: updateID)
+                let index = marketSet.index(of: updateID)
                 var amountChanged = 0.0
+                
+                if changeValue as! Double != 0 && index <= marketArray.count - 1 && marketArray[index].value != 0 {
+                    amountChanged = changeValue as! Double - marketArray[index].value
+                }
+                
+                if self.marketSet.contains(updateID) {
+                    marketArray.remove(at: index)
+                    marketArray.insert(stock, at: index)
+                    if marketArray[index].recordValue < stock.value {
+                        marketArray[index].recordValue = stock.value
+                    }
+                    marketArray[index].amountChanged = amountChanged
+                } else {
+                    marketSet.add(stock.name)
+                    marketArray.append(stock)
+                }
+                
+                NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
+                                                object: nil,
+                                                userInfo: ["id": updateID, "value": changeValue])
+                
+                // ========================== //
+                // Update to the current user
+                // ========================== //
+                let userIndex = stockSet.index(of: updateID)
+                var userAmountChanged = 0.0
                 
                 if changeValue as! Double != 0 && index <= stockArray.count - 1 && stockArray[index].value != 0 {
                     amountChanged = changeValue as! Double - stockArray[index].value
@@ -174,16 +260,20 @@ final class ObjectHandler: NSObject {
                     if stockArray[index].recordValue < stock.value {
                         stockArray[index].recordValue = stock.value
                     }
+                    
                     stockArray[index].amountChanged = amountChanged
-                } else {
-                    stockSet.add(stock.name)
-                    stockArray.append(stock)
+                    
+                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserStockPrice.rawValue,
+                                                    object: nil,
+                                                    userInfo: ["id": updateID, "value": changeValue])
                 }
                 
-                NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
-                                                object: nil,
-                                                userInfo: ["id": updateID, "value": changeValue])
+
                 
+
+            // ========================== //
+            // Update ledger
+            // ========================== //
             } else if updateType == "exchange_ledger" {
                 if changeType == "holders" {
                     //TODO:
@@ -203,7 +293,6 @@ final class ObjectHandler: NSObject {
         }
     }
     
-    
     // ======================== Chat ======================== //
     func chatHandler (message: JSON) {
         let chatDict = ["chat" : Chat.init(json: message)]
@@ -212,13 +301,29 @@ final class ObjectHandler: NSObject {
                                         userInfo: chatDict)
     }
     
-    
     // ======================== Alert ======================== //
     func alertHandler (message: JSON) {
-        let alertDict = ["chat" : Alert.init(json:message)]
+        let alertDict = ["alert" : Alert.init(json:message)]
         NotificationCenter.default.post(name: ObjectServiceNotification.ActionChat.rawValue,
                                         object: nil,
                                         userInfo: alertDict)
+    }
+    
+    // ======================== Login ======================== //
+    func loginHandler (message: JSON) {
+        if message["success"].boolValue {
+            self.currentUserID = message["uuid"].stringValue
+            NotificationCenter.default.post(name: ObjectServiceNotification.LoginSuccessful.rawValue,
+                                            object: nil,
+                                            userInfo: nil)
+        } else {
+            
+            let errorDict = ["err" : message["err"].stringValue]
+
+            NotificationCenter.default.post(name: ObjectServiceNotification.LoginUnsuccessful.rawValue,
+                                            object: nil,
+                                            userInfo: errorDict)
+        }
     }
 }
 
@@ -236,13 +341,18 @@ enum ObjectServiceNotification: Notification.Name {
     case ActionUpdatePortfolioLedger = "ActionUpdatePortfolioLedger"
     //stock updates
     case ActionUpdateStockPrice = "ActionUpdateStockPrice"
+    case ActionUpdateCurrentUserStockPrice = "ActionUpdateCurrentUserStockPrice"
     //exchange updates
     case ActionUpdateExchangeHolders = "ActionUpdateExchangeHolders"
     case ActionUpdateExchangeOpenShares = "ActionUpdateExchangeOpenShares"
-
+    
     //chat updates
     case ActionChat = "ActionChat"
     
     //alert updates
     case ActionAlert = "ActionAlert"
+    
+    //login
+    case LoginSuccessful = "LoginSuccesful"
+    case LoginUnsuccessful = "LoginUnsuccesful"
 }

@@ -49,7 +49,11 @@ class LoginViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(loginSuccesful),
-                                               name: NetworkServiceNotification.SocketMessageReceived.rawValue,
+                                               name: ObjectServiceNotification.LoginSuccessful.rawValue,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(loginRejected(_:)),
+                                               name: ObjectServiceNotification.LoginUnsuccessful.rawValue,
                                                object: nil)
         
         NotificationCenter.default.addObserver(self,
@@ -63,7 +67,6 @@ class LoginViewController: UIViewController {
         
         NetworkService.connect()
     }
-
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -77,8 +80,11 @@ class LoginViewController: UIViewController {
         super.viewDidDisappear(true)
         
         NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketDidConnect.rawValue, object: nil)
-        NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketMessageReceived.rawValue, object: nil)
         NotificationCenter.default.removeObserver(self, name: NetworkServiceNotification.SocketDidDisconnect.rawValue, object: nil)
+
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.LoginSuccessful.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.LoginUnsuccessful.rawValue, object: nil)
+
 
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: nil)
@@ -110,7 +116,6 @@ class LoginViewController: UIViewController {
             
         }
     }
-    
     
     //MARK: keyboard scroll code
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -208,16 +213,16 @@ class LoginViewController: UIViewController {
     }
     
     //MARK: WebSocket Handling
-    @objc func enableLogin () {
+    @objc func enableLogin() {
         print("Connected")
         loginButton.backgroundColor = UIColor.msAquamarine
     }
     
-    @objc func loginSuccesful () {
+    @objc func loginSuccesful() {
         self.loginActivityIndicator.stopAnimating()
         self.loginActivityIndicator.isHidden = true
         
-        ObjectHandler.sharedInstance.displayName = self.usernameTextField.text!
+        ObjectHandler.sharedInstance.currentUserName = self.usernameTextField.text!
         
         Answers.logCustomEvent(withName: "LogInSuccessful", customAttributes: ["any":"something"])
         alertWithTitle("Login Successful!", message: "", ViewController: self) { (alertAction) -> (Void) in
@@ -225,14 +230,23 @@ class LoginViewController: UIViewController {
         }
     }
     
-    @objc func loginUnsuccesful () {
+    @objc func loginRejected(_ notification:NSNotification) {
+        self.loginActivityIndicator.stopAnimating()
+        self.loginActivityIndicator.isHidden = true
+        
+        Answers.logCustomEvent(withName: "LogInUnsuccessful", customAttributes: ["error" : notification.userInfo!["err"] as! String])
+        alertWithTitle("Login Unsuccessful", message: notification.userInfo!["err"] as! String, ViewController: self) { (alertAction) -> (Void) in
+
+        }
+    }
+    
+    @objc func loginUnsuccesful() {
         self.loginActivityIndicator.stopAnimating()
         self.loginActivityIndicator.isHidden = true
         
         Answers.logCustomEvent(withName: "LogInUnsuccessful", customAttributes: ["any":"something"])
-        
         alertWithTitle("Server Issue", message: "Try again later", ViewController: self) { (alertAction) -> (Void) in
-            self.performSegue(withIdentifier: "loginSuccessful", sender: self)
+
         }
     }
 }
