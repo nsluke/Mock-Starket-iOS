@@ -78,7 +78,8 @@ class PortfolioViewController: UIViewController {
     func setupData() {
         
         if ObjectHandler.sharedInstance.netWorth != 0 {
-            self.netWorthLabel.text = String(ObjectHandler.sharedInstance.netWorth)
+            self.netWorthLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth)
+            self.netWorthLabel.isHidden = false
         } else {
             self.netWorthLabel.text = "Loading..."
         }
@@ -89,13 +90,13 @@ class PortfolioViewController: UIViewController {
         self.netWorthDollarSignLabel.isHidden = true
         
         if ObjectHandler.sharedInstance.netWorth != 0 {
-            self.cashAmountLabel.text = String(ObjectHandler.sharedInstance.wallet)
+            self.cashAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.wallet)
         } else {
             self.cashAmountLabel.text = "Loading..."
         }
         
         if ObjectHandler.sharedInstance.netWorth != 0 && ObjectHandler.sharedInstance.wallet != 0 {
-            self.investmentsAmountLabel.text = String(ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
+            self.investmentsAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
         } else {
             self.investmentsAmountLabel.text = "Loading..."
         }
@@ -111,21 +112,18 @@ class PortfolioViewController: UIViewController {
         gradient.endPoint = CGPoint.init(x: blueView.frame.width/2, y: blueView.frame.maxY)
         blueView.layer.addSublayer(gradient)
         
-        
-        
-        
         tableView.reloadData()
     }
     
     //MARK: NotificationHandling
     @objc func updateWallet(_ notification:NSNotification) {
-        self.cashAmountLabel.text = String(ObjectHandler.sharedInstance.wallet)
-        self.investmentsAmountLabel.text = String(ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
+        self.cashAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.wallet)
+        self.investmentsAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
     }
     
     @objc func updateNetWorth(_ notification:NSNotification) {
-        self.netWorthLabel.text = String(ObjectHandler.sharedInstance.netWorth)
-        self.investmentsAmountLabel.text = String(ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
+        self.netWorthLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth)
+        self.investmentsAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
     }
     
     @objc func updateLedger(_ notification:NSNotification) {

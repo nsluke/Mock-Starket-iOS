@@ -33,6 +33,16 @@ final class NetworkService: NSObject {
         
         socket.write(string: message)
     }
+    
+    static func createAccount(username:String, password: String) {
+
+    
+        let message = "{\"action\": \"new_account\", \"msg\": {\"username\": \"\(username)\", \"password\": \"\(password)\" }}"
+        print(message)
+        
+        socket.write(string: message)
+        
+    }
 
 }
 extension NetworkService: WebSocketDelegate {

@@ -202,6 +202,14 @@ struct Stock {
         self.recordValue = value
         self.amountChanged = 0.0
     }
+    
+    init(name:String, value:Double, fullname:String) {
+        self.name = name
+        self.fullname = fullname
+        self.value = value
+        self.recordValue = value
+        self.amountChanged = 0.0
+    }
 }
 
 enum StockNames: String {

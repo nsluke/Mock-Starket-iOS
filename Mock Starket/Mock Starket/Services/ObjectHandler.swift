@@ -74,6 +74,7 @@ final class ObjectHandler: NSObject {
             loginHandler(message: action["msg"])
         }
     }
+    
     // ======================== Object ======================== //
     func objectHandler (message: JSON) {
         let objectType = message["type"].stringValue
@@ -81,49 +82,27 @@ final class ObjectHandler: NSObject {
         let object = message["object"]
         
         if objectType == "user" {
-
-            // TODO:
-            //            if objectID == self.currentUserID! {
-//                self.wallet = changeValue as! Double
-//                self.netWorth =
-//            }
-            
-            
+            if objectID == self.currentUserID! {
+                self.displayName = object["display_name"].stringValue
+            } else {
+                //Todo: other users
+            }
             
         } else if objectType == "stock" {
+            let stock = Stock.init(name: objectID, value: object["current_price"].doubleValue, fullname: object["name"].stringValue)
+            marketSet.add(stock.name)
+            marketArray.append(stock)
             
-            let stock = Stock.init(name: objectID, value: object["current_price"].doubleValue)
-            let index = marketSet.index(of: objectID)
-            var amountChanged = 0.0
-            
-            if index <= marketArray.count - 1 && marketArray[index].value != 0 {
-                amountChanged = changeValue as! Double - marketArray[index].value
-            }
-            
-            if self.marketSet.contains(updateID) {
-                marketArray.remove(at: index)
-                marketArray.insert(stock, at: index)
-                if marketArray[index].recordValue < stock.value {
-                    marketArray[index].recordValue = stock.value
-                }
-                marketArray[index].amountChanged = amountChanged
-            } else {
-                marketSet.add(stock.name)
-                marketArray.append(stock)
-            }
-            
-            NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateStockPrice.rawValue,
+            NotificationCenter.default.post(name: ObjectServiceNotification.ObjectStock.rawValue,
                                             object: nil,
-                                            userInfo: ["id": updateID, "value": changeValue])
-            
-            
-            
+                                            userInfo: ["id": objectID, "value": object["current_price"].doubleValue])
+
         } else if objectType == "portfolio" {
             if objectID == self.currentUserID! {
                 self.wallet = object["wallet"].doubleValue
                 self.netWorth = object["net_worth"].doubleValue
             } else {
-                //TODO:
+                //TODO: other users
             }
         }
     }
@@ -328,6 +307,9 @@ final class ObjectHandler: NSObject {
 }
 
 enum ObjectServiceNotification: Notification.Name {
+    //Object updates
+    case ObjectStock = "ObjectStock"
+    
     //user updates
     case ActionUpdateUsername = "ActionUpdateUsername"
     case ActionUpdateUserActive = "ActionUpdateUserActive"

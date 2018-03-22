@@ -112,9 +112,10 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func createAccountButtonTapped(_ sender: Any) {
-        self.alertWithTitle("Not Available Yet", message: "Account creation is not yet available. For now, Log in as 'username' with the password 'password' to continue.", ViewController: self) { (action) -> (Void) in
-            
-        }
+        guard let username = usernameTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        
+        NetworkService.createAccount(username: username, password: password)
     }
     
     //MARK: keyboard scroll code
