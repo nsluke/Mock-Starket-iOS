@@ -20,6 +20,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var loginButton: UIButton!
     @IBOutlet weak var createAccountButton: UIButton!
     @IBOutlet weak var loginActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var createAccountIndicator: UIActivityIndicatorView!
     @IBOutlet weak var constraintContentHeight: NSLayoutConstraint!
 
     //MARK: Variables
@@ -73,6 +74,8 @@ class LoginViewController: UIViewController {
         
         loginButton.backgroundColor = UIColor.red
         self.loginActivityIndicator.isHidden = true
+        self.createAccountIndicator.isHidden = true
+
         self.setNeedsStatusBarAppearanceUpdate()
     }
     
@@ -115,6 +118,11 @@ class LoginViewController: UIViewController {
         guard let username = usernameTextField.text else { return }
         guard let password = passwordTextField.text else { return }
         
+        self.createAccountButton.titleLabel?.attributedText = NSAttributedString(string: "")
+        self.createAccountButton.titleLabel?.text = ""
+        self.createAccountIndicator.isHidden = false
+        self.createAccountIndicator.startAnimating()
+
         NetworkService.createAccount(username: username, password: password)
     }
     
@@ -217,10 +225,14 @@ class LoginViewController: UIViewController {
     @objc func enableLogin() {
         print("Connected")
         loginButton.backgroundColor = UIColor.msAquamarine
+        createAccountButton.backgroundColor = UIColor.msAquamarine
     }
     
     @objc func loginSuccesful() {
         self.loginActivityIndicator.stopAnimating()
+        self.loginActivityIndicator.isHidden = true
+        
+        self.createAccountIndicator.stopAnimating()
         self.loginActivityIndicator.isHidden = true
         
         ObjectHandler.sharedInstance.currentUserName = self.usernameTextField.text!
@@ -235,20 +247,30 @@ class LoginViewController: UIViewController {
         self.loginActivityIndicator.stopAnimating()
         self.loginActivityIndicator.isHidden = true
         
+        self.createAccountIndicator.stopAnimating()
+        self.createAccountIndicator.isHidden = true
+        
+        NetworkService.connect()
+        
         Answers.logCustomEvent(withName: "LogInUnsuccessful", customAttributes: ["error" : notification.userInfo!["err"] as! String])
-        alertWithTitle("Login Unsuccessful", message: notification.userInfo!["err"] as! String, ViewController: self) { (alertAction) -> (Void) in
-
-        }
+        alertWithTitle("Login Unsuccessful",
+                       message: notification.userInfo!["err"] as! String,
+                       ViewController: self) { (alertAction) -> (Void) in }
     }
     
     @objc func loginUnsuccesful() {
         self.loginActivityIndicator.stopAnimating()
         self.loginActivityIndicator.isHidden = true
         
-        Answers.logCustomEvent(withName: "LogInUnsuccessful", customAttributes: ["any":"something"])
-        alertWithTitle("Server Issue", message: "Try again later", ViewController: self) { (alertAction) -> (Void) in
+        self.createAccountIndicator.stopAnimating()
+        self.createAccountIndicator.isHidden = true
 
-        }
+        NetworkService.connect()
+
+        Answers.logCustomEvent(withName: "LogInUnsuccessful", customAttributes: ["any":"something"])
+        alertWithTitle("Server Issue",
+                       message: "Try again later",
+                       ViewController: self) { (alertAction) -> (Void) in }
     }
 }
 
@@ -271,8 +293,13 @@ extension LoginViewController: UITextFieldDelegate {
                 loginButton.titleLabel?.text = "Errors Detected"
                 loginButton.titleLabel?.attributedText = NSAttributedString(string: "Errors Detected")
                 loginButton.backgroundColor = UIColor.red
+                
+                createAccountButton.titleLabel?.text = "Errors Detected"
+                createAccountButton.titleLabel?.attributedText = NSAttributedString(string: "Errors Detected")
+                createAccountButton.backgroundColor = UIColor.red
             } else {
                 loginButton.backgroundColor = UIColor.msAquamarine
+                createAccountButton.backgroundColor = UIColor.msAquamarine
             }
         }
         

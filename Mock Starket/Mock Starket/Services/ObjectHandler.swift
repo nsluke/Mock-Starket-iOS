@@ -72,6 +72,8 @@ final class ObjectHandler: NSObject {
             chatHandler(message:action["msg"])
         } else if actionType == "login" {
             loginHandler(message: action["msg"])
+        } else if actionType == "error" {
+            errorHandler(message: action["msg"])
         }
     }
     
@@ -304,6 +306,14 @@ final class ObjectHandler: NSObject {
                                             userInfo: errorDict)
         }
     }
+    // ======================== Error ======================== //
+    func errorHandler (message: JSON) {
+        let errorDict = ["error" : message["error"].stringValue]
+
+        NotificationCenter.default.post(name: ObjectServiceNotification.Error.rawValue,
+                                        object: nil,
+                                        userInfo: errorDict)
+    }
 }
 
 enum ObjectServiceNotification: Notification.Name {
@@ -337,4 +347,11 @@ enum ObjectServiceNotification: Notification.Name {
     //login
     case LoginSuccessful = "LoginSuccesful"
     case LoginUnsuccessful = "LoginUnsuccesful"
+    
+    //error
+    case Error = "Error"
+    
+    //createAccount
+    case CreateAccountSuccesful = "CreateAccountSuccesful"
+    case CreateAccountUnsuccesful = "CreateAccountUnsuccesful"
 }

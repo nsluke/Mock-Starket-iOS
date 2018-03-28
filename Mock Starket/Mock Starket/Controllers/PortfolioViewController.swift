@@ -50,7 +50,8 @@ class PortfolioViewController: UIViewController {
                                                selector: #selector(updateWallet(_:)),
                                                name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioWallet.rawValue,
                                                object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateNetWorth(_:)),
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateNetWorth(_:)),
                                                name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue,
                                                object: nil)
         NotificationCenter.default.addObserver(self,

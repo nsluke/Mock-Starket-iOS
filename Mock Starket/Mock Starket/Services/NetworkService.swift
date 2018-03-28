@@ -43,6 +43,22 @@ final class NetworkService: NSObject {
         socket.write(string: message)
         
     }
+    
+    static func buyStock(ticker:String, amount:Int) {
+        
+        let message = "{\"action\": \"trade\", \"msg\": {\"stock_ticker\": \"\(ticker)\", \"amount\": \(amount) }}"
+        print(message)
+        
+        socket.write(string: message)
+        
+    }
+    
+    static func sellStock(ticker:String, amount:Int) {
+        let message = "{\"action\": \"trade\", \"msg\": {\"stock_ticker\": \"\(ticker)\", \"amount\": -\(amount) }}"
+        print(message)
+        
+        socket.write(string: message)
+    }
 
 }
 extension NetworkService: WebSocketDelegate {
