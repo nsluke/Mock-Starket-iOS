@@ -345,7 +345,7 @@
                                 <rect key="frame" x="0.0" y="72" width="414" height="200"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20,000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="MiH-Iv-Ar7">
-                                        <rect key="frame" x="135" y="40" width="145" height="45"/>
+                                        <rect key="frame" x="135.33333333333331" y="40" width="144.33333333333331" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="cGo-eF-126"/>
                                         </constraints>
@@ -354,7 +354,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8.5" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oz3-R4-EY2">
-                                        <rect key="frame" x="292" y="52" width="21" height="21"/>
+                                        <rect key="frame" x="291.66666666666669" y="52" width="21.333333333333314" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="e7P-8Q-MZC"/>
                                         </constraints>
@@ -363,7 +363,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="net worth" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i2R-op-H2x">
-                                        <rect key="frame" x="172" y="93" width="71" height="30"/>
+                                        <rect key="frame" x="172" y="93" width="71.333333333333314" height="30"/>
                                         <fontDescription key="fontDescription" name="MuktaVaani-ExtraLight" family="Mukta Vaani" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -383,7 +383,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x7N-U8-i0x">
-                                        <rect key="frame" x="124" y="40" width="11" height="21"/>
+                                        <rect key="frame" x="124.33333333333331" y="40" width="11" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="gIH-sl-Cm4"/>
                                         </constraints>
@@ -419,7 +419,7 @@
                                 <rect key="frame" x="0.0" y="272" width="414" height="150"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Portfolio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="213-je-Poa">
-                                        <rect key="frame" x="25" y="58.666666666666686" width="110" height="47"/>
+                                        <rect key="frame" x="25" y="59" width="110" height="46.666666666666657"/>
                                         <fontDescription key="fontDescription" name="MuktaVaani-Bold" family="Mukta Vaani" pointSize="28"/>
                                         <color key="textColor" red="0.50980392156862742" green="0.50980392156862742" blue="0.50980392156862742" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -478,13 +478,13 @@
                                 <rect key="frame" x="25" y="225" width="364" height="95"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10,000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Kr-Rd-rHA">
-                                        <rect key="frame" x="52" y="19" width="63.666666666666657" height="37"/>
+                                        <rect key="frame" x="52" y="18.999999999999996" width="63.666666666666657" height="36.666666666666657"/>
                                         <fontDescription key="fontDescription" name="MuktaVaani-Regular" family="Mukta Vaani" pointSize="22"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="cash" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3zj-nl-WcS">
-                                        <rect key="frame" x="69" y="63.999999999999993" width="31" height="28.666666666666664"/>
+                                        <rect key="frame" x="69.333333333333329" y="63.666666666666693" width="30.666666666666671" height="28.333333333333336"/>
                                         <fontDescription key="fontDescription" name="MuktaVaani-ExtraLight" family="Mukta Vaani" pointSize="17"/>
                                         <color key="textColor" red="0.74117647058823533" green="0.74117647058823533" blue="0.74117647058823533" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -495,7 +495,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="investments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jWd-St-MDY">
-                                        <rect key="frame" x="238.66666666666671" y="63.666666666666693" width="83.333333333333343" height="28.333333333333336"/>
+                                        <rect key="frame" x="238.66666666666671" y="63.333333333333321" width="83.333333333333343" height="28.333333333333336"/>
                                         <fontDescription key="fontDescription" name="MuktaVaani-ExtraLight" family="Mukta Vaani" pointSize="17"/>
                                         <color key="textColor" red="0.74117647060000003" green="0.74117647060000003" blue="0.74117647060000003" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -506,7 +506,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10,000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kF8-zI-ejb">
-                                        <rect key="frame" x="248.66666666666671" y="19" width="63.333333333333343" height="37"/>
+                                        <rect key="frame" x="248.33333333333329" y="18.999999999999996" width="63.666666666666657" height="36.666666666666657"/>
                                         <fontDescription key="fontDescription" name="MuktaVaani-Regular" family="Mukta Vaani" pointSize="22"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>

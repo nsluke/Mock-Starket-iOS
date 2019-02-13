@@ -26,6 +26,7 @@ final class ObjectHandler: NSObject {
     var netWorth = Double()
     var displayName = String()
     var wallet = Double()
+    var ledger = [LedgerEntry]()
     
     
     // ======================== init ======================== //
@@ -55,6 +56,7 @@ final class ObjectHandler: NSObject {
     
     func singleActionRout(action:JSON) {
         let actionType = action["action"].stringValue
+        
         if actionType == "object" {
             objectHandler(message: action["msg"])
         } else if actionType == "update" {
@@ -106,7 +108,22 @@ final class ObjectHandler: NSObject {
             } else {
                 //TODO: other users
             }
+            
+        } else if objectType == "ledger" {
+            if self.currentUserID! == objectID {
+                let ledger = LedgerEntry.init(portfolioID: message["object"]["uuid"].stringValue,
+                                              stockID: message["object"]["stock_id"].stringValue,
+                                              amount: message["object"]["amount"].intValue)
+                
+                NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserLedger.rawValue,
+                                                object: nil,
+                                                userInfo: ["id": objectID, "value": object["current_price"].doubleValue])
+                self.ledger.append(ledger)
+            } else {
+                //TODO: other users
+            }
         }
+        
     }
 
     // ======================== Update ======================== //
@@ -159,13 +176,6 @@ final class ObjectHandler: NSObject {
                         NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue,
                                                         object: nil,
                                                         userInfo: ["id": updateID, "value": changeValue])
-                    } else if changeType == "ledger" {
-                        //TODO:
-                        //                        changeValue = change["value"]
-                        //
-                        //                        NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioLedger.rawValue,
-                        //                                                        object: nil,
-                        //                                                        userInfo: ["id": updateID, "value": changeValue])
                     }
                 
                 // ========================== //
@@ -183,13 +193,6 @@ final class ObjectHandler: NSObject {
                         NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioNetWorth.rawValue,
                                                         object: nil,
                                                         userInfo: ["id": updateID, "value": changeValue])
-                    } else if changeType == "ledger" {
-                        //TODO:
-                        //                    changeValue = change["value"]
-                        //
-                        //                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdatePortfolioLedger.rawValue,
-                        //                                                    object: nil,
-                        //                                                    userInfo: ["id": updateID, "value": changeValue])
                     }
                 }
             // ========================== //
@@ -255,18 +258,18 @@ final class ObjectHandler: NSObject {
             // ========================== //
             // Update ledger
             // ========================== //
-            } else if updateType == "exchange_ledger" {
-                if changeType == "holders" {
-                    //TODO:
-                    //                    changeValue = change["value"].doubleValue
-                    //                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateExchangeHolders.rawValue,
-                    //                                                    object: nil,
-                    //                                                    userInfo: ["id": updateID, "value": changeValue])
-                } else if changeType == "open_shares" {
-                    changeValue = change["value"].intValue
-                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateExchangeOpenShares.rawValue,
+            } else if updateType == "ledger" {
+                if self.currentUserID! == message["object"]["uuid"].stringValue {
+                    let ledger = LedgerEntry.init(portfolioID: message["object"]["uuid"].stringValue,
+                                                  stockID: message["object"]["stock_id"].stringValue,
+                                                  amount: message["object"]["amount"].intValue)
+                    self.ledger.append(ledger)
+                    
+                    NotificationCenter.default.post(name: ObjectServiceNotification.ActionUpdateCurrentUserLedger.rawValue,
                                                     object: nil,
-                                                    userInfo: ["id": updateID, "value": changeValue])
+                                                    userInfo: nil)
+                } else {
+                    //TODO: other users
                 }
             } else {
                 print("unexpected update type!")
@@ -337,7 +340,9 @@ enum ObjectServiceNotification: Notification.Name {
     //exchange updates
     case ActionUpdateExchangeHolders = "ActionUpdateExchangeHolders"
     case ActionUpdateExchangeOpenShares = "ActionUpdateExchangeOpenShares"
-    
+    //ledger updates
+    case ActionUpdateCurrentUserLedger = "ActionUpdateCurrentUserLedger"
+
     //chat updates
     case ActionChat = "ActionChat"
     

@@ -58,6 +58,11 @@ class PortfolioViewController: UIViewController {
                                                selector: #selector(updateStockPrice(_:)),
                                                name: ObjectServiceNotification.ActionUpdateCurrentUserStockPrice.rawValue,
                                                object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(updateLedger(_:)),
+                                               name: ObjectServiceNotification.ActionUpdateCurrentUserLedger.rawValue,
+                                               object: nil)
+        
         self.setupData()
     
         
@@ -73,6 +78,7 @@ class PortfolioViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioWallet.rawValue, object: nil)
         NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserPortfolioNetWorth.rawValue, object: nil)
         NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserStockPrice.rawValue, object: nil)
+        NotificationCenter.default.removeObserver(self, name: ObjectServiceNotification.ActionUpdateCurrentUserLedger.rawValue, object: nil)
     }
     
     //MARK: View Setup Functions
@@ -101,6 +107,15 @@ class PortfolioViewController: UIViewController {
         } else {
             self.investmentsAmountLabel.text = "Loading..."
         }
+        
+        for ledger in ObjectHandler.sharedInstance.ledger {
+            if ledger.amount > 1 && ObjectHandler.sharedInstance.stockSet.contains(ledger) {
+                for _ in 1...ledger.amount {
+                    ObjectHandler.sharedInstance.netWorth += ObjectHandler.sharedInstance.stockArray[ObjectHandler.sharedInstance.stockSet.index(of: ledger.stockID)].value
+                }
+                
+            }
+        }
     }
     
     func setupViews() {
@@ -128,7 +143,11 @@ class PortfolioViewController: UIViewController {
     }
     
     @objc func updateLedger(_ notification:NSNotification) {
-        //TODO:
+        self.netWorthLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth)
+        self.investmentsAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
+        self.cashAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.wallet)
+        self.investmentsAmountLabel.text = String(format: "%.2f", ObjectHandler.sharedInstance.netWorth - ObjectHandler.sharedInstance.wallet)
+        
     }
     
     @objc func updateStockPrice(_ notification:NSNotification) {

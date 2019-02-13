@@ -98,30 +98,20 @@ struct Change {
 }
 
 // ======================== Models ======================== //
-
 struct Exchange {
     var name:String
     var ledger: [String : LedgerEntry]
-    
 }
 
 struct LedgerEntry {
-    var exchangeName:String
-    var name:String
-    var holders:[String:Int] // The string is the username
-    var openShares:Int
+    var portfolioID:String
+    var stockID:String
+    var amount:Int
     
-    init(json:JSON) {
-        self.exchangeName = json["exchangeName"].stringValue
-        self.name = json["name"].stringValue
-        
-        var holderArray = [String:Int]()
-        for holder in json["holders"].arrayValue {
-            
-        }
-        self.holders = holderArray
-        
-        self.openShares = json["openShares"].intValue
+    init(portfolioID:String, stockID:String, amount:Int) {
+        self.portfolioID = portfolioID
+        self.stockID = stockID
+        self.amount = amount
     }
 }
 
@@ -158,6 +148,7 @@ struct Portfolio {
 struct Stock {
     var name: String
     var fullname: String
+//    var uuid: String
     var value: Double
     var recordValue: Double
     var amountChanged: Double

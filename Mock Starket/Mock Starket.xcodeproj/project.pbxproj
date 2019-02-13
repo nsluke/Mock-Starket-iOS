@@ -20,6 +20,21 @@
 		D5376C44200D4B8200B2E203 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5376C43200D4B8200B2E203 /* NetworkService.swift */; };
 		D5387996201D17D4001ECC44 /* NetworkObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5387995201D17D4001ECC44 /* NetworkObjects.swift */; };
 		D54E2E8D2043652B000240C6 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E2E8C2043652B000240C6 /* UIColor+Extensions.swift */; };
+		D5567CD320AB4C2100ADC031 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5567CD120AB4C2100ADC031 /* Interface.storyboard */; };
+		D5567CD520AB4C2100ADC031 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5567CD420AB4C2100ADC031 /* Assets.xcassets */; };
+		D5567CDC20AB4C2200ADC031 /* Watch Starket Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D5567CDB20AB4C2200ADC031 /* Watch Starket Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D5567CE120AB4C2200ADC031 /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567CE020AB4C2200ADC031 /* InterfaceController.swift */; };
+		D5567CE320AB4C2200ADC031 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567CE220AB4C2200ADC031 /* ExtensionDelegate.swift */; };
+		D5567CE520AB4C2200ADC031 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567CE420AB4C2200ADC031 /* NotificationController.swift */; };
+		D5567CE720AB4C2200ADC031 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5567CE620AB4C2200ADC031 /* Assets.xcassets */; };
+		D5567CEC20AB4C2200ADC031 /* Watch Starket.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = D5567CCF20AB4C2100ADC031 /* Watch Starket.app */; };
+		D5567CFC20AB4C5700ADC031 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567CFB20AB4C5700ADC031 /* AppDelegate.swift */; };
+		D5567CFE20AB4C5700ADC031 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567CFD20AB4C5700ADC031 /* ViewController.swift */; };
+		D5567D0120AB4C5700ADC031 /* TV_Starket.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D5567CFF20AB4C5700ADC031 /* TV_Starket.xcdatamodeld */; };
+		D5567D0420AB4C5700ADC031 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5567D0220AB4C5700ADC031 /* Main.storyboard */; };
+		D5567D0620AB4C5700ADC031 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5567D0520AB4C5700ADC031 /* Assets.xcassets */; };
+		D5567D1120AB4C5700ADC031 /* TV_StarketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567D1020AB4C5700ADC031 /* TV_StarketTests.swift */; };
+		D5567D1C20AB4C5700ADC031 /* TV_StarketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5567D1B20AB4C5700ADC031 /* TV_StarketUITests.swift */; };
 		D56304FE204F998C00A66179 /* MarketViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56304FD204F998C00A66179 /* MarketViewController.swift */; };
 		D5630500204F9A8D00A66179 /* StockTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56304FF204F9A8D00A66179 /* StockTableView.swift */; };
 		D5630502205B53E200A66179 /* ObjectHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5630501205B53E200A66179 /* ObjectHandler.swift */; };
@@ -55,7 +70,60 @@
 			remoteGlobalIDString = D5376C08200D491200B2E203;
 			remoteInfo = "Mock Starket";
 		};
+		D5567CDD20AB4C2200ADC031 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5376C01200D491200B2E203 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5567CDA20AB4C2200ADC031;
+			remoteInfo = "Watch Starket Extension";
+		};
+		D5567CEA20AB4C2200ADC031 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5376C01200D491200B2E203 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5567CCE20AB4C2100ADC031;
+			remoteInfo = "Watch Starket";
+		};
+		D5567D0D20AB4C5700ADC031 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5376C01200D491200B2E203 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5567CF820AB4C5700ADC031;
+			remoteInfo = "TV Starket";
+		};
+		D5567D1820AB4C5700ADC031 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5376C01200D491200B2E203 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5567CF820AB4C5700ADC031;
+			remoteInfo = "TV Starket";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D5567CF220AB4C2200ADC031 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D5567CDC20AB4C2200ADC031 /* Watch Starket Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567CF420AB4C2200ADC031 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				D5567CEC20AB4C2200ADC031 /* Watch Starket.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3D173A91AB601FDBC8AF50CA /* Pods_Mock_Starket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Mock_Starket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,6 +149,30 @@
 		D5376C43200D4B8200B2E203 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		D5387995201D17D4001ECC44 /* NetworkObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkObjects.swift; sourceTree = "<group>"; };
 		D54E2E8C2043652B000240C6 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		D5567CCF20AB4C2100ADC031 /* Watch Starket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Watch Starket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5567CD220AB4C2100ADC031 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		D5567CD420AB4C2100ADC031 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D5567CD620AB4C2100ADC031 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5567CDB20AB4C2200ADC031 /* Watch Starket Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Watch Starket Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5567CE020AB4C2200ADC031 /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		D5567CE220AB4C2200ADC031 /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		D5567CE420AB4C2200ADC031 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		D5567CE620AB4C2200ADC031 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D5567CE820AB4C2200ADC031 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5567CE920AB4C2200ADC031 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		D5567CF920AB4C5700ADC031 /* TV Starket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TV Starket.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5567CFB20AB4C5700ADC031 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D5567CFD20AB4C5700ADC031 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D5567D0020AB4C5700ADC031 /* TV_Starket.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TV_Starket.xcdatamodel; sourceTree = "<group>"; };
+		D5567D0320AB4C5700ADC031 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D5567D0520AB4C5700ADC031 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D5567D0720AB4C5700ADC031 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5567D0C20AB4C5700ADC031 /* TV StarketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TV StarketTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5567D1020AB4C5700ADC031 /* TV_StarketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TV_StarketTests.swift; sourceTree = "<group>"; };
+		D5567D1220AB4C5700ADC031 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5567D1720AB4C5700ADC031 /* TV StarketUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TV StarketUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5567D1B20AB4C5700ADC031 /* TV_StarketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TV_StarketUITests.swift; sourceTree = "<group>"; };
+		D5567D1D20AB4C5700ADC031 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D56304FD204F998C00A66179 /* MarketViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketViewController.swift; sourceTree = "<group>"; };
 		D56304FF204F9A8D00A66179 /* StockTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockTableView.swift; sourceTree = "<group>"; };
 		D5630501205B53E200A66179 /* ObjectHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectHandler.swift; sourceTree = "<group>"; };
@@ -125,6 +217,34 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5567CD820AB4C2200ADC031 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567CF620AB4C5700ADC031 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567D0920AB4C5700ADC031 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567D1420AB4C5700ADC031 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -157,6 +277,11 @@
 				D5376C0B200D491200B2E203 /* Mock Starket */,
 				D5376C23200D491200B2E203 /* Mock StarketTests */,
 				D5376C2E200D491300B2E203 /* Mock StarketUITests */,
+				D5567CD020AB4C2100ADC031 /* Watch Starket */,
+				D5567CDF20AB4C2200ADC031 /* Watch Starket Extension */,
+				D5567CFA20AB4C5700ADC031 /* TV Starket */,
+				D5567D0F20AB4C5700ADC031 /* TV StarketTests */,
+				D5567D1A20AB4C5700ADC031 /* TV StarketUITests */,
 				D5376C0A200D491200B2E203 /* Products */,
 				923C30930B9EE659A671E183 /* Pods */,
 				CDFD0F2215B4C8B080544406 /* Frameworks */,
@@ -169,6 +294,11 @@
 				D5376C09200D491200B2E203 /* Mock Starket.app */,
 				D5376C20200D491200B2E203 /* Mock StarketTests.xctest */,
 				D5376C2B200D491300B2E203 /* Mock StarketUITests.xctest */,
+				D5567CCF20AB4C2100ADC031 /* Watch Starket.app */,
+				D5567CDB20AB4C2200ADC031 /* Watch Starket Extension.appex */,
+				D5567CF920AB4C5700ADC031 /* TV Starket.app */,
+				D5567D0C20AB4C5700ADC031 /* TV StarketTests.xctest */,
+				D5567D1720AB4C5700ADC031 /* TV StarketUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -268,6 +398,60 @@
 			path = IBFiles;
 			sourceTree = "<group>";
 		};
+		D5567CD020AB4C2100ADC031 /* Watch Starket */ = {
+			isa = PBXGroup;
+			children = (
+				D5567CD120AB4C2100ADC031 /* Interface.storyboard */,
+				D5567CD420AB4C2100ADC031 /* Assets.xcassets */,
+				D5567CD620AB4C2100ADC031 /* Info.plist */,
+			);
+			path = "Watch Starket";
+			sourceTree = "<group>";
+		};
+		D5567CDF20AB4C2200ADC031 /* Watch Starket Extension */ = {
+			isa = PBXGroup;
+			children = (
+				D5567CE020AB4C2200ADC031 /* InterfaceController.swift */,
+				D5567CE220AB4C2200ADC031 /* ExtensionDelegate.swift */,
+				D5567CE420AB4C2200ADC031 /* NotificationController.swift */,
+				D5567CE620AB4C2200ADC031 /* Assets.xcassets */,
+				D5567CE820AB4C2200ADC031 /* Info.plist */,
+				D5567CE920AB4C2200ADC031 /* PushNotificationPayload.apns */,
+			);
+			path = "Watch Starket Extension";
+			sourceTree = "<group>";
+		};
+		D5567CFA20AB4C5700ADC031 /* TV Starket */ = {
+			isa = PBXGroup;
+			children = (
+				D5567CFB20AB4C5700ADC031 /* AppDelegate.swift */,
+				D5567CFD20AB4C5700ADC031 /* ViewController.swift */,
+				D5567D0220AB4C5700ADC031 /* Main.storyboard */,
+				D5567D0520AB4C5700ADC031 /* Assets.xcassets */,
+				D5567D0720AB4C5700ADC031 /* Info.plist */,
+				D5567CFF20AB4C5700ADC031 /* TV_Starket.xcdatamodeld */,
+			);
+			path = "TV Starket";
+			sourceTree = "<group>";
+		};
+		D5567D0F20AB4C5700ADC031 /* TV StarketTests */ = {
+			isa = PBXGroup;
+			children = (
+				D5567D1020AB4C5700ADC031 /* TV_StarketTests.swift */,
+				D5567D1220AB4C5700ADC031 /* Info.plist */,
+			);
+			path = "TV StarketTests";
+			sourceTree = "<group>";
+		};
+		D5567D1A20AB4C5700ADC031 /* TV StarketUITests */ = {
+			isa = PBXGroup;
+			children = (
+				D5567D1B20AB4C5700ADC031 /* TV_StarketUITests.swift */,
+				D5567D1D20AB4C5700ADC031 /* Info.plist */,
+			);
+			path = "TV StarketUITests";
+			sourceTree = "<group>";
+		};
 		D56A0DC1203D05F200499F00 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -292,10 +476,12 @@
 				DE4D50AEF0153B23C6768F38 /* [CP] Embed Pods Frameworks */,
 				29630DA03A464CEE90636319 /* [CP] Copy Pods Resources */,
 				D5B87BB6203E22B00071C7E2 /* ShellScript */,
+				D5567CF420AB4C2200ADC031 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				D5567CEB20AB4C2200ADC031 /* PBXTargetDependency */,
 			);
 			name = "Mock Starket";
 			productName = "Mock Starket";
@@ -344,6 +530,93 @@
 			productReference = D5376C2B200D491300B2E203 /* Mock StarketUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		D5567CCE20AB4C2100ADC031 /* Watch Starket */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5567CF320AB4C2200ADC031 /* Build configuration list for PBXNativeTarget "Watch Starket" */;
+			buildPhases = (
+				D5567CCD20AB4C2100ADC031 /* Resources */,
+				D5567CF220AB4C2200ADC031 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5567CDE20AB4C2200ADC031 /* PBXTargetDependency */,
+			);
+			name = "Watch Starket";
+			productName = "Watch Starket";
+			productReference = D5567CCF20AB4C2100ADC031 /* Watch Starket.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		D5567CDA20AB4C2200ADC031 /* Watch Starket Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5567CF120AB4C2200ADC031 /* Build configuration list for PBXNativeTarget "Watch Starket Extension" */;
+			buildPhases = (
+				D5567CD720AB4C2200ADC031 /* Sources */,
+				D5567CD820AB4C2200ADC031 /* Frameworks */,
+				D5567CD920AB4C2200ADC031 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Watch Starket Extension";
+			productName = "Watch Starket Extension";
+			productReference = D5567CDB20AB4C2200ADC031 /* Watch Starket Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
+		D5567CF820AB4C5700ADC031 /* TV Starket */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5567D1E20AB4C5700ADC031 /* Build configuration list for PBXNativeTarget "TV Starket" */;
+			buildPhases = (
+				D5567CF520AB4C5700ADC031 /* Sources */,
+				D5567CF620AB4C5700ADC031 /* Frameworks */,
+				D5567CF720AB4C5700ADC031 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "TV Starket";
+			productName = "TV Starket";
+			productReference = D5567CF920AB4C5700ADC031 /* TV Starket.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D5567D0B20AB4C5700ADC031 /* TV StarketTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5567D2120AB4C5700ADC031 /* Build configuration list for PBXNativeTarget "TV StarketTests" */;
+			buildPhases = (
+				D5567D0820AB4C5700ADC031 /* Sources */,
+				D5567D0920AB4C5700ADC031 /* Frameworks */,
+				D5567D0A20AB4C5700ADC031 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5567D0E20AB4C5700ADC031 /* PBXTargetDependency */,
+			);
+			name = "TV StarketTests";
+			productName = "TV StarketTests";
+			productReference = D5567D0C20AB4C5700ADC031 /* TV StarketTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D5567D1620AB4C5700ADC031 /* TV StarketUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5567D2420AB4C5700ADC031 /* Build configuration list for PBXNativeTarget "TV StarketUITests" */;
+			buildPhases = (
+				D5567D1320AB4C5700ADC031 /* Sources */,
+				D5567D1420AB4C5700ADC031 /* Frameworks */,
+				D5567D1520AB4C5700ADC031 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5567D1920AB4C5700ADC031 /* PBXTargetDependency */,
+			);
+			name = "TV StarketUITests";
+			productName = "TV StarketUITests";
+			productReference = D5567D1720AB4C5700ADC031 /* TV StarketUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -368,6 +641,28 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = D5376C08200D491200B2E203;
 					};
+					D5567CCE20AB4C2100ADC031 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					D5567CDA20AB4C2200ADC031 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					D5567CF820AB4C5700ADC031 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					D5567D0B20AB4C5700ADC031 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = D5567CF820AB4C5700ADC031;
+					};
+					D5567D1620AB4C5700ADC031 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = D5567CF820AB4C5700ADC031;
+					};
 				};
 			};
 			buildConfigurationList = D5376C04200D491200B2E203 /* Build configuration list for PBXProject "Mock Starket" */;
@@ -386,6 +681,11 @@
 				D5376C08200D491200B2E203 /* Mock Starket */,
 				D5376C1F200D491200B2E203 /* Mock StarketTests */,
 				D5376C2A200D491300B2E203 /* Mock StarketUITests */,
+				D5567CCE20AB4C2100ADC031 /* Watch Starket */,
+				D5567CDA20AB4C2200ADC031 /* Watch Starket Extension */,
+				D5567CF820AB4C5700ADC031 /* TV Starket */,
+				D5567D0B20AB4C5700ADC031 /* TV StarketTests */,
+				D5567D1620AB4C5700ADC031 /* TV StarketUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -422,6 +722,46 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5B513FC202A78C80013FE9E /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567CCD20AB4C2100ADC031 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567CD520AB4C2100ADC031 /* Assets.xcassets in Resources */,
+				D5567CD320AB4C2100ADC031 /* Interface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567CD920AB4C2200ADC031 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567CE720AB4C2200ADC031 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567CF720AB4C5700ADC031 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567D0620AB4C5700ADC031 /* Assets.xcassets in Resources */,
+				D5567D0420AB4C5700ADC031 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567D0A20AB4C5700ADC031 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567D1520AB4C5700ADC031 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +990,42 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D5567CD720AB4C2200ADC031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567CE520AB4C2200ADC031 /* NotificationController.swift in Sources */,
+				D5567CE320AB4C2200ADC031 /* ExtensionDelegate.swift in Sources */,
+				D5567CE120AB4C2200ADC031 /* InterfaceController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567CF520AB4C5700ADC031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567CFE20AB4C5700ADC031 /* ViewController.swift in Sources */,
+				D5567D0120AB4C5700ADC031 /* TV_Starket.xcdatamodeld in Sources */,
+				D5567CFC20AB4C5700ADC031 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567D0820AB4C5700ADC031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567D1120AB4C5700ADC031 /* TV_StarketTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5567D1320AB4C5700ADC031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5567D1C20AB4C5700ADC031 /* TV_StarketUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -662,6 +1038,26 @@
 			isa = PBXTargetDependency;
 			target = D5376C08200D491200B2E203 /* Mock Starket */;
 			targetProxy = D5376C2C200D491300B2E203 /* PBXContainerItemProxy */;
+		};
+		D5567CDE20AB4C2200ADC031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5567CDA20AB4C2200ADC031 /* Watch Starket Extension */;
+			targetProxy = D5567CDD20AB4C2200ADC031 /* PBXContainerItemProxy */;
+		};
+		D5567CEB20AB4C2200ADC031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5567CCE20AB4C2100ADC031 /* Watch Starket */;
+			targetProxy = D5567CEA20AB4C2200ADC031 /* PBXContainerItemProxy */;
+		};
+		D5567D0E20AB4C5700ADC031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5567CF820AB4C5700ADC031 /* TV Starket */;
+			targetProxy = D5567D0D20AB4C5700ADC031 /* PBXContainerItemProxy */;
+		};
+		D5567D1920AB4C5700ADC031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5567CF820AB4C5700ADC031 /* TV Starket */;
+			targetProxy = D5567D1820AB4C5700ADC031 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -680,6 +1076,22 @@
 				D5376C19200D491200B2E203 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		D5567CD120AB4C2100ADC031 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5567CD220AB4C2100ADC031 /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
+		D5567D0220AB4C5700ADC031 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5567D0320AB4C5700ADC031 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -904,6 +1316,193 @@
 			};
 			name = Release;
 		};
+		D5567CED20AB4C2200ADC031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				IBSC_MODULE = Watch_Starket_Extension;
+				INFOPLIST_FILE = "Watch Starket/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Solomon.MockStarket.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 4.2;
+			};
+			name = Debug;
+		};
+		D5567CEE20AB4C2200ADC031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Luke Solomon (6TK8Q4KD6G)";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				IBSC_MODULE = Watch_Starket_Extension;
+				INFOPLIST_FILE = "Watch Starket/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Solomon.MockStarket.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 4.2;
+			};
+			name = Release;
+		};
+		D5567CEF20AB4C2200ADC031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Watch Starket Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Solomon.MockStarket.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 4.2;
+			};
+			name = Debug;
+		};
+		D5567CF020AB4C2200ADC031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "Watch Starket Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Solomon.MockStarket.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 4.2;
+			};
+			name = Release;
+		};
+		D5567D1F20AB4C5700ADC031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "TV Starket/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "LukeSolomon.TV-Starket";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		D5567D2020AB4C5700ADC031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "TV Starket/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "LukeSolomon.TV-Starket";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
+		D5567D2220AB4C5700ADC031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "TV StarketTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "LukeSolomon.TV-StarketTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TV Starket.app/TV Starket";
+				TVOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		D5567D2320AB4C5700ADC031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "TV StarketTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "LukeSolomon.TV-StarketTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TV Starket.app/TV Starket";
+				TVOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
+		D5567D2520AB4C5700ADC031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "TV StarketUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "LukeSolomon.TV-StarketUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "TV Starket";
+				TVOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		D5567D2620AB4C5700ADC031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6TK8Q4KD6G;
+				INFOPLIST_FILE = "TV StarketUITests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "LukeSolomon.TV-StarketUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TEST_TARGET_NAME = "TV Starket";
+				TVOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -943,6 +1542,51 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		D5567CF120AB4C2200ADC031 /* Build configuration list for PBXNativeTarget "Watch Starket Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5567CEF20AB4C2200ADC031 /* Debug */,
+				D5567CF020AB4C2200ADC031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5567CF320AB4C2200ADC031 /* Build configuration list for PBXNativeTarget "Watch Starket" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5567CED20AB4C2200ADC031 /* Debug */,
+				D5567CEE20AB4C2200ADC031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5567D1E20AB4C5700ADC031 /* Build configuration list for PBXNativeTarget "TV Starket" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5567D1F20AB4C5700ADC031 /* Debug */,
+				D5567D2020AB4C5700ADC031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5567D2120AB4C5700ADC031 /* Build configuration list for PBXNativeTarget "TV StarketTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5567D2220AB4C5700ADC031 /* Debug */,
+				D5567D2320AB4C5700ADC031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5567D2420AB4C5700ADC031 /* Build configuration list for PBXNativeTarget "TV StarketUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5567D2520AB4C5700ADC031 /* Debug */,
+				D5567D2620AB4C5700ADC031 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
@@ -953,6 +1597,16 @@
 			);
 			currentVersion = D5376C14200D491200B2E203 /* Mock_Starket.xcdatamodel */;
 			path = Mock_Starket.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		D5567CFF20AB4C5700ADC031 /* TV_Starket.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D5567D0020AB4C5700ADC031 /* TV_Starket.xcdatamodel */,
+			);
+			currentVersion = D5567D0020AB4C5700ADC031 /* TV_Starket.xcdatamodel */;
+			path = TV_Starket.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
