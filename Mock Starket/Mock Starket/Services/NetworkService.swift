@@ -15,7 +15,7 @@ final class NetworkService: NSObject {
     public static let sharedInstance = NetworkService()
     
 //    public static let socket = WebSocket(url: URL(string: "ws://localhost:8000/ws")!)
-    public static let socket = WebSocket(url: URL(string: "ws://159.89.154.221:8000/ws")!)
+    public static let socket = WebSocket(url: URL(string: "ws://mockstarket.com:8000/ws")!)
     
     private override init() {
         super.init()

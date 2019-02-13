@@ -64,8 +64,6 @@ class PortfolioViewController: UIViewController {
                                                object: nil)
         
         self.setupData()
-    
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
