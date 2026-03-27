@@ -1,14 +1,15 @@
 'use client';
 
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { apiClient } from '@/lib/api-client';
 import { formatCurrency, formatPercent, formatVolume, priceChangeColor, priceChangeBg } from '@/lib/formatters';
 import { useMarketStore } from '@/stores/market-store';
 import type { Stock, PricePoint, ETFHolding } from '@/types/stock';
 
-const PriceChart = lazy(() => import('@/components/charts/PriceChart'));
+const PriceChart = dynamic(() => import('@/components/charts/PriceChart'), { ssr: false });
 
 export default function StockDetailPage() {
   const { ticker } = useParams<{ ticker: string }>();
@@ -172,7 +173,6 @@ export default function StockDetailPage() {
         </div>
 
         {history.length > 0 ? (
-          <Suspense fallback={<div className="h-[300px] flex items-center justify-center text-[#8B949E]">Loading chart...</div>}>
             <PriceChart
               data={history.map((p) => ({
                 time: p.recorded_at,
@@ -182,7 +182,6 @@ export default function StockDetailPage() {
                 close: parseFloat(p.close as any),
               }))}
             />
-          </Suspense>
         ) : (
           <div className="h-[300px] flex items-center justify-center text-[#6E7681] text-sm">
             No price history yet. Data will appear as the market simulation runs.

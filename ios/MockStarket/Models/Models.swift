@@ -33,7 +33,7 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
     let ticker: String
     let name: String
     let sector: String
-    let assetType: String // stock, etf, crypto, commodity
+    var assetType: String = "stock" // stock, etf, crypto, commodity
     let basePrice: Decimal
     var currentPrice: Decimal
     var dayOpen: Decimal
@@ -53,6 +53,30 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
         case dayHigh = "day_high"
         case dayLow = "day_low"
         case prevClose = "prev_close"
+    }
+
+    init(ticker: String, name: String, sector: String, assetType: String = "stock", basePrice: Decimal, currentPrice: Decimal, dayOpen: Decimal, dayHigh: Decimal, dayLow: Decimal, prevClose: Decimal, volume: Int64, volatility: Decimal, description: String? = nil) {
+        self.ticker = ticker; self.name = name; self.sector = sector; self.assetType = assetType
+        self.basePrice = basePrice; self.currentPrice = currentPrice; self.dayOpen = dayOpen
+        self.dayHigh = dayHigh; self.dayLow = dayLow; self.prevClose = prevClose
+        self.volume = volume; self.volatility = volatility; self.description = description
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        ticker = try c.decode(String.self, forKey: .ticker)
+        name = try c.decode(String.self, forKey: .name)
+        sector = try c.decode(String.self, forKey: .sector)
+        assetType = try c.decodeIfPresent(String.self, forKey: .assetType) ?? "stock"
+        basePrice = try c.decode(Decimal.self, forKey: .basePrice)
+        currentPrice = try c.decode(Decimal.self, forKey: .currentPrice)
+        dayOpen = try c.decode(Decimal.self, forKey: .dayOpen)
+        dayHigh = try c.decode(Decimal.self, forKey: .dayHigh)
+        dayLow = try c.decode(Decimal.self, forKey: .dayLow)
+        prevClose = try c.decode(Decimal.self, forKey: .prevClose)
+        volume = try c.decode(Int64.self, forKey: .volume)
+        volatility = try c.decode(Decimal.self, forKey: .volatility)
+        description = try c.decodeIfPresent(String.self, forKey: .description)
     }
 
     var change: Decimal { currentPrice - dayOpen }
