@@ -17,12 +17,6 @@ final class AppState {
     private let webSocketManager = WebSocketManager.shared
     private let authManager = AuthManager.shared
 
-    init() {
-        Task {
-            await checkAuth()
-        }
-    }
-
     func checkAuth() async {
         if let token = authManager.currentToken {
             do {

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { formatCurrency, formatPercent, formatVolume, priceChangeColor, priceChangeBg } from '@/lib/formatters';
 import { useMarketStore } from '@/stores/market-store';
-import type { Stock, PricePoint } from '@/types/stock';
+import type { Stock, PricePoint, ETFHolding } from '@/types/stock';
 
 const PriceChart = lazy(() => import('@/components/charts/PriceChart'));
 
@@ -17,6 +17,7 @@ export default function StockDetailPage() {
 
   const [stock, setStock] = useState<Stock | null>(null);
   const [history, setHistory] = useState<PricePoint[]>([]);
+  const [etfHoldings, setEtfHoldings] = useState<ETFHolding[]>([]);
   const [interval, setInterval] = useState('1m');
   const [loading, setLoading] = useState(true);
 
@@ -36,6 +37,14 @@ export default function StockDetailPage() {
         ]);
         setStock(stockData);
         setHistory(historyData || []);
+
+        // Load ETF holdings if this is an ETF
+        if (stockData.asset_type === 'etf') {
+          try {
+            const holdings = await apiClient.getETFHoldings(ticker);
+            setEtfHoldings(holdings || []);
+          } catch { /* not an ETF or no holdings */ }
+        }
       } catch {
         console.error('Failed to load stock');
       } finally {
@@ -96,6 +105,14 @@ export default function StockDetailPage() {
               {stock.ticker}
             </span>
             <span className="text-sm text-[#8B949E]">{stock.sector}</span>
+            <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+              stock.asset_type === 'crypto' ? 'bg-orange-400/10 text-orange-400' :
+              stock.asset_type === 'commodity' ? 'bg-yellow-400/10 text-yellow-400' :
+              stock.asset_type === 'etf' ? 'bg-purple-400/10 text-purple-400' :
+              'bg-[#8B949E]/10 text-[#8B949E]'
+            }`}>
+              {stock.asset_type?.toUpperCase() || 'STOCK'}
+            </span>
           </div>
           <h1 className="text-2xl font-bold">{stock.name}</h1>
           {stock.description && (
@@ -172,6 +189,31 @@ export default function StockDetailPage() {
           </div>
         )}
       </div>
+
+      {/* ETF Holdings */}
+      {stock.asset_type === 'etf' && etfHoldings.length > 0 && (
+        <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
+          <h2 className="font-semibold mb-4">Holdings</h2>
+          <div className="space-y-3">
+            {etfHoldings.map((h) => (
+              <div key={h.ticker} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Link href={`/stock/${h.ticker}`}>
+                    <span className="rounded bg-[#50E3C2]/10 px-2 py-0.5 text-xs font-mono font-bold text-[#50E3C2] hover:bg-[#50E3C2]/20 transition-colors">
+                      {h.ticker}
+                    </span>
+                  </Link>
+                  <span className="text-sm text-[#8B949E]">{h.name}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-[#8B949E]">{h.price ? formatCurrency(h.price) : '-'}</span>
+                  <span className="text-sm font-semibold">{(parseFloat(h.weight) * 100).toFixed(0)}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Trade Panel */}
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">

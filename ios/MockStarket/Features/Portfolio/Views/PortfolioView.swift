@@ -26,7 +26,7 @@ struct PortfolioView: View {
                             .padding(.horizontal)
 
                         ForEach(viewModel.positions) { position in
-                            NavigationLink(value: Stock(ticker: position.ticker, name: "", sector: "", basePrice: 0, currentPrice: position.currentPrice, dayOpen: 0, dayHigh: 0, dayLow: 0, prevClose: 0, volume: 0, volatility: 0, description: nil)) {
+                            NavigationLink(value: Stock(ticker: position.ticker, name: "", sector: "", assetType: "stock", basePrice: 0, currentPrice: position.currentPrice, dayOpen: 0, dayHigh: 0, dayLow: 0, prevClose: 0, volume: 0, volatility: 0, description: nil)) {
                                 PositionRowView(position: position)
                             }
                         }

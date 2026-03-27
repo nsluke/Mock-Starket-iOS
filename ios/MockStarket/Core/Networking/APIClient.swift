@@ -30,6 +30,7 @@ enum APIEndpoint {
     case listStocks
     case getStock(ticker: String)
     case getStockHistory(ticker: String, interval: String)
+    case getETFHoldings(ticker: String)
     case marketSummary
 
     // Trading
@@ -78,6 +79,7 @@ enum APIEndpoint {
         case .listStocks: return "/api/v1/stocks"
         case .getStock(let ticker): return "/api/v1/stocks/\(ticker)"
         case .getStockHistory(let ticker, let interval): return "/api/v1/stocks/\(ticker)/history?interval=\(interval)"
+        case .getETFHoldings(let ticker): return "/api/v1/stocks/\(ticker)/holdings"
         case .marketSummary: return "/api/v1/stocks/market-summary"
         case .executeTrade, .getTradeHistory: return "/api/v1/trades"
         case .createOrder, .listOrders: return "/api/v1/orders"

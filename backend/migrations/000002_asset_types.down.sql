@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS etf_holdings;
+ALTER TABLE stocks DROP COLUMN IF EXISTS asset_type;

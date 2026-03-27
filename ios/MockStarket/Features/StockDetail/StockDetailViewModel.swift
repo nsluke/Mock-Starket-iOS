@@ -28,10 +28,12 @@ final class StockDetailViewModel {
 
     var stock: Stock?
     var priceHistory: [PricePoint] = []
+    var etfHoldings: [ETFHolding] = []
     var selectedRange: TimeRange = .oneDay
     var showTradeSheet = false
     var tradeSide = "buy"
     var isLoading = false
+    var userShares = 0
 
     private let apiClient = APIClient.shared
     private let wsManager = WebSocketManager.shared
@@ -48,6 +50,15 @@ final class StockDetailViewModel {
                 .getStockHistory(ticker: ticker, interval: selectedRange.interval),
                 token: token
             )
+
+            // Fetch user's current holding for this stock
+            let portfolio: PortfolioResponse = try await apiClient.request(.getPortfolio, token: token)
+            userShares = portfolio.positions.first(where: { $0.ticker == ticker })?.shares ?? 0
+
+            // Fetch ETF holdings if this is an ETF
+            if stock?.assetType == "etf" {
+                etfHoldings = (try? await apiClient.request(.getETFHoldings(ticker: ticker), token: token)) ?? []
+            }
         } catch {
             // Handle error
         }

@@ -2,6 +2,7 @@ export interface Stock {
   ticker: string;
   name: string;
   sector: string;
+  asset_type: string; // stock, etf, crypto, commodity
   base_price: string;
   current_price: string;
   day_open: string;
@@ -34,6 +35,13 @@ export interface PricePoint {
   volume: number;
   interval: string;
   recorded_at: string;
+}
+
+export interface ETFHolding {
+  ticker: string;
+  name: string;
+  weight: string;
+  price: string;
 }
 
 export interface MarketSummary {

@@ -1,14 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { useMarketStore } from '@/stores/market-store';
 import { formatCurrency, formatPercent, priceChangeColor, priceChangeBg } from '@/lib/formatters';
 import type { Stock, MarketSummary } from '@/types/stock';
 
+const assetFilters = [
+  { value: 'all', label: 'All' },
+  { value: 'stock', label: 'Stocks' },
+  { value: 'etf', label: 'ETFs' },
+  { value: 'crypto', label: 'Crypto' },
+  { value: 'commodity', label: 'Commodities' },
+];
+
 export default function MarketPage() {
   const { stocks, summary, isLoading, searchQuery, setStocks, setSummary, setLoading, setSearchQuery, filteredStocks } = useMarketStore();
+  const [assetFilter, setAssetFilter] = useState('all');
 
   useEffect(() => {
     async function loadData() {
@@ -29,7 +38,11 @@ export default function MarketPage() {
     loadData();
   }, [setStocks, setSummary, setLoading]);
 
-  const displayed = filteredStocks();
+  const displayed = useMemo(() => {
+    const searched = filteredStocks();
+    if (assetFilter === 'all') return searched;
+    return searched.filter((s: Stock) => s.asset_type === assetFilter);
+  }, [filteredStocks, assetFilter]);
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
@@ -64,13 +77,30 @@ export default function MarketPage() {
         className="w-full rounded-lg bg-[#161B22] border border-[#30363D] px-4 py-3 text-sm text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2]"
       />
 
+      {/* Asset Type Filter */}
+      <div className="flex gap-1 overflow-x-auto">
+        {assetFilters.map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setAssetFilter(f.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              assetFilter === f.value
+                ? 'bg-[#21262D] text-white'
+                : 'text-[#8B949E] hover:text-white'
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
       {/* Stock Table */}
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] overflow-hidden">
         <table className="w-full">
           <thead>
             <tr className="border-b border-[#30363D] text-xs text-[#8B949E] uppercase">
               <th className="text-left px-4 py-3">Stock</th>
-              <th className="text-left px-4 py-3 hidden sm:table-cell">Sector</th>
+              <th className="text-left px-4 py-3 hidden sm:table-cell">Type</th>
               <th className="text-right px-4 py-3">Price</th>
               <th className="text-right px-4 py-3">Change</th>
             </tr>
@@ -93,8 +123,15 @@ export default function MarketPage() {
                       <span className="text-sm font-medium text-white">{stock.name}</span>
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-sm text-[#8B949E] hidden sm:table-cell">
-                    {stock.sector}
+                  <td className="px-4 py-3 hidden sm:table-cell">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+                      stock.asset_type === 'crypto' ? 'bg-orange-400/10 text-orange-400' :
+                      stock.asset_type === 'commodity' ? 'bg-yellow-400/10 text-yellow-400' :
+                      stock.asset_type === 'etf' ? 'bg-purple-400/10 text-purple-400' :
+                      'bg-[#8B949E]/10 text-[#8B949E]'
+                    }`}>
+                      {stock.asset_type?.toUpperCase() || 'STOCK'}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-right text-sm font-semibold text-white">
                     {formatCurrency(stock.current_price)}

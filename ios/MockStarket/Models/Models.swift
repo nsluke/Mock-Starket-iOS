@@ -33,6 +33,7 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
     let ticker: String
     let name: String
     let sector: String
+    let assetType: String // stock, etf, crypto, commodity
     let basePrice: Decimal
     var currentPrice: Decimal
     var dayOpen: Decimal
@@ -45,6 +46,7 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case ticker, name, sector, volume, volatility, description
+        case assetType = "asset_type"
         case basePrice = "base_price"
         case currentPrice = "current_price"
         case dayOpen = "day_open"
@@ -59,6 +61,16 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
         return (change / dayOpen) * 100
     }
     var isUp: Bool { change >= 0 }
+}
+
+// MARK: - ETF Holding
+
+struct ETFHolding: Codable, Identifiable, Sendable {
+    var id: String { ticker }
+    let ticker: String
+    let name: String
+    let weight: String
+    let price: String
 }
 
 // MARK: - Portfolio

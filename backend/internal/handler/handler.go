@@ -262,6 +262,45 @@ func (h *Handler) GetMarketSummary(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (h *Handler) GetETFHoldings(w http.ResponseWriter, r *http.Request) {
+	ticker := chi.URLParam(r, "ticker")
+
+	holdings, err := h.repo.GetETFHoldings(r.Context(), ticker)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to fetch ETF holdings")
+		return
+	}
+
+	// Enrich with current prices and stock names
+	livePrices := h.engine.GetAllPrices()
+	type enrichedHolding struct {
+		Ticker string  `json:"ticker"`
+		Name   string  `json:"name"`
+		Weight string  `json:"weight"`
+		Price  string  `json:"price"`
+	}
+
+	result := make([]enrichedHolding, 0, len(holdings))
+	for _, holding := range holdings {
+		price := ""
+		if p, ok := livePrices[holding.HoldingTicker]; ok {
+			price = p.String()
+		}
+		name := holding.HoldingTicker
+		if stock, err := h.repo.GetStockByTicker(r.Context(), holding.HoldingTicker); err == nil {
+			name = stock.Name
+		}
+		result = append(result, enrichedHolding{
+			Ticker: holding.HoldingTicker,
+			Name:   name,
+			Weight: holding.Weight.String(),
+			Price:  price,
+		})
+	}
+
+	writeJSON(w, http.StatusOK, result)
+}
+
 // ---- Trading ----
 
 func (h *Handler) ExecuteTrade(w http.ResponseWriter, r *http.Request) {
