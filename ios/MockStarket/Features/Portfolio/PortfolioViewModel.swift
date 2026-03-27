@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class PortfolioViewModel {
     var portfolioResponse: PortfolioResponse?
     var positions: [Position] { portfolioResponse?.positions ?? [] }

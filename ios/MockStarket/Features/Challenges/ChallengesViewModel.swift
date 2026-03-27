@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class ChallengesViewModel {
     var challenge: DailyChallenge?
     var progress: UserChallenge?

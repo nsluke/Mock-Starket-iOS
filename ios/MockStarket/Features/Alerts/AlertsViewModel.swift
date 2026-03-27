@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class AlertsViewModel {
     var alerts: [PriceAlert] = []
     var isLoading = false

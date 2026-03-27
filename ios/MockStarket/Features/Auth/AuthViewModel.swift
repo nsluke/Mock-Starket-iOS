@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class AuthViewModel {
     var isLoading = false
     var errorMessage: String?

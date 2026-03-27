@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class StockDetailViewModel {
     enum TimeRange: CaseIterable {
         case oneDay, oneWeek, oneMonth, threeMonths, all
@@ -53,15 +53,14 @@ final class StockDetailViewModel {
         }
 
         // Subscribe to live updates
-        wsManager.onPriceUpdate { [weak self] updates in
+        let vm = self
+        wsManager.onPriceUpdate { updates in
+            guard let update = updates.first(where: { $0.ticker == ticker }) else { return }
             Task { @MainActor in
-                guard let self else { return }
-                if let update = updates.first(where: { $0.ticker == ticker }) {
-                    self.stock?.currentPrice = update.price
-                    self.stock?.dayHigh = update.high
-                    self.stock?.dayLow = update.low
-                    self.stock?.volume = update.volume
-                }
+                vm.stock?.currentPrice = update.price
+                vm.stock?.dayHigh = update.high
+                vm.stock?.dayLow = update.low
+                vm.stock?.volume = update.volume
             }
         }
     }

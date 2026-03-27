@@ -28,7 +28,7 @@ struct User: Codable, Identifiable, Sendable {
 
 // MARK: - Stock
 
-struct Stock: Codable, Identifiable, Sendable {
+struct Stock: Codable, Identifiable, Hashable, Sendable {
     var id: String { ticker }
     let ticker: String
     let name: String

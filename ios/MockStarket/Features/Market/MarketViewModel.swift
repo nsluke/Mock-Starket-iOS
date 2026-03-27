@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class MarketViewModel {
     var stocks: [Stock] = []
     var searchText = ""
@@ -42,14 +42,14 @@ final class MarketViewModel {
     }
 
     func subscribeToUpdates() {
-        wsManager.onPriceUpdate { [weak self] updates in
+        let vm = self
+        wsManager.onPriceUpdate { updates in
             Task { @MainActor in
-                self?.applyPriceUpdates(updates)
+                vm.applyPriceUpdates(updates)
             }
         }
     }
 
-    @MainActor
     private func applyPriceUpdates(_ updates: [PriceUpdate]) {
         for update in updates {
             if let index = stocks.firstIndex(where: { $0.ticker == update.ticker }) {
