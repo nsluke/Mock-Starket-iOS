@@ -1,0 +1,46 @@
+name: Release iOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.0)'
+        required: true
+
+jobs:
+  release:
+    name: Build & Upload to TestFlight
+    runs-on: macos-15
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.0.app
+
+      - name: Run tests
+        working-directory: ios
+        run: |
+          xcodebuild test \
+            -scheme MockStarket \
+            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            | xcpretty
+
+      - name: Archive
+        working-directory: ios
+        run: |
+          xcodebuild archive \
+            -scheme MockStarket \
+            -archivePath build/MockStarket.xcarchive \
+            -destination 'generic/platform=iOS' \
+            | xcpretty
+
+      # Add signing and TestFlight upload steps:
+      # - Import certificates and provisioning profiles
+      # - xcodebuild -exportArchive
+      # - xcrun altool --upload-app
+
+      - name: Upload archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: MockStarket-${{ inputs.version }}
+          path: ios/build/MockStarket.xcarchive

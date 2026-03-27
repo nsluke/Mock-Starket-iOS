@@ -1,0 +1,48 @@
+{
+  "name": "mockstarket-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@tanstack/react-query": "^5.60.0",
+    "zustand": "^5.0.0",
+    "firebase": "^11.0.0",
+    "lightweight-charts": "^4.2.0",
+    "framer-motion": "^11.12.0",
+    "react-hook-form": "^7.53.0",
+    "zod": "^3.23.0",
+    "@hookform/resolvers": "^3.9.0",
+    "lucide-react": "^0.460.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.6.0",
+    "class-variance-authority": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "postcss": "^8.5.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.0.0",
+    "vitest": "^2.1.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "msw": "^2.6.0",
+    "@playwright/test": "^1.49.0",
+    "jsdom": "^25.0.0"
+  }
+}

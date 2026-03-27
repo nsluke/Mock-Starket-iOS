@@ -1,57 +1,158 @@
-# Mock-Starket-iOS
-> A simple stock market simulation written in Swift, using a web-socket backend written in Go.
+# Mock Starket
 
-[![Swift Version][swift-image]][swift-url]
-[![Build Status][travis-image]][travis-url]
-[![License][license-image]][license-url]
-[![Platform](https://img.shields.io/cocoapods/p/LFAlertController.svg?style=flat)](http://cocoapods.org/pods/LFAlertController)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+A full-stack stock market simulation where users trade fictional stocks with fake money in real-time. Built as a mono-repo with a Go backend, Next.js web app, SwiftUI iOS app, and Jetpack Compose Android app.
 
-Mock Starket is an open-source iOS app that plans to be a learning tool for those who want to get into investing in stocks, but either don't have the initial money to do so, or who want to have fun without risking any money.
+## Architecture
 
+```
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│   iOS App   │  │   Web App   │  │ Android App │
+│   SwiftUI   │  │   Next.js   │  │   Compose   │
+└──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+       │                │                │
+       └────────────────┼────────────────┘
+                        │
+              REST API + WebSocket
+                        │
+               ┌────────┴────────┐
+               │   Go Backend    │
+               │  Chi + pgx +   │
+               │  Gorilla WS    │
+               ├─────────────────┤
+               │ Simulation Eng. │ ← Geometric Brownian Motion
+               │ Order Matching  │ ← Limit/Stop/Stop-Limit
+               │ Price History   │ ← OHLCV at 1s/1m/5m/1h
+               │ Leaderboard    │ ← Ranked by net worth
+               │ Achievements   │ ← 20 achievements
+               │ Daily Challenge │ ← Auto-generated daily
+               │ Price Alerts   │ ← WebSocket notifications
+               └────────┬────────┘
+                        │
+               ┌────────┴────────┐
+               │   PostgreSQL    │
+               └─────────────────┘
+```
 
-![](Header.png)
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | Go 1.23, Chi router, pgx, Gorilla WebSocket, Firebase Auth |
+| **Web** | Next.js 15, React 19, TypeScript, Tailwind CSS, Zustand, lightweight-charts |
+| **iOS** | SwiftUI, iOS 18+, Swift 6, MVVM, async/await, Charts framework |
+| **Android** | Jetpack Compose, Material 3, Hilt, Retrofit, Kotlin Coroutines |
+| **Database** | PostgreSQL with golang-migrate |
+| **Deploy** | Docker Compose, nginx reverse proxy |
+| **CI/CD** | GitHub Actions (7 workflows) |
 
 ## Features
 
-- [x] Buy and sell stocks
-- [x] Maintain a portfolio of investments that are updated in real-time
-- [x] Compete with friends to see who is the best investor
-- [x] Optimized for iOS 11 & iPhone X
-- [x] Also available on web
+- **Real-time trading** -- Buy and sell 23 fictional stocks with simulated prices
+- **Live price simulation** -- Geometric Brownian Motion with mean reversion, sector correlation, and market events
+- **Order types** -- Market, limit, stop, and stop-limit orders with automatic matching
+- **Portfolio tracking** -- Net worth, P&L, position breakdown, portfolio history
+- **Leaderboard** -- Compete for the top rank (daily, weekly, all-time)
+- **Achievements** -- 20 unlockable achievements across trading, portfolio, social, and skill categories
+- **Daily challenges** -- Auto-generated challenges with cash rewards
+- **Price alerts** -- Set above/below alerts with real-time WebSocket notifications
+- **Price charts** -- Interactive candlestick charts with multiple time intervals
+- **Guest accounts** -- Start trading immediately, no sign-up required
 
-## Requirements
+## Project Structure
 
-- iOS 11.0+
-- Xcode 9.0
-
-## Installation
-
-#### Git & CocoaPods
-
-After cloning the repo, cd into the /Mock \Starket folder, and run
-``` bash
-pod install
 ```
-Open the .xcworkspace, and you're good to go
+.
+├── backend/          # Go REST API + WebSocket server
+│   ├── cmd/          # Server, migrate, seed entrypoints
+│   ├── internal/     # Handler, service, repository, simulation, workers
+│   └── migrations/   # PostgreSQL schema
+├── web/              # Next.js web frontend
+│   └── src/          # Pages, components, stores, types
+├── ios/              # SwiftUI iOS app
+│   └── MockStarket/  # App, Core, Features, Models
+├── android/          # Jetpack Compose Android app
+│   └── app/src/      # UI, data, domain, DI
+├── deploy/           # Docker Compose, nginx, Postgres init
+├── .github/          # CI/CD workflows, PR/issue templates
+└── scripts/          # Setup and test runner scripts
+```
 
-## Contribute
+## Getting Started
 
-If you're interested in helping, get in touch with me or create a pull request!
+### Prerequisites
 
-## Meta
+- Go 1.23+
+- Node.js 22+
+- PostgreSQL 15+
+- Docker & Docker Compose (optional, for containerized setup)
 
-Luke Solomon – [@_luke_warm](https://twitter.com/_luke_warm) – solomora@gmail.com
+### Quick Start (Docker)
 
-Distributed under the MIT license. See ``LICENSE`` for more information.
+```bash
+cd deploy
+cp .env.example .env
+docker compose up -d
+```
 
-[https://github.com/ares42/Mock-Starket-iOS](https://github.com/ares42/Mock-Starket-iOS)
+This starts PostgreSQL, the Go backend, the Next.js web app, and nginx.
 
-[swift-image]:https://img.shields.io/badge/swift-3.0-orange.svg
-[swift-url]: https://swift.org/
-[license-image]: https://img.shields.io/badge/License-MIT-blue.svg
-[license-url]: LICENSE
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[codebeat-image]: https://codebeat.co/badges/c19b47ea-2f9d-45df-8458-b2d952fe9dad
-[codebeat-url]: https://codebeat.co/projects/github-com-vsouza-awesomeios-com
+### Manual Setup
+
+**Backend:**
+```bash
+cd backend
+export DATABASE_URL="postgres://user:pass@localhost:5432/mockstarket?sslmode=disable"
+go run cmd/migrate/main.go up
+go run cmd/seed/main.go
+go run cmd/server/main.go
+```
+
+**Web:**
+```bash
+cd web
+npm install
+npm run dev
+```
+
+**iOS:**
+Open `ios/MockStarket.xcodeproj` in Xcode. The Firebase SPM package will resolve on first open.
+
+**Android:**
+Open the `android/` directory in Android Studio. Gradle will sync dependencies automatically.
+
+### Running Tests
+
+```bash
+# Backend (42 tests)
+cd backend && go test ./...
+
+# Web
+cd web && npm run type-check
+```
+
+## API Overview
+
+The backend exposes 30+ REST endpoints under `/api/v1/`:
+
+| Group | Endpoints |
+|-------|----------|
+| Auth | Register, guest login, get/update/delete profile |
+| Stocks | List, detail, history, market summary |
+| Trading | Execute trades, trade history |
+| Orders | Create/list/cancel limit & stop orders |
+| Portfolio | Holdings, net worth, portfolio history |
+| Leaderboard | Rankings by period |
+| Achievements | List all, user progress |
+| Challenges | Today's challenge, check progress, claim reward |
+| Alerts | Create/list/delete price alerts |
+| Watchlist | Add/remove/list |
+
+Real-time updates via WebSocket at `/ws` (price batches, trade confirmations, alert triggers).
+
+## License
+
+MIT
+
+## Author
+
+Luke Solomon

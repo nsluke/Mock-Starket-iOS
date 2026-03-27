@@ -1,0 +1,17 @@
+services:
+  backend:
+    build:
+      target: dev
+    volumes:
+      - ../backend:/app
+    environment:
+      LOG_LEVEL: debug
+      SIM_TICK_MS: 1000
+
+  web:
+    command: npm run dev
+    volumes:
+      - ../web/src:/app/src
+      - ../web/public:/app/public
+    environment:
+      NODE_ENV: development

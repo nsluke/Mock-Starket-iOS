@@ -1,0 +1,66 @@
+name: MockStarket
+options:
+  bundleIdPrefix: com.mockstarket
+  deploymentTarget:
+    iOS: "18.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+packages:
+  firebase-ios-sdk:
+    url: https://github.com/firebase/firebase-ios-sdk.git
+    from: "11.0.0"
+targets:
+  MockStarket:
+    type: application
+    platform: iOS
+    sources:
+      - path: MockStarket
+    resources:
+      - path: MockStarket/Resources/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mockstarket.app
+        PRODUCT_NAME: Mock Starket
+        SWIFT_VERSION: "6.0"
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_KEY_UILaunchScreen_Generation: "YES"
+        INFOPLIST_KEY_UIUserInterfaceStyle: Dark
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+        CODE_SIGN_STYLE: Automatic
+    dependencies:
+      - package: firebase-ios-sdk
+        product: FirebaseAuth
+  MockStarketTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MockStarketTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mockstarket.app.tests
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: "YES"
+    dependencies:
+      - target: MockStarket
+  MockStarketUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: MockStarketUITests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mockstarket.app.uitests
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_TARGET_NAME: MockStarket
+    dependencies:
+      - target: MockStarket

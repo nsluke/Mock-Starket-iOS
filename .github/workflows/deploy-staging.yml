@@ -1,0 +1,28 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t mockstarket-backend:${{ github.sha }} backend/
+
+      - name: Build web image
+        run: docker build -t mockstarket-web:${{ github.sha }} web/
+
+      # Add your deployment steps here:
+      # - Push to container registry (ECR, GHCR, Docker Hub)
+      # - SSH to server and docker compose pull
+      # - Or deploy to ECS/Cloud Run/etc.
+
+      - name: Deployment placeholder
+        run: echo "Images built successfully. Configure deployment target in this workflow."

@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --accent: #50E3C2;
+  --positive: #4ADE80;
+  --negative: #F87171;
+  --bg: #0D1117;
+  --surface: #161B22;
+  --surface-elevated: #21262D;
+  --border: #30363D;
+  --text-primary: #E6EDF3;
+  --text-secondary: #8B949E;
+  --text-tertiary: #6E7681;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* Number animation */
+@keyframes flash-green {
+  0% { background-color: rgba(74, 222, 128, 0.3); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-red {
+  0% { background-color: rgba(248, 113, 113, 0.3); }
+  100% { background-color: transparent; }
+}
+
+.price-up {
+  animation: flash-green 0.5s ease-out;
+}
+
+.price-down {
+  animation: flash-red 0.5s ease-out;
+}

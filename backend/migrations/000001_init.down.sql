@@ -1,0 +1,15 @@
+DROP TABLE IF EXISTS watchlist;
+DROP TABLE IF EXISTS user_challenges;
+DROP TABLE IF EXISTS daily_challenges;
+DROP TABLE IF EXISTS price_alerts;
+DROP TABLE IF EXISTS user_achievements;
+DROP TABLE IF EXISTS achievements;
+DROP TABLE IF EXISTS leaderboard;
+DROP TABLE IF EXISTS portfolio_history;
+DROP TABLE IF EXISTS price_history;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS trades;
+DROP TABLE IF EXISTS holdings;
+DROP TABLE IF EXISTS portfolios;
+DROP TABLE IF EXISTS stocks;
+DROP TABLE IF EXISTS users;
