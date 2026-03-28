@@ -68,15 +68,23 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
         name = try c.decode(String.self, forKey: .name)
         sector = try c.decode(String.self, forKey: .sector)
         assetType = try c.decodeIfPresent(String.self, forKey: .assetType) ?? "stock"
-        basePrice = try c.decode(Decimal.self, forKey: .basePrice)
-        currentPrice = try c.decode(Decimal.self, forKey: .currentPrice)
-        dayOpen = try c.decode(Decimal.self, forKey: .dayOpen)
-        dayHigh = try c.decode(Decimal.self, forKey: .dayHigh)
-        dayLow = try c.decode(Decimal.self, forKey: .dayLow)
-        prevClose = try c.decode(Decimal.self, forKey: .prevClose)
+        basePrice = try Self.decimalFromStringOrNumber(c, forKey: .basePrice)
+        currentPrice = try Self.decimalFromStringOrNumber(c, forKey: .currentPrice)
+        dayOpen = try Self.decimalFromStringOrNumber(c, forKey: .dayOpen)
+        dayHigh = try Self.decimalFromStringOrNumber(c, forKey: .dayHigh)
+        dayLow = try Self.decimalFromStringOrNumber(c, forKey: .dayLow)
+        prevClose = try Self.decimalFromStringOrNumber(c, forKey: .prevClose)
         volume = try c.decode(Int64.self, forKey: .volume)
-        volatility = try c.decode(Decimal.self, forKey: .volatility)
+        volatility = try Self.decimalFromStringOrNumber(c, forKey: .volatility)
         description = try c.decodeIfPresent(String.self, forKey: .description)
+    }
+
+    /// Decodes a Decimal that may come as a JSON string or number.
+    private static func decimalFromStringOrNumber(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> Decimal {
+        if let str = try? container.decode(String.self, forKey: key), let d = Decimal(string: str) {
+            return d
+        }
+        return try container.decode(Decimal.self, forKey: key)
     }
 
     var change: Decimal { currentPrice - dayOpen }
@@ -361,5 +369,19 @@ struct MarketSummary: Codable, Sendable {
         case indexChangePct = "index_change_pct"
         case totalStocks = "total_stocks"
         case gainers, losers
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        indexValue = Self.dec(c, .indexValue)
+        indexChangePct = Self.dec(c, .indexChangePct)
+        totalStocks = try c.decode(Int.self, forKey: .totalStocks)
+        gainers = try c.decode(Int.self, forKey: .gainers)
+        losers = try c.decode(Int.self, forKey: .losers)
+    }
+
+    private static func dec(_ c: KeyedDecodingContainer<CodingKeys>, _ key: CodingKeys) -> Decimal {
+        if let s = try? c.decode(String.self, forKey: key), let d = Decimal(string: s) { return d }
+        return (try? c.decode(Decimal.self, forKey: key)) ?? 0
     }
 }
