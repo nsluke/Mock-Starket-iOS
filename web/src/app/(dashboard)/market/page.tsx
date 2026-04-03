@@ -8,7 +8,6 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useSort } from '@/hooks/use-sort';
 import { PageTransition } from '@/components/ui/PageTransition';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
-import { CardSkeleton } from '@/components/ui/CardSkeleton';
 import { formatCurrency, formatPercent, priceChangeColor, priceChangeBg } from '@/lib/formatters';
 import type { Stock } from '@/types/stock';
 
