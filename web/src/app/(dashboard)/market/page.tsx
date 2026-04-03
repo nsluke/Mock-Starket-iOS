@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { apiClient } from '@/lib/api-client';
+import { useStocks, useMarketSummary } from '@/hooks/use-stocks';
 import { useMarketStore } from '@/stores/market-store';
+import { useDebounce } from '@/hooks/use-debounce';
+import { useSort } from '@/hooks/use-sort';
+import { PageTransition } from '@/components/ui/PageTransition';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { CardSkeleton } from '@/components/ui/CardSkeleton';
 import { formatCurrency, formatPercent, priceChangeColor, priceChangeBg } from '@/lib/formatters';
-import type { Stock, MarketSummary } from '@/types/stock';
+import type { Stock } from '@/types/stock';
 
 const assetFilters = [
   { value: 'all', label: 'All' },
@@ -16,35 +21,29 @@ const assetFilters = [
 ];
 
 export default function MarketPage() {
-  const { stocks, summary, isLoading, searchQuery, setStocks, setSummary, setLoading, setSearchQuery, filteredStocks } = useMarketStore();
+  const { setSearchQuery, filteredStocks } = useMarketStore();
+  const [localSearch, setLocalSearch] = useState('');
   const [assetFilter, setAssetFilter] = useState('all');
+  const debouncedSearch = useDebounce(localSearch, 300);
 
-  useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      try {
-        const [stocksData, summaryData] = await Promise.all([
-          apiClient.getStocks(),
-          apiClient.getMarketSummary(),
-        ]);
-        setStocks(stocksData);
-        setSummary(summaryData);
-      } catch (err) {
-        console.error('Failed to load market data:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, [setStocks, setSummary, setLoading]);
+  const { isLoading: stocksLoading } = useStocks();
+  const { data: summary } = useMarketSummary();
 
-  const displayed = useMemo(() => {
+  // Sync debounced value to store
+  useMemo(() => {
+    setSearchQuery(debouncedSearch);
+  }, [debouncedSearch, setSearchQuery]);
+
+  const filtered = useMemo(() => {
     const searched = filteredStocks();
     if (assetFilter === 'all') return searched;
     return searched.filter((s: Stock) => s.asset_type === assetFilter);
   }, [filteredStocks, assetFilter]);
 
+  const { sorted: displayed, sortKey, sortDirection, onSort } = useSort(filtered, 'ticker', 'asc');
+
   return (
+    <PageTransition>
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">Market</h1>
 
@@ -72,8 +71,8 @@ export default function MarketPage() {
       <input
         type="text"
         placeholder="Search stocks..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        value={localSearch}
+        onChange={(e) => setLocalSearch(e.target.value)}
         className="w-full rounded-lg bg-[#161B22] border border-[#30363D] px-4 py-3 text-sm text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2]"
       />
 
@@ -99,10 +98,16 @@ export default function MarketPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-[#30363D] text-xs text-[#8B949E] uppercase">
-              <th className="text-left px-4 py-3">Stock</th>
+              <th className="text-left px-4 py-3 cursor-pointer hover:text-white select-none" onClick={() => onSort('ticker')}>
+                Stock {sortKey === 'ticker' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
               <th className="text-left px-4 py-3 hidden sm:table-cell">Type</th>
-              <th className="text-right px-4 py-3">Price</th>
-              <th className="text-right px-4 py-3">Change</th>
+              <th className="text-right px-4 py-3 cursor-pointer hover:text-white select-none" onClick={() => onSort('current_price')}>
+                Price {sortKey === 'current_price' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th className="text-right px-4 py-3 cursor-pointer hover:text-white select-none" onClick={() => onSort('name')}>
+                Change {sortKey === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -147,10 +152,9 @@ export default function MarketPage() {
           </tbody>
         </table>
 
-        {isLoading && (
-          <div className="p-8 text-center text-[#8B949E]">Loading stocks...</div>
-        )}
+        {stocksLoading && <TableSkeleton rows={8} columns={4} />}
       </div>
     </div>
+    </PageTransition>
   );
 }

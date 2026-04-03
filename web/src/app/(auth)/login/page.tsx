@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { TrendingUp } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -23,6 +24,7 @@ export default function LoginPage() {
       setToken(guestUID);
       setUser(user);
       localStorage.setItem('mockstarket_token', guestUID);
+      document.cookie = `mockstarket_token=${guestUID}; path=/; max-age=${60 * 60 * 24 * 30}`;
       router.replace('/market');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
@@ -36,7 +38,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-10">
         {/* Logo */}
         <div className="text-center space-y-4">
-          <div className="text-6xl">📈</div>
+          <TrendingUp className="w-16 h-16 text-[#50E3C2] mx-auto" />
           <h1 className="text-4xl font-bold tracking-tight text-white">
             Mock Starket
           </h1>

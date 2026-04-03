@@ -1,78 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api-client';
+import { useState } from 'react';
+import { PageTransition } from '@/components/ui/PageTransition';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAlerts, useCreateAlert, useDeleteAlert } from '@/hooks/use-alerts';
 import { formatCurrency } from '@/lib/formatters';
-
-interface PriceAlert {
-  id: string;
-  ticker: string;
-  condition: string;
-  target_price: string;
-  triggered: boolean;
-  triggered_at: string | null;
-  created_at: string;
-}
+import { alertSchema, type AlertFormValues } from '@/lib/schemas';
+import { FormInput } from '@/components/ui/FormInput';
 
 export default function AlertsPage() {
-  const [alerts, setAlerts] = useState<PriceAlert[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: alerts = [], isLoading } = useAlerts();
+  const createAlert = useCreateAlert();
+  const deleteAlert = useDeleteAlert();
 
-  // Create form
   const [showForm, setShowForm] = useState(false);
-  const [ticker, setTicker] = useState('');
-  const [condition, setCondition] = useState('above');
-  const [targetPrice, setTargetPrice] = useState('');
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<AlertFormValues>({
+    resolver: zodResolver(alertSchema),
+    defaultValues: { condition: 'above' },
+  });
 
-  useEffect(() => {
-    loadAlerts();
-  }, []);
-
-  async function loadAlerts() {
-    setLoading(true);
-    try {
-      const data = await apiClient.getAlerts();
-      setAlerts(data || []);
-    } catch (err) {
-      console.error('Failed to load alerts:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleCreate() {
-    if (!ticker || !targetPrice) return;
-    setCreating(true);
-    setError(null);
-
-    try {
-      await apiClient.createAlert(ticker.toUpperCase(), condition, targetPrice);
-      setShowForm(false);
-      setTicker('');
-      setTargetPrice('');
-      await loadAlerts();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create alert');
-    } finally {
-      setCreating(false);
-    }
-  }
-
-  async function handleDelete(id: string) {
-    try {
-      await apiClient.deleteAlert(id);
-      setAlerts((prev) => prev.filter((a) => a.id !== id));
-    } catch (err) {
-      console.error('Failed to delete alert:', err);
-    }
+  function onSubmitAlert(data: AlertFormValues) {
+    createAlert.mutate(
+      { ticker: data.ticker, condition: data.condition, targetPrice: data.target_price },
+      {
+        onSuccess: () => {
+          setShowForm(false);
+          reset();
+        },
+      }
+    );
   }
 
   const activeAlerts = alerts.filter((a) => !a.triggered);
   const triggeredAlerts = alerts.filter((a) => a.triggered);
 
   return (
+    <PageTransition>
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Price Alerts</h1>
@@ -86,58 +50,41 @@ export default function AlertsPage() {
 
       {/* Create Alert Form */}
       {showForm && (
-        <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmitAlert)} className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-4">
           <h2 className="font-semibold">Create Alert</h2>
 
           <div className="grid grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs text-[#6E7681] mb-1.5">Ticker</label>
-              <input
-                type="text"
-                value={ticker}
-                onChange={(e) => setTicker(e.target.value.toUpperCase())}
-                placeholder="PIPE"
-                className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2] text-sm"
-              />
-            </div>
+            <FormInput label="Ticker" placeholder="PIPE" error={errors.ticker?.message} {...register('ticker')} />
             <div>
               <label className="block text-xs text-[#6E7681] mb-1.5">Condition</label>
               <select
-                value={condition}
-                onChange={(e) => setCondition(e.target.value)}
+                {...register('condition')}
                 className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#50E3C2]"
               >
                 <option value="above">Price goes above</option>
                 <option value="below">Price goes below</option>
               </select>
             </div>
-            <div>
-              <label className="block text-xs text-[#6E7681] mb-1.5">Target Price</label>
-              <input
-                type="text"
-                value={targetPrice}
-                onChange={(e) => setTargetPrice(e.target.value)}
-                placeholder="100.00"
-                className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2] text-sm"
-              />
-            </div>
+            <FormInput label="Target Price" placeholder="100.00" error={errors.target_price?.message} {...register('target_price')} />
           </div>
 
-          {error && (
-            <div className="rounded-lg bg-red-500/10 text-red-400 px-4 py-2.5 text-sm">{error}</div>
+          {createAlert.isError && (
+            <div className="rounded-lg bg-red-500/10 text-red-400 px-4 py-2.5 text-sm">
+              {createAlert.error?.message || 'Failed to create alert'}
+            </div>
           )}
 
           <button
-            onClick={handleCreate}
-            disabled={creating || !ticker || !targetPrice}
+            type="submit"
+            disabled={createAlert.isPending}
             className="px-6 py-2.5 rounded-lg bg-[#50E3C2] text-[#0D1117] text-sm font-semibold hover:bg-[#3BC4A7] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {creating ? 'Creating...' : 'Create Alert'}
+            {createAlert.isPending ? 'Creating...' : 'Create Alert'}
           </button>
-        </div>
+        </form>
       )}
 
-      {loading ? (
+      {isLoading ? (
         <div className="p-8 text-center text-[#8B949E]">Loading alerts...</div>
       ) : alerts.length === 0 ? (
         <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-8 text-center text-[#8B949E]">
@@ -157,12 +104,12 @@ export default function AlertsPage() {
                         {alert.ticker}
                       </span>
                       <span className="text-sm text-[#8B949E]">
-                        {alert.condition === 'above' ? '↑ Above' : '↓ Below'}{' '}
+                        {alert.condition === 'above' ? '\u2191 Above' : '\u2193 Below'}{' '}
                         <span className="text-white font-medium">{formatCurrency(alert.target_price)}</span>
                       </span>
                     </div>
                     <button
-                      onClick={() => handleDelete(alert.id)}
+                      onClick={() => deleteAlert.mutate(alert.id)}
                       className="text-xs text-red-400 hover:text-red-300 transition-colors"
                     >
                       Delete
@@ -185,13 +132,13 @@ export default function AlertsPage() {
                         {alert.ticker}
                       </span>
                       <span className="text-sm text-[#8B949E]">
-                        {alert.condition === 'above' ? '↑ Above' : '↓ Below'}{' '}
+                        {alert.condition === 'above' ? '\u2191 Above' : '\u2193 Below'}{' '}
                         <span className="text-white font-medium">{formatCurrency(alert.target_price)}</span>
                       </span>
                       <span className="text-xs text-emerald-400">Triggered</span>
                     </div>
                     <button
-                      onClick={() => handleDelete(alert.id)}
+                      onClick={() => deleteAlert.mutate(alert.id)}
                       className="text-xs text-[#6E7681] hover:text-red-400 transition-colors"
                     >
                       Remove
@@ -204,5 +151,6 @@ export default function AlertsPage() {
         </>
       )}
     </div>
+    </PageTransition>
   );
 }
