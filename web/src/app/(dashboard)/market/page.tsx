@@ -20,7 +20,9 @@ const assetFilters = [
 ];
 
 export default function MarketPage() {
-  const { setSearchQuery, filteredStocks } = useMarketStore();
+  const stocks = useMarketStore((s) => s.stocks);
+  const searchQuery = useMarketStore((s) => s.searchQuery);
+  const setSearchQuery = useMarketStore((s) => s.setSearchQuery);
   const [localSearch, setLocalSearch] = useState('');
   const [assetFilter, setAssetFilter] = useState('all');
   const debouncedSearch = useDebounce(localSearch, 300);
@@ -34,10 +36,16 @@ export default function MarketPage() {
   }, [debouncedSearch, setSearchQuery]);
 
   const filtered = useMemo(() => {
-    const searched = filteredStocks();
-    if (assetFilter === 'all') return searched;
-    return searched.filter((s: Stock) => s.asset_type === assetFilter);
-  }, [filteredStocks, assetFilter]);
+    let result = stocks;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((s) => s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
+    }
+    if (assetFilter !== 'all') {
+      result = result.filter((s: Stock) => s.asset_type === assetFilter);
+    }
+    return result;
+  }, [stocks, searchQuery, assetFilter]);
 
   const { sorted: displayed, sortKey, sortDirection, onSort } = useSort(filtered, 'ticker', 'asc');
 
