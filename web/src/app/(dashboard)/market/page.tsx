@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { useStocks, useMarketSummary } from '@/hooks/use-stocks';
 import { useMarketStore } from '@/stores/market-store';
@@ -8,6 +8,7 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useSort } from '@/hooks/use-sort';
 import { PageTransition } from '@/components/ui/PageTransition';
 import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { PieChart, COLORS } from '@/components/charts/PieChart';
 import { formatCurrency, formatPercent, priceChangeColor, priceChangeBg } from '@/lib/formatters';
 import type { Stock } from '@/types/stock';
 
@@ -25,15 +26,28 @@ export default function MarketPage() {
   const setSearchQuery = useMarketStore((s) => s.setSearchQuery);
   const [localSearch, setLocalSearch] = useState('');
   const [assetFilter, setAssetFilter] = useState('all');
+  const [sectorFilter, setSectorFilter] = useState('all');
   const debouncedSearch = useDebounce(localSearch, 300);
 
   const { isLoading: stocksLoading } = useStocks();
   const { data: summary } = useMarketSummary();
 
   // Sync debounced value to store
-  useMemo(() => {
+  useEffect(() => {
     setSearchQuery(debouncedSearch);
   }, [debouncedSearch, setSearchQuery]);
+
+  // Available sectors based on current asset type filter
+  const availableSectors = useMemo(() => {
+    const pool = assetFilter === 'all' ? stocks : stocks.filter((s) => s.asset_type === assetFilter);
+    const unique = [...new Set(pool.map((s) => s.sector))].sort();
+    return unique;
+  }, [stocks, assetFilter]);
+
+  // Reset sector when asset type changes
+  useEffect(() => {
+    setSectorFilter('all');
+  }, [assetFilter]);
 
   const filtered = useMemo(() => {
     let result = stocks;
@@ -44,10 +58,26 @@ export default function MarketPage() {
     if (assetFilter !== 'all') {
       result = result.filter((s: Stock) => s.asset_type === assetFilter);
     }
+    if (sectorFilter !== 'all') {
+      result = result.filter((s: Stock) => s.sector === sectorFilter);
+    }
     return result;
-  }, [stocks, searchQuery, assetFilter]);
+  }, [stocks, searchQuery, assetFilter, sectorFilter]);
 
   const { sorted: displayed, sortKey, sortDirection, onSort } = useSort(filtered, 'ticker', 'asc');
+
+  // Sector breakdown for pie chart (by count of stocks, excluding ETFs)
+  const sectorData = useMemo(() => {
+    const counts: Record<string, number> = {};
+    stocks.forEach((s) => {
+      if (s.asset_type === 'etf') return;
+      const key = s.sector || s.asset_type;
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([label, value], i) => ({ label, value, color: COLORS[i % COLORS.length] }))
+      .sort((a, b) => b.value - a.value);
+  }, [stocks]);
 
   return (
     <PageTransition>
@@ -57,19 +87,29 @@ export default function MarketPage() {
       {/* Market Summary */}
       {summary && (
         <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
-          <div className="flex items-baseline justify-between">
-            <div>
-              <p className="text-sm text-[#8B949E] mb-1">Market Index</p>
-              <p className="text-3xl font-bold">{formatCurrency(summary.index_value)}</p>
+          <div className="flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex-1">
+              <div className="flex items-baseline justify-between mb-3">
+                <div>
+                  <p className="text-sm text-[#8B949E] mb-1">Market Index</p>
+                  <p className="text-3xl font-bold">{formatCurrency(summary.index_value)}</p>
+                </div>
+                <div className={`text-lg font-semibold ${priceChangeColor(summary.index_change_pct)}`}>
+                  {formatPercent(summary.index_change_pct)}
+                </div>
+              </div>
+              <div className="flex gap-4 text-sm text-[#8B949E]">
+                <span className="text-emerald-400">{summary.gainers} gainers</span>
+                <span className="text-red-400">{summary.losers} losers</span>
+                <span>{summary.total_stocks} assets</span>
+              </div>
             </div>
-            <div className={`text-lg font-semibold ${priceChangeColor(summary.index_change_pct)}`}>
-              {formatPercent(summary.index_change_pct)}
-            </div>
-          </div>
-          <div className="mt-3 flex gap-4 text-sm text-[#8B949E]">
-            <span className="text-emerald-400">{summary.gainers} gainers</span>
-            <span className="text-red-400">{summary.losers} losers</span>
-            <span>{summary.total_stocks} stocks</span>
+            {sectorData.length > 0 && (
+              <div>
+                <p className="text-xs text-[#6E7681] mb-2">Composition by Sector</p>
+                <PieChart data={sectorData} size={130} />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -99,6 +139,35 @@ export default function MarketPage() {
           </button>
         ))}
       </div>
+
+      {/* Sector Filter */}
+      {availableSectors.length > 1 && (
+        <div className="flex gap-1.5 overflow-x-auto pb-1">
+          <button
+            onClick={() => setSectorFilter('all')}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              sectorFilter === 'all'
+                ? 'bg-[#50E3C2]/15 text-[#50E3C2]'
+                : 'bg-[#21262D] text-[#8B949E] hover:text-white'
+            }`}
+          >
+            All Sectors
+          </button>
+          {availableSectors.map((sector) => (
+            <button
+              key={sector}
+              onClick={() => setSectorFilter(sector)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                sectorFilter === sector
+                  ? 'bg-[#50E3C2]/15 text-[#50E3C2]'
+                  : 'bg-[#21262D] text-[#8B949E] hover:text-white'
+              }`}
+            >
+              {sector}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Stock Table */}
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] overflow-hidden">

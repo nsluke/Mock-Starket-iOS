@@ -11,6 +11,46 @@ struct MarketView: View {
                     .listRowBackground(Theme.surface)
             }
 
+            // Asset Category Filter
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(AssetCategory.allCases) { category in
+                            SectorChip(title: category.rawValue, isSelected: viewModel.selectedCategory == category) {
+                                viewModel.selectedCategory = category
+                                viewModel.selectedSector = nil
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+                .listRowBackground(Theme.surface)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+            }
+
+            // Sector Filter
+            if viewModel.availableSectors.count > 1 {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            SectorChip(title: "All Sectors", isSelected: viewModel.selectedSector == nil) {
+                                viewModel.selectedSector = nil
+                            }
+                            ForEach(viewModel.availableSectors, id: \.self) { sector in
+                                SectorChip(title: sector, isSelected: viewModel.selectedSector == sector) {
+                                    viewModel.selectedSector = sector
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 4)
+                    }
+                    .listRowBackground(Theme.surface)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                }
+            }
+
             // Stock List
             Section {
                 ForEach(viewModel.filteredStocks) { stock in
@@ -20,7 +60,7 @@ struct MarketView: View {
                     .listRowBackground(Theme.surface)
                 }
             } header: {
-                Text("All Stocks")
+                Text(viewModel.selectedCategory == .all ? "All Assets" : viewModel.selectedCategory.rawValue)
                     .foregroundStyle(Theme.textSecondary)
             }
         }
@@ -117,6 +157,25 @@ struct MarketSummaryCard: View {
         .padding()
         .background(Theme.surfaceElevated)
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+struct SectorChip: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.caption.weight(.medium))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(isSelected ? Theme.accent.opacity(0.2) : Theme.surfaceElevated)
+                .foregroundStyle(isSelected ? Theme.accent : Theme.textSecondary)
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 }
 
