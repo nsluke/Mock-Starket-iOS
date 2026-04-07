@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class APIClient {
   private baseURL: string;
@@ -167,6 +167,50 @@ class APIClient {
   // Portfolio History
   getPortfolioHistory(limit = 100) {
     return this.request<any[]>(`/api/v1/portfolio/history?limit=${limit}`);
+  }
+
+  // Options
+  getOptionChain(ticker: string, expiration?: string) {
+    const params = expiration ? `?expiration=${expiration}` : '';
+    return this.request<any>(`/api/v1/stocks/${ticker}/options${params}`);
+  }
+
+  getOptionExpirations(ticker: string) {
+    return this.request<string[]>(`/api/v1/stocks/${ticker}/options/expirations`);
+  }
+
+  getOptionContract(id: string) {
+    return this.request<any>(`/api/v1/options/${id}`);
+  }
+
+  executeOptionsTrade(contractId: string, side: string, quantity: number) {
+    return this.request<any>('/api/v1/options/trades', {
+      method: 'POST',
+      body: JSON.stringify({ contract_id: contractId, side, quantity }),
+    });
+  }
+
+  getOptionsTradeHistory(limit = 50, offset = 0) {
+    return this.request<any[]>(`/api/v1/options/trades?limit=${limit}&offset=${offset}`);
+  }
+
+  getOptionsPositions() {
+    return this.request<any[]>('/api/v1/options/positions');
+  }
+
+  createOptionsOrder(contractId: string, side: string, orderType: string, quantity: number, limitPrice?: string) {
+    return this.request<any>('/api/v1/options/orders', {
+      method: 'POST',
+      body: JSON.stringify({ contract_id: contractId, side, order_type: orderType, quantity, limit_price: limitPrice }),
+    });
+  }
+
+  getOptionsOrders() {
+    return this.request<any[]>('/api/v1/options/orders');
+  }
+
+  cancelOptionsOrder(id: string) {
+    return this.request<any>(`/api/v1/options/orders/${id}`, { method: 'DELETE' });
   }
 }
 

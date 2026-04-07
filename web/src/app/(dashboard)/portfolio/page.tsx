@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { usePortfolio, usePortfolioHistory, useTradeHistory } from '@/hooks/use-portfolio';
 import { PageTransition } from '@/components/ui/PageTransition';
 import { CardSkeleton } from '@/components/ui/CardSkeleton';
+import { PieChart, COLORS } from '@/components/charts/PieChart';
+import { OptionsPositionsTable } from '@/components/options/OptionsPositionsTable';
 import { formatCurrency, formatPercent, priceChangeColor } from '@/lib/formatters';
 
 const PortfolioChart = dynamic(() => import('@/components/charts/PortfolioChart'), { ssr: false });
@@ -14,7 +16,7 @@ export default function PortfolioPage() {
   const { data, isLoading } = usePortfolio();
   const { data: trades = [] } = useTradeHistory(20, 0);
   const { data: portfolioHistory = [] } = usePortfolioHistory(100);
-  const [tab, setTab] = useState<'holdings' | 'history'>('holdings');
+  const [tab, setTab] = useState<'holdings' | 'options' | 'history'>('holdings');
 
   if (isLoading) {
     return (
@@ -89,6 +91,24 @@ export default function PortfolioPage() {
         </div>
       )}
 
+      {/* Portfolio Breakdown */}
+      {data.positions.length > 0 && (
+        <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
+          <h2 className="font-semibold mb-4">Portfolio Breakdown</h2>
+          <PieChart
+            data={[
+              ...data.positions.map((pos, i) => ({
+                label: pos.ticker,
+                value: parseFloat(pos.market_value),
+                color: COLORS[i % COLORS.length],
+              })),
+              { label: 'Cash', value: cash, color: '#6E7681' },
+            ]}
+            size={160}
+          />
+        </div>
+      )}
+
       {/* Tab Toggle */}
       <div className="flex border-b border-[#30363D]">
         <button
@@ -100,6 +120,16 @@ export default function PortfolioPage() {
           }`}
         >
           Holdings
+        </button>
+        <button
+          onClick={() => setTab('options')}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            tab === 'options'
+              ? 'border-[#50E3C2] text-white'
+              : 'border-transparent text-[#8B949E] hover:text-white'
+          }`}
+        >
+          Options
         </button>
         <button
           onClick={() => setTab('history')}
@@ -168,6 +198,13 @@ export default function PortfolioPage() {
               </tbody>
             </table>
           )}
+        </div>
+      )}
+
+      {/* Options Positions */}
+      {tab === 'options' && (
+        <div className="rounded-xl bg-[#161B22] border border-[#30363D] overflow-hidden">
+          <OptionsPositionsTable />
         </div>
       )}
 

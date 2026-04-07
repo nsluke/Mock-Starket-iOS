@@ -8,11 +8,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PageTransition } from '@/components/ui/PageTransition';
 import { useStock, useStockHistory, useETFHoldings } from '@/hooks/use-stocks';
-import { useExecuteTrade } from '@/hooks/use-portfolio';
+import { useExecuteTrade, usePortfolio } from '@/hooks/use-portfolio';
+import { useCreateOrder } from '@/hooks/use-orders';
 import { useWatchlist, useAddToWatchlist, useRemoveFromWatchlist } from '@/hooks/use-watchlist';
 import { formatCurrency, formatPercent, formatVolume, priceChangeColor } from '@/lib/formatters';
 import { tradeSchema, type TradeFormValues } from '@/lib/schemas';
 import { useMarketStore } from '@/stores/market-store';
+import { PieChart, COLORS } from '@/components/charts/PieChart';
+
+import { OptionChainTable } from '@/components/options/OptionChainTable';
 
 const PriceChart = dynamic(() => import('@/components/charts/PriceChart'), { ssr: false });
 
@@ -29,9 +33,16 @@ export default function StockDetailPage() {
   const removeFromWatchlist = useRemoveFromWatchlist();
   const isWatched = watchlist.includes(ticker);
 
+  // Portfolio data for sell-all
+  const { data: portfolio } = usePortfolio();
+  const position = portfolio?.positions?.find((p: any) => p.ticker === ticker);
+  const ownedShares = position ? Number(position.shares) : 0;
+
   // Trade form
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
+  const [orderMode, setOrderMode] = useState<'market' | 'limit' | 'stop'>('market');
   const executeTrade = useExecuteTrade();
+  const createOrder = useCreateOrder();
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<TradeFormValues>({
     resolver: zodResolver(tradeSchema),
   });
@@ -45,11 +56,38 @@ export default function StockDetailPage() {
   const changePct = dayOpen !== 0 ? (change / dayOpen) * 100 : 0;
   const totalCost = (sharesValue || 0) * currentPrice;
 
+  const [limitPrice, setLimitPrice] = useState('');
+  const [stopPrice, setStopPrice] = useState('');
+
   function onTrade(data: TradeFormValues) {
-    executeTrade.mutate(
-      { ticker, side, shares: data.shares },
-      { onSuccess: () => reset() }
-    );
+    if (orderMode === 'market') {
+      executeTrade.mutate(
+        { ticker, side, shares: data.shares },
+        { onSuccess: () => reset() }
+      );
+    } else {
+      createOrder.mutate(
+        {
+          ticker,
+          side,
+          orderType: orderMode === 'limit' ? 'limit' : 'stop',
+          shares: data.shares,
+          limitPrice: orderMode === 'limit' ? limitPrice : undefined,
+          stopPrice: orderMode === 'stop' ? stopPrice : undefined,
+        },
+        { onSuccess: () => { reset(); setLimitPrice(''); setStopPrice(''); } }
+      );
+    }
+  }
+
+  function handleQuickBuy(shares: number) {
+    executeTrade.mutate({ ticker, side: 'buy', shares });
+  }
+
+  function handleSellAll() {
+    if (ownedShares > 0) {
+      executeTrade.mutate({ ticker, side: 'sell', shares: ownedShares });
+    }
   }
 
   if (isLoading) {
@@ -177,23 +215,35 @@ export default function StockDetailPage() {
       {stock.asset_type === 'etf' && etfHoldings.length > 0 && (
         <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
           <h2 className="font-semibold mb-4">Holdings</h2>
-          <div className="space-y-3">
-            {etfHoldings.map((h) => (
-              <div key={h.ticker} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Link href={`/stock/${h.ticker}`}>
-                    <span className="rounded bg-[#50E3C2]/10 px-2 py-0.5 text-xs font-mono font-bold text-[#50E3C2] hover:bg-[#50E3C2]/20 transition-colors">
-                      {h.ticker}
-                    </span>
-                  </Link>
-                  <span className="text-sm text-[#8B949E]">{h.name}</span>
+          <div className="flex flex-col md:flex-row gap-6">
+            <div>
+              <PieChart
+                data={etfHoldings.map((h, i) => ({
+                  label: h.ticker,
+                  value: parseFloat(h.weight) * 100,
+                  color: COLORS[i % COLORS.length],
+                }))}
+                size={140}
+              />
+            </div>
+            <div className="flex-1 space-y-3">
+              {etfHoldings.map((h) => (
+                <div key={h.ticker} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Link href={`/stock/${h.ticker}`}>
+                      <span className="rounded bg-[#50E3C2]/10 px-2 py-0.5 text-xs font-mono font-bold text-[#50E3C2] hover:bg-[#50E3C2]/20 transition-colors">
+                        {h.ticker}
+                      </span>
+                    </Link>
+                    <span className="text-sm text-[#8B949E]">{h.name}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-[#8B949E]">{h.price ? formatCurrency(h.price) : '-'}</span>
+                    <span className="text-sm font-semibold">{(parseFloat(h.weight) * 100).toFixed(0)}%</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-[#8B949E]">{h.price ? formatCurrency(h.price) : '-'}</span>
-                  <span className="text-sm font-semibold">{(parseFloat(h.weight) * 100).toFixed(0)}%</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -202,68 +252,170 @@ export default function StockDetailPage() {
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
         <h2 className="font-semibold mb-4">Trade {stock.ticker}</h2>
 
-        {/* Buy / Sell toggle */}
-        <div className="flex rounded-lg overflow-hidden border border-[#30363D] mb-4">
-          <button
-            onClick={() => setSide('buy')}
-            className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-              side === 'buy'
-                ? 'bg-emerald-500/20 text-emerald-400 border-r border-[#30363D]'
-                : 'text-[#8B949E] hover:text-white border-r border-[#30363D]'
-            }`}
-          >
-            Buy
-          </button>
-          <button
-            onClick={() => setSide('sell')}
-            className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
-              side === 'sell'
-                ? 'bg-red-500/20 text-red-400'
-                : 'text-[#8B949E] hover:text-white'
-            }`}
-          >
-            Sell
-          </button>
+        {/* Position info */}
+        {ownedShares > 0 && (
+          <div className="flex items-center justify-between rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-3 mb-4 text-sm">
+            <span className="text-[#8B949E]">You own <span className="text-white font-semibold">{ownedShares}</span> shares</span>
+            <button
+              onClick={handleSellAll}
+              disabled={executeTrade.isPending}
+              className="px-3 py-1 rounded-lg bg-red-500/10 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-colors disabled:opacity-40"
+            >
+              Sell All
+            </button>
+          </div>
+        )}
+
+        {/* Quick Buy Buttons */}
+        <div className="mb-4">
+          <label className="block text-xs text-[#6E7681] mb-2">Quick Buy</label>
+          <div className="grid grid-cols-4 gap-2">
+            {[1, 10, 100, 1000].map((qty) => (
+              <button
+                key={qty}
+                onClick={() => handleQuickBuy(qty)}
+                disabled={executeTrade.isPending}
+                className="py-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-semibold hover:bg-emerald-500/20 transition-colors disabled:opacity-40"
+              >
+                {qty}
+              </button>
+            ))}
+          </div>
+          <p className="text-xs text-[#6E7681] mt-1">
+            1 share = {formatCurrency(currentPrice)}
+          </p>
         </div>
 
-        {/* Trade form */}
-        <form onSubmit={handleSubmit(onTrade)}>
-          <div className="mb-4">
-            <label className="block text-xs text-[#6E7681] mb-1.5">Shares</label>
-            <input
-              type="number"
-              min="1"
-              placeholder="0"
-              {...register('shares')}
-              className={`w-full rounded-lg bg-[#0D1117] border px-4 py-3 text-white placeholder-[#6E7681] focus:outline-none ${
-                errors.shares ? 'border-red-400' : 'border-[#30363D] focus:border-[#50E3C2]'
+        <div className="border-t border-[#30363D] pt-4 mt-4">
+          {/* Buy / Sell toggle */}
+          <div className="flex rounded-lg overflow-hidden border border-[#30363D] mb-4">
+            <button
+              onClick={() => setSide('buy')}
+              className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                side === 'buy'
+                  ? 'bg-emerald-500/20 text-emerald-400 border-r border-[#30363D]'
+                  : 'text-[#8B949E] hover:text-white border-r border-[#30363D]'
               }`}
-            />
-            {errors.shares && (
-              <p className="text-xs text-red-400 mt-1">{errors.shares.message}</p>
-            )}
+            >
+              Buy
+            </button>
+            <button
+              onClick={() => setSide('sell')}
+              className={`flex-1 py-2.5 text-sm font-semibold transition-colors ${
+                side === 'sell'
+                  ? 'bg-red-500/20 text-red-400'
+                  : 'text-[#8B949E] hover:text-white'
+              }`}
+            >
+              Sell
+            </button>
           </div>
 
-          {totalCost > 0 && (
-            <div className="flex justify-between text-sm mb-4 px-1">
-              <span className="text-[#8B949E]">Estimated Total</span>
-              <span className="font-semibold">{formatCurrency(totalCost)}</span>
-            </div>
-          )}
+          {/* Order type toggle */}
+          <div className="flex gap-1 mb-4">
+            {(['market', 'limit', 'stop'] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setOrderMode(mode)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  orderMode === mode
+                    ? 'bg-[#21262D] text-white'
+                    : 'text-[#8B949E] hover:text-white'
+                }`}
+              >
+                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+              </button>
+            ))}
+          </div>
 
-          <button
-            type="submit"
-            disabled={executeTrade.isPending}
-            className={`w-full py-3 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-              side === 'buy'
-                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                : 'bg-red-500 hover:bg-red-600 text-white'
-            }`}
-          >
-            {executeTrade.isPending ? 'Processing...' : `${side === 'buy' ? 'Buy' : 'Sell'} ${stock.ticker}`}
-          </button>
-        </form>
+          {/* Trade form */}
+          <form onSubmit={handleSubmit(onTrade)}>
+            <div className="mb-4">
+              <label className="block text-xs text-[#6E7681] mb-1.5">Shares</label>
+              <input
+                type="number"
+                min="1"
+                placeholder="0"
+                {...register('shares')}
+                className={`w-full rounded-lg bg-[#0D1117] border px-4 py-3 text-white placeholder-[#6E7681] focus:outline-none ${
+                  errors.shares ? 'border-red-400' : 'border-[#30363D] focus:border-[#50E3C2]'
+                }`}
+              />
+              {errors.shares && (
+                <p className="text-xs text-red-400 mt-1">{errors.shares.message}</p>
+              )}
+            </div>
+
+            {/* Limit price input */}
+            {orderMode === 'limit' && (
+              <div className="mb-4">
+                <label className="block text-xs text-[#6E7681] mb-1.5">
+                  Limit Price {side === 'buy' ? '(buy at or below)' : '(sell at or above)'}
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder={currentPrice.toFixed(2)}
+                  value={limitPrice}
+                  onChange={(e) => setLimitPrice(e.target.value)}
+                  className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-3 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2]"
+                />
+              </div>
+            )}
+
+            {/* Stop price input */}
+            {orderMode === 'stop' && (
+              <div className="mb-4">
+                <label className="block text-xs text-[#6E7681] mb-1.5">
+                  Stop Price {side === 'buy' ? '(trigger above)' : '(trigger below)'}
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder={currentPrice.toFixed(2)}
+                  value={stopPrice}
+                  onChange={(e) => setStopPrice(e.target.value)}
+                  className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-3 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2]"
+                />
+              </div>
+            )}
+
+            {totalCost > 0 && orderMode === 'market' && (
+              <div className="flex justify-between text-sm mb-4 px-1">
+                <span className="text-[#8B949E]">Estimated Total</span>
+                <span className="font-semibold">{formatCurrency(totalCost)}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={executeTrade.isPending || createOrder.isPending}
+              className={`w-full py-3 rounded-lg text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                side === 'buy'
+                  ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                  : 'bg-red-500 hover:bg-red-600 text-white'
+              }`}
+            >
+              {(executeTrade.isPending || createOrder.isPending)
+                ? 'Processing...'
+                : orderMode === 'market'
+                  ? `${side === 'buy' ? 'Buy' : 'Sell'} ${stock.ticker}`
+                  : `Place ${orderMode} ${side} order`
+              }
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* Options Chain */}
+      {stock.asset_type === 'stock' && (
+        <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
+          <h2 className="font-semibold mb-4">Options Chain</h2>
+          <OptionChainTable ticker={ticker} underlyingPrice={currentPrice} />
+        </div>
+      )}
     </div>
     </PageTransition>
   );

@@ -179,3 +179,66 @@ type PortfolioHistory struct {
 	Cash       decimal.Decimal `json:"cash" db:"cash"`
 	RecordedAt time.Time       `json:"recorded_at" db:"recorded_at"`
 }
+
+// ---- Options ----
+
+type OptionContract struct {
+	ID             uuid.UUID       `json:"id" db:"id"`
+	Ticker         string          `json:"ticker" db:"ticker"`
+	OptionType     string          `json:"option_type" db:"option_type"`
+	StrikePrice    decimal.Decimal `json:"strike_price" db:"strike_price"`
+	Expiration     time.Time       `json:"expiration" db:"expiration"`
+	ContractSymbol string          `json:"contract_symbol" db:"contract_symbol"`
+	BidPrice       decimal.Decimal `json:"bid_price" db:"bid_price"`
+	AskPrice       decimal.Decimal `json:"ask_price" db:"ask_price"`
+	LastPrice      decimal.Decimal `json:"last_price" db:"last_price"`
+	MarkPrice      decimal.Decimal `json:"mark_price" db:"mark_price"`
+	OpenInterest   int             `json:"open_interest" db:"open_interest"`
+	Volume         int             `json:"volume" db:"volume"`
+	ImpliedVol     decimal.Decimal `json:"implied_vol" db:"implied_vol"`
+	Delta          decimal.Decimal `json:"delta" db:"delta"`
+	Gamma          decimal.Decimal `json:"gamma" db:"gamma"`
+	Theta          decimal.Decimal `json:"theta" db:"theta"`
+	Vega           decimal.Decimal `json:"vega" db:"vega"`
+	Rho            decimal.Decimal `json:"rho" db:"rho"`
+	Status         string          `json:"status" db:"status"`
+	CreatedAt      time.Time       `json:"created_at" db:"created_at"`
+	UpdatedAt      time.Time       `json:"updated_at" db:"updated_at"`
+}
+
+type OptionPosition struct {
+	ID          uuid.UUID       `json:"id" db:"id"`
+	PortfolioID uuid.UUID       `json:"portfolio_id" db:"portfolio_id"`
+	ContractID  uuid.UUID       `json:"contract_id" db:"contract_id"`
+	Quantity    int             `json:"quantity" db:"quantity"`
+	AvgCost     decimal.Decimal `json:"avg_cost" db:"avg_cost"`
+	Collateral  decimal.Decimal `json:"collateral" db:"collateral"`
+	CreatedAt   time.Time       `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at" db:"updated_at"`
+}
+
+type OptionTrade struct {
+	ID         uuid.UUID       `json:"id" db:"id"`
+	UserID     uuid.UUID       `json:"user_id" db:"user_id"`
+	ContractID uuid.UUID       `json:"contract_id" db:"contract_id"`
+	Side       string          `json:"side" db:"side"`
+	Quantity   int             `json:"quantity" db:"quantity"`
+	Price      decimal.Decimal `json:"price" db:"price"`
+	Total      decimal.Decimal `json:"total" db:"total"`
+	CreatedAt  time.Time       `json:"created_at" db:"created_at"`
+}
+
+type OptionOrder struct {
+	ID          uuid.UUID        `json:"id" db:"id"`
+	UserID      uuid.UUID        `json:"user_id" db:"user_id"`
+	ContractID  uuid.UUID        `json:"contract_id" db:"contract_id"`
+	Side        string           `json:"side" db:"side"`
+	OrderType   string           `json:"order_type" db:"order_type"`
+	Quantity    int              `json:"quantity" db:"quantity"`
+	LimitPrice  *decimal.Decimal `json:"limit_price,omitempty" db:"limit_price"`
+	Status      string           `json:"status" db:"status"`
+	FilledPrice *decimal.Decimal `json:"filled_price,omitempty" db:"filled_price"`
+	FilledAt    *time.Time       `json:"filled_at,omitempty" db:"filled_at"`
+	CreatedAt   time.Time        `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time        `json:"updated_at" db:"updated_at"`
+}

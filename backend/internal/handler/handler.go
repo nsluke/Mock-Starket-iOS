@@ -19,12 +19,13 @@ import (
 
 // Handler holds dependencies for HTTP handlers.
 type Handler struct {
-	repo         *repository.Repo
-	tradeSvc     *service.TradeService
-	challengeSvc *service.ChallengeService
-	engine       *simulation.Engine
-	hub          *ws.Hub
-	startingCash float64
+	repo            *repository.Repo
+	tradeSvc        *service.TradeService
+	optionsTradeSvc *service.OptionsTradeService
+	challengeSvc    *service.ChallengeService
+	engine          *simulation.Engine
+	hub             *ws.Hub
+	startingCash    float64
 }
 
 // New creates a new Handler.
@@ -41,6 +42,11 @@ func New(repo *repository.Repo, tradeSvc *service.TradeService, engine *simulati
 // SetChallengeService sets the challenge service (avoids circular deps during init).
 func (h *Handler) SetChallengeService(svc *service.ChallengeService) {
 	h.challengeSvc = svc
+}
+
+// SetOptionsTradeService sets the options trade service.
+func (h *Handler) SetOptionsTradeService(svc *service.OptionsTradeService) {
+	h.optionsTradeSvc = svc
 }
 
 // ---- Auth ----

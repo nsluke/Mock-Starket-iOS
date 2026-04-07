@@ -116,6 +116,17 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 		r.Get("/watchlist", h.GetWatchlist)
 		r.Post("/watchlist", h.AddToWatchlist)
 		r.Delete("/watchlist/{ticker}", h.RemoveFromWatchlist)
+
+		// Options
+		r.Get("/stocks/{ticker}/options", h.GetOptionChain)
+		r.Get("/stocks/{ticker}/options/expirations", h.GetOptionExpirations)
+		r.Get("/options/{id}", h.GetOptionContractDetail)
+		r.Post("/options/trades", h.ExecuteOptionsTrade)
+		r.Get("/options/trades", h.GetOptionsTradeHistory)
+		r.Get("/options/positions", h.GetOptionsPositions)
+		r.Post("/options/orders", h.CreateOptionsOrder)
+		r.Get("/options/orders", h.ListOptionsOrders)
+		r.Delete("/options/orders/{id}", h.CancelOptionsOrder)
 	})
 
 	return r
