@@ -64,6 +64,10 @@ class APIClient {
     return this.request<any[]>(`/api/v1/stocks/${ticker}/history?interval=${interval}`);
   }
 
+  getETFHoldings(ticker: string) {
+    return this.request<any[]>(`/api/v1/stocks/${ticker}/holdings`);
+  }
+
   getMarketSummary() {
     return this.request<any>('/api/v1/stocks/market-summary');
   }

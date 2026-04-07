@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { createChart, ColorType, type IChartApi, type ISeriesApi, type LineData, type Time } from 'lightweight-charts';
+import { createChart, ColorType, type IChartApi, type ISeriesApi, type Time } from 'lightweight-charts';
 
 interface PriceChartProps {
   data: Array<{

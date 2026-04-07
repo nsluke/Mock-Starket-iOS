@@ -1,4 +1,6 @@
 type MessageHandler = (data: any) => void;
+export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected';
+type StatusHandler = (status: ConnectionStatus) => void;
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws';
 
@@ -8,6 +10,25 @@ export class WebSocketClient {
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 10;
   private token: string | null = null;
+  private pingInterval: ReturnType<typeof setInterval> | null = null;
+  private _status: ConnectionStatus = 'disconnected';
+  private statusHandlers: StatusHandler[] = [];
+
+  get status() {
+    return this._status;
+  }
+
+  private setStatus(status: ConnectionStatus) {
+    this._status = status;
+    this.statusHandlers.forEach((h) => h(status));
+  }
+
+  onStatusChange(handler: StatusHandler) {
+    this.statusHandlers.push(handler);
+    return () => {
+      this.statusHandlers = this.statusHandlers.filter((h) => h !== handler);
+    };
+  }
 
   connect(token: string) {
     this.token = token;
@@ -15,6 +36,7 @@ export class WebSocketClient {
 
     this.ws.onopen = () => {
       this.reconnectAttempts = 0;
+      this.setStatus('connected');
       this.subscribe('market');
       this.subscribe('portfolio');
       this.startPing();
@@ -31,6 +53,7 @@ export class WebSocketClient {
     };
 
     this.ws.onclose = () => {
+      this.stopPing();
       this.attemptReconnect();
     };
 
@@ -40,8 +63,10 @@ export class WebSocketClient {
   }
 
   disconnect() {
+    this.stopPing();
     this.ws?.close();
     this.ws = null;
+    this.setStatus('disconnected');
   }
 
   subscribe(channel: string) {
@@ -73,16 +98,28 @@ export class WebSocketClient {
   }
 
   private attemptReconnect() {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts || !this.token) return;
+    if (this.reconnectAttempts >= this.maxReconnectAttempts || !this.token) {
+      this.setStatus('disconnected');
+      return;
+    }
+    this.setStatus('reconnecting');
     this.reconnectAttempts++;
     const delay = Math.min(Math.pow(2, this.reconnectAttempts) * 1000, 30000);
     setTimeout(() => this.connect(this.token!), delay);
   }
 
   private startPing() {
-    setInterval(() => {
+    this.stopPing();
+    this.pingInterval = setInterval(() => {
       this.send({ type: 'ping' });
     }, 30000);
+  }
+
+  private stopPing() {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
   }
 }
 

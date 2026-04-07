@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class AppState {
     enum AuthState {
         case loading
@@ -16,12 +16,6 @@ final class AppState {
     private let apiClient = APIClient.shared
     private let webSocketManager = WebSocketManager.shared
     private let authManager = AuthManager.shared
-
-    init() {
-        Task {
-            await checkAuth()
-        }
-    }
 
     func checkAuth() async {
         if let token = authManager.currentToken {

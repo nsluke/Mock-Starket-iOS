@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class LeaderboardViewModel {
     var entries: [LeaderboardEntry] = []
     var selectedPeriod = "alltime"

@@ -26,6 +26,64 @@ struct StockDetailView: View {
                     statsGrid(stock)
                 }
 
+                // ETF Holdings (if this is an ETF)
+                if viewModel.stock?.assetType == "etf" && !viewModel.etfHoldings.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Holdings")
+                            .font(.headline)
+                            .foregroundStyle(Theme.textPrimary)
+
+                        ForEach(viewModel.etfHoldings) { holding in
+                            HStack {
+                                Text(holding.ticker)
+                                    .font(.caption.monospaced().weight(.bold))
+                                    .foregroundStyle(Theme.accent)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 3)
+                                    .background(Theme.accent.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
+
+                                Text(holding.name)
+                                    .font(.subheadline)
+                                    .foregroundStyle(Theme.textSecondary)
+
+                                Spacer()
+
+                                Text("\((Decimal(string: holding.weight) ?? 0) * 100)%")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(Theme.textPrimary)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+
+                // User position
+                if viewModel.userShares > 0 {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Your Position")
+                                .font(.caption)
+                                .foregroundStyle(Theme.textTertiary)
+                            Text("\(viewModel.userShares) share\(viewModel.userShares == 1 ? "" : "s")")
+                                .font(.headline)
+                        }
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text("Market Value")
+                                .font(.caption)
+                                .foregroundStyle(Theme.textTertiary)
+                            Text(((viewModel.stock?.currentPrice ?? 0) * Decimal(viewModel.userShares)).formatted(.currency(code: "USD")))
+                                .font(.headline)
+                        }
+                    }
+                    .padding()
+                    .background(Theme.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
+                }
+
                 // Trade buttons
                 tradeButtons
 
@@ -55,9 +113,19 @@ struct StockDetailView: View {
 
     private func priceHeader(_ stock: Stock) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(stock.name)
-                .font(.title3.weight(.semibold))
-                .foregroundStyle(Theme.textSecondary)
+            HStack(spacing: 8) {
+                Text(stock.name)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary)
+
+                Text(stock.assetType.uppercased())
+                    .font(.caption2.weight(.bold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(assetTypeColor(stock.assetType).opacity(0.15))
+                    .foregroundStyle(assetTypeColor(stock.assetType))
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
 
             HStack(alignment: .firstTextBaseline, spacing: 12) {
                 Text(stock.currentPrice.currencyFormatted)
@@ -200,8 +268,22 @@ struct StockDetailView: View {
             }
         }
         .padding(.horizontal)
-        .sheet(isPresented: $viewModel.showTradeSheet) {
-            TradeSheetView(ticker: ticker, side: viewModel.tradeSide)
+        .fullScreenCover(isPresented: $viewModel.showTradeSheet) {
+            TradeSheetView(
+                ticker: ticker,
+                side: viewModel.tradeSide,
+                currentPrice: viewModel.stock?.currentPrice ?? 0,
+                currentShares: viewModel.userShares
+            )
+        }
+    }
+
+    private func assetTypeColor(_ type: String) -> Color {
+        switch type {
+        case "crypto": return .orange
+        case "commodity": return .yellow
+        case "etf": return .purple
+        default: return Theme.accent
         }
     }
 }

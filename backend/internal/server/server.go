@@ -80,6 +80,7 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 		r.Get("/stocks/market-summary", h.GetMarketSummary)
 		r.Get("/stocks/{ticker}", h.GetStock)
 		r.Get("/stocks/{ticker}/history", h.GetStockHistory)
+		r.Get("/stocks/{ticker}/holdings", h.GetETFHoldings)
 
 		// Trading
 		r.Post("/trades", h.ExecuteTrade)

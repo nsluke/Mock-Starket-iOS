@@ -17,6 +17,9 @@ struct MockStarketApp: App {
                 }
             }
             .environment(appState)
+            .task {
+                await appState.checkAuth()
+            }
         }
     }
 }

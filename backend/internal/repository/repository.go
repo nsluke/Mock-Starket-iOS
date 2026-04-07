@@ -86,21 +86,21 @@ func (r *Repo) UpdateLoginStreak(ctx context.Context, id uuid.UUID) error {
 
 func (r *Repo) UpsertStock(ctx context.Context, s *model.Stock) error {
 	_, err := r.pool.Exec(ctx,
-		`INSERT INTO stocks (ticker, name, sector, base_price, current_price, day_open, day_high, day_low, prev_close, volume, volatility, drift, mean_reversion, description)
-		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+		`INSERT INTO stocks (ticker, name, sector, asset_type, base_price, current_price, day_open, day_high, day_low, prev_close, volume, volatility, drift, mean_reversion, description)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		 ON CONFLICT (ticker) DO UPDATE SET
-			name = EXCLUDED.name, sector = EXCLUDED.sector, base_price = EXCLUDED.base_price,
+			name = EXCLUDED.name, sector = EXCLUDED.sector, asset_type = EXCLUDED.asset_type, base_price = EXCLUDED.base_price,
 			current_price = EXCLUDED.current_price, volatility = EXCLUDED.volatility, drift = EXCLUDED.drift,
 			mean_reversion = EXCLUDED.mean_reversion, description = EXCLUDED.description`,
-		s.Ticker, s.Name, s.Sector, s.BasePrice, s.CurrentPrice, s.DayOpen, s.DayHigh, s.DayLow,
+		s.Ticker, s.Name, s.Sector, s.AssetType, s.BasePrice, s.CurrentPrice, s.DayOpen, s.DayHigh, s.DayLow,
 		s.PrevClose, s.Volume, s.Volatility, s.Drift, s.MeanReversion, s.Description)
 	return err
 }
 
 func (r *Repo) GetAllStocks(ctx context.Context) ([]model.Stock, error) {
 	rows, err := r.pool.Query(ctx,
-		`SELECT ticker, name, sector, base_price, current_price, day_open, day_high, day_low, prev_close, volume, volatility, drift, mean_reversion, description, logo_url, created_at
-		 FROM stocks ORDER BY ticker`)
+		`SELECT ticker, name, sector, asset_type, base_price, current_price, day_open, day_high, day_low, prev_close, volume, volatility, drift, mean_reversion, description, logo_url, created_at
+		 FROM stocks ORDER BY asset_type, ticker`)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (r *Repo) GetAllStocks(ctx context.Context) ([]model.Stock, error) {
 	var stocks []model.Stock
 	for rows.Next() {
 		var s model.Stock
-		if err := rows.Scan(&s.Ticker, &s.Name, &s.Sector, &s.BasePrice, &s.CurrentPrice,
+		if err := rows.Scan(&s.Ticker, &s.Name, &s.Sector, &s.AssetType, &s.BasePrice, &s.CurrentPrice,
 			&s.DayOpen, &s.DayHigh, &s.DayLow, &s.PrevClose, &s.Volume,
 			&s.Volatility, &s.Drift, &s.MeanReversion, &s.Description, &s.LogoURL, &s.CreatedAt); err != nil {
 			return nil, err
@@ -122,9 +122,9 @@ func (r *Repo) GetAllStocks(ctx context.Context) ([]model.Stock, error) {
 func (r *Repo) GetStockByTicker(ctx context.Context, ticker string) (*model.Stock, error) {
 	s := &model.Stock{}
 	err := r.pool.QueryRow(ctx,
-		`SELECT ticker, name, sector, base_price, current_price, day_open, day_high, day_low, prev_close, volume, volatility, drift, mean_reversion, description, logo_url, created_at
+		`SELECT ticker, name, sector, asset_type, base_price, current_price, day_open, day_high, day_low, prev_close, volume, volatility, drift, mean_reversion, description, logo_url, created_at
 		 FROM stocks WHERE ticker = $1`, ticker,
-	).Scan(&s.Ticker, &s.Name, &s.Sector, &s.BasePrice, &s.CurrentPrice,
+	).Scan(&s.Ticker, &s.Name, &s.Sector, &s.AssetType, &s.BasePrice, &s.CurrentPrice,
 		&s.DayOpen, &s.DayHigh, &s.DayLow, &s.PrevClose, &s.Volume,
 		&s.Volatility, &s.Drift, &s.MeanReversion, &s.Description, &s.LogoURL, &s.CreatedAt)
 	return s, err
@@ -135,6 +135,36 @@ func (r *Repo) UpdateStockPrices(ctx context.Context, ticker string, price, high
 		`UPDATE stocks SET current_price = $2, day_high = $3, day_low = $4, volume = $5 WHERE ticker = $1`,
 		ticker, price, high, low, volume)
 	return err
+}
+
+// ---- ETF Holdings ----
+
+func (r *Repo) UpsertETFHolding(ctx context.Context, etfTicker, holdingTicker string, weight decimal.Decimal) error {
+	_, err := r.pool.Exec(ctx,
+		`INSERT INTO etf_holdings (etf_ticker, holding_ticker, weight)
+		 VALUES ($1, $2, $3)
+		 ON CONFLICT (etf_ticker, holding_ticker) DO UPDATE SET weight = EXCLUDED.weight`,
+		etfTicker, holdingTicker, weight)
+	return err
+}
+
+func (r *Repo) GetETFHoldings(ctx context.Context, etfTicker string) ([]model.ETFHolding, error) {
+	rows, err := r.pool.Query(ctx,
+		`SELECT id, etf_ticker, holding_ticker, weight FROM etf_holdings WHERE etf_ticker = $1 ORDER BY weight DESC`, etfTicker)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var holdings []model.ETFHolding
+	for rows.Next() {
+		var h model.ETFHolding
+		if err := rows.Scan(&h.ID, &h.ETFTicker, &h.HoldingTicker, &h.Weight); err != nil {
+			return nil, err
+		}
+		holdings = append(holdings, h)
+	}
+	return holdings, nil
 }
 
 // ---- Portfolios ----

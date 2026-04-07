@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api-client';
+import { useState } from 'react';
+import { PageTransition } from '@/components/ui/PageTransition';
+import { TableSkeleton } from '@/components/ui/TableSkeleton';
+import { useLeaderboard } from '@/hooks/use-leaderboard';
 import { formatCurrency, formatPercent, priceChangeColor } from '@/lib/formatters';
-import type { LeaderboardEntry } from '@/types/user';
 
 const periods = [
   { value: 'alltime', label: 'All Time' },
@@ -12,26 +13,11 @@ const periods = [
 ];
 
 export default function LeaderboardPage() {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [period, setPeriod] = useState('alltime');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const data = await apiClient.getLeaderboard(period);
-        setEntries(data || []);
-      } catch (err) {
-        console.error('Failed to load leaderboard:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [period]);
+  const { data: entries = [], isLoading } = useLeaderboard(period);
 
   return (
+    <PageTransition>
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">Leaderboard</h1>
 
@@ -54,8 +40,8 @@ export default function LeaderboardPage() {
 
       {/* Leaderboard Table */}
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] overflow-hidden">
-        {loading ? (
-          <div className="p-8 text-center text-[#8B949E]">Loading rankings...</div>
+        {isLoading ? (
+          <TableSkeleton rows={6} columns={4} />
         ) : entries.length === 0 ? (
           <div className="p-8 text-center text-[#8B949E]">
             No rankings yet. Start trading to appear on the leaderboard!
@@ -109,5 +95,6 @@ export default function LeaderboardPage() {
         )}
       </div>
     </div>
+    </PageTransition>
   );
 }

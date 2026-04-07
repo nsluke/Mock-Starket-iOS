@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class AuthViewModel {
     var isLoading = false
     var errorMessage: String?
@@ -13,18 +13,14 @@ final class AuthViewModel {
         defer { isLoading = false }
         errorMessage = nil
 
-        // In dev mode, generate a unique guest token
+        // In dev mode, the token IS the Firebase UID.
+        // The backend treats Bearer tokens as UIDs when DEV_MODE=true.
         let guestUID = "guest_\(UUID().uuidString.prefix(8))"
 
-        struct RegisterBody: Encodable {
-            let display_name: String
-            let is_guest: Bool
-        }
-
+        // Create the guest account on the backend
         let _: User = try await apiClient.request(
             .createGuest,
-            token: guestUID,
-            body: RegisterBody(display_name: "Guest Trader", is_guest: true)
+            token: guestUID
         )
 
         return guestUID

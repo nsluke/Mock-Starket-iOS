@@ -1,56 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { apiClient } from '@/lib/api-client';
-import { formatCurrency, formatPercent, priceChangeColor, priceChangeBg } from '@/lib/formatters';
-import type { Trade } from '@/types/portfolio';
+import dynamic from 'next/dynamic';
+import { usePortfolio, usePortfolioHistory, useTradeHistory } from '@/hooks/use-portfolio';
+import { PageTransition } from '@/components/ui/PageTransition';
+import { CardSkeleton } from '@/components/ui/CardSkeleton';
+import { formatCurrency, formatPercent, priceChangeColor } from '@/lib/formatters';
 
-interface Position {
-  id: string;
-  ticker: string;
-  shares: number;
-  avg_cost: string;
-  current_price: string;
-  market_value: string;
-  pnl: string;
-  pnl_pct: string;
-}
-
-interface PortfolioData {
-  portfolio: { id: string; cash: string; net_worth: string };
-  positions: Position[];
-  net_worth: string;
-  invested: string;
-}
+const PortfolioChart = dynamic(() => import('@/components/charts/PortfolioChart'), { ssr: false });
 
 export default function PortfolioPage() {
-  const [data, setData] = useState<PortfolioData | null>(null);
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = usePortfolio();
+  const { data: trades = [] } = useTradeHistory(20, 0);
+  const { data: portfolioHistory = [] } = usePortfolioHistory(100);
   const [tab, setTab] = useState<'holdings' | 'history'>('holdings');
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const [portfolio, tradeHistory] = await Promise.all([
-          apiClient.getPortfolio(),
-          apiClient.getTradeHistory(20, 0),
-        ]);
-        setData(portfolio);
-        setTrades(tradeHistory || []);
-      } catch (err) {
-        console.error('Failed to load portfolio:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  if (loading) {
-    return <div className="p-6 text-center text-[#8B949E]">Loading portfolio...</div>;
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-6xl mx-auto space-y-6">
+        <h1 className="text-2xl font-bold">Portfolio</h1>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <CardSkeleton /><CardSkeleton /><CardSkeleton /><CardSkeleton />
+        </div>
+      </div>
+    );
   }
 
   if (!data) {
@@ -60,10 +34,11 @@ export default function PortfolioPage() {
   const netWorth = parseFloat(data.net_worth);
   const cash = parseFloat(data.portfolio.cash);
   const invested = parseFloat(data.invested);
-  const totalPnl = netWorth - 100000; // starting cash
+  const totalPnl = netWorth - 100000;
   const totalPnlPct = (totalPnl / 100000) * 100;
 
   return (
+    <PageTransition>
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">Portfolio</h1>
 
@@ -100,6 +75,19 @@ export default function PortfolioPage() {
           </p>
         </div>
       </div>
+
+      {/* Portfolio Performance Chart */}
+      {portfolioHistory.length > 1 && (
+        <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
+          <h2 className="font-semibold mb-4">Performance</h2>
+          <PortfolioChart
+            data={portfolioHistory.map((h: any) => ({
+              time: h.recorded_at,
+              value: parseFloat(h.net_worth),
+            }))}
+          />
+        </div>
+      )}
 
       {/* Tab Toggle */}
       <div className="flex border-b border-[#30363D]">
@@ -153,10 +141,7 @@ export default function PortfolioPage() {
                     className="border-b border-[#21262D] hover:bg-[#21262D] transition-colors"
                   >
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/stock/${pos.ticker}`}
-                        className="flex items-center gap-2"
-                      >
+                      <Link href={`/stock/${pos.ticker}`} className="flex items-center gap-2">
                         <span className="rounded bg-[#50E3C2]/10 px-2 py-0.5 text-xs font-mono font-bold text-[#50E3C2]">
                           {pos.ticker}
                         </span>
@@ -234,5 +219,6 @@ export default function PortfolioPage() {
         </div>
       )}
     </div>
+    </PageTransition>
   );
 }

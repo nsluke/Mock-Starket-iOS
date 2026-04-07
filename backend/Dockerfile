@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /migrate cmd/migrate/main.go
 RUN CGO_ENABLED=0 GOOS=linux go build -o /seed cmd/seed/main.go
 
 # Dev stage (for hot reload with Docker Compose)
-FROM golang:1.23-alpine AS dev
+FROM golang:1.25-alpine AS dev
 
 WORKDIR /app
 RUN go install github.com/air-verse/air@latest

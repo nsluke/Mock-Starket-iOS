@@ -24,6 +24,7 @@ type Stock struct {
 	Ticker         string          `json:"ticker" db:"ticker"`
 	Name           string          `json:"name" db:"name"`
 	Sector         string          `json:"sector" db:"sector"`
+	AssetType      string          `json:"asset_type" db:"asset_type"` // stock, etf, crypto, commodity
 	BasePrice      decimal.Decimal `json:"base_price" db:"base_price"`
 	CurrentPrice   decimal.Decimal `json:"current_price" db:"current_price"`
 	DayOpen        decimal.Decimal `json:"day_open" db:"day_open"`
@@ -37,6 +38,13 @@ type Stock struct {
 	Description    *string         `json:"description,omitempty" db:"description"`
 	LogoURL        *string         `json:"logo_url,omitempty" db:"logo_url"`
 	CreatedAt      time.Time       `json:"created_at" db:"created_at"`
+}
+
+type ETFHolding struct {
+	ID            uuid.UUID       `json:"id" db:"id"`
+	ETFTicker     string          `json:"etf_ticker" db:"etf_ticker"`
+	HoldingTicker string          `json:"holding_ticker" db:"holding_ticker"`
+	Weight        decimal.Decimal `json:"weight" db:"weight"`
 }
 
 type Portfolio struct {

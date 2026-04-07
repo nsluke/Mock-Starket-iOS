@@ -1,66 +1,43 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api-client';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PageTransition } from '@/components/ui/PageTransition';
+import { useCurrentUser, useUpdateProfile } from '@/hooks/use-user';
 import { useAuthStore } from '@/stores/auth-store';
-
-interface UserProfile {
-  id: string;
-  display_name: string;
-  avatar_url: string | null;
-  is_guest: boolean;
-  created_at: string;
-  login_streak: number;
-  longest_streak: number;
-}
+import { apiClient } from '@/lib/api-client';
+import { toast } from '@/lib/toast';
+import { profileSchema, type ProfileFormValues } from '@/lib/schemas';
+import { FormInput } from '@/components/ui/FormInput';
 
 export default function SettingsPage() {
   const router = useRouter();
   const { signOut } = useAuthStore();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [displayName, setDisplayName] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const { data: profile, isLoading } = useCurrentUser();
+  const updateProfile = useUpdateProfile();
+  const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+  });
+
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      try {
-        const user = await apiClient.getMe();
-        setProfile(user);
-        setDisplayName(user.display_name);
-      } catch (err) {
-        console.error('Failed to load profile:', err);
-      } finally {
-        setLoading(false);
-      }
+    if (profile) {
+      reset({ display_name: profile.display_name });
     }
-    load();
-  }, []);
+  }, [profile, reset]);
 
-  async function handleSave() {
-    setSaving(true);
-    setSaved(false);
-    try {
-      await apiClient.request('/api/v1/auth/me', {
-        method: 'PUT',
-        body: JSON.stringify({ display_name: displayName }),
-      });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch (err) {
-      console.error('Failed to update profile:', err);
-    } finally {
-      setSaving(false);
-    }
+  function onSave(data: ProfileFormValues) {
+    updateProfile.mutate(data.display_name);
   }
 
   function handleSignOut() {
     signOut();
     apiClient.setToken(null);
+    document.cookie = 'mockstarket_token=; path=/; max-age=0';
     router.push('/');
   }
 
@@ -70,43 +47,41 @@ export default function SettingsPage() {
       await apiClient.request('/api/v1/auth/me', { method: 'DELETE' });
       signOut();
       apiClient.setToken(null);
+      document.cookie = 'mockstarket_token=; path=/; max-age=0';
       router.push('/');
-    } catch (err) {
-      console.error('Failed to delete account:', err);
+    } catch {
+      toast.error('Failed to delete account');
       setDeleting(false);
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return <div className="p-6 text-center text-[#8B949E]">Loading...</div>;
   }
 
   return (
+    <PageTransition>
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">Settings</h1>
 
       {/* Profile */}
-      <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-4">
+      <form onSubmit={handleSubmit(onSave)} className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-4">
         <h2 className="font-semibold">Profile</h2>
 
-        <div>
-          <label className="block text-xs text-[#6E7681] mb-1.5">Display Name</label>
-          <input
-            type="text"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-3 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2]"
-          />
-        </div>
+        <FormInput
+          label="Display Name"
+          error={errors.display_name?.message}
+          {...register('display_name')}
+        />
 
         <button
-          onClick={handleSave}
-          disabled={saving || displayName === profile?.display_name}
+          type="submit"
+          disabled={updateProfile.isPending || !isDirty}
           className="px-4 py-2 rounded-lg bg-[#50E3C2] text-[#0D1117] text-sm font-semibold hover:bg-[#3BC4A7] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
+          {updateProfile.isPending ? 'Saving...' : 'Save Changes'}
         </button>
-      </div>
+      </form>
 
       {/* Account Info */}
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-3">
@@ -179,5 +154,6 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }

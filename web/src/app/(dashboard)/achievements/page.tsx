@@ -1,14 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api-client';
-import type { Achievement } from '@/types/user';
-
-interface UserAchievement {
-  id: string;
-  achievement_id: string;
-  earned_at: string;
-}
+import { PageTransition } from '@/components/ui/PageTransition';
+import { useAchievements } from '@/hooks/use-achievements';
 
 const categoryLabels: Record<string, string> = {
   trading: 'Trading',
@@ -20,45 +13,28 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function AchievementsPage() {
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [earned, setEarned] = useState<UserAchievement[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = useAchievements();
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const [allAchievements, myAchievements] = await Promise.all([
-          apiClient.getAchievements(),
-          apiClient.getMyAchievements(),
-        ]);
-        setAchievements(allAchievements || []);
-        setEarned(myAchievements || []);
-      } catch (err) {
-        console.error('Failed to load achievements:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
+  const achievements = data?.achievements || [];
+  const earned = data?.earned || [];
 
   const earnedIds = new Set(earned.map((e) => e.achievement_id));
   const earnedCount = earnedIds.size;
   const totalCount = achievements.length;
 
   // Group by category
-  const grouped = achievements.reduce<Record<string, Achievement[]>>((acc, a) => {
+  const grouped = achievements.reduce<Record<string, typeof achievements>>((acc, a) => {
     if (!acc[a.category]) acc[a.category] = [];
     acc[a.category].push(a);
     return acc;
   }, {});
 
-  if (loading) {
+  if (isLoading) {
     return <div className="p-6 text-center text-[#8B949E]">Loading achievements...</div>;
   }
 
   return (
+    <PageTransition>
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-2xl font-bold">Achievements</h1>
@@ -100,7 +76,7 @@ export default function AchievementsPage() {
                     <div
                       className={`text-2xl flex-shrink-0 ${isEarned ? '' : 'grayscale'}`}
                     >
-                      {isEarned ? '&#x2714;' : '&#x1F512;'}
+                      {isEarned ? '\u2714' : '\uD83D\uDD12'}
                     </div>
                     <div className="min-w-0">
                       <h3 className={`font-semibold text-sm ${isEarned ? 'text-white' : 'text-[#8B949E]'}`}>
@@ -121,5 +97,6 @@ export default function AchievementsPage() {
         </div>
       ))}
     </div>
+    </PageTransition>
   );
 }

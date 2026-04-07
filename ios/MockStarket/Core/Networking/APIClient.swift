@@ -30,6 +30,7 @@ enum APIEndpoint {
     case listStocks
     case getStock(ticker: String)
     case getStockHistory(ticker: String, interval: String)
+    case getETFHoldings(ticker: String)
     case marketSummary
 
     // Trading
@@ -78,6 +79,7 @@ enum APIEndpoint {
         case .listStocks: return "/api/v1/stocks"
         case .getStock(let ticker): return "/api/v1/stocks/\(ticker)"
         case .getStockHistory(let ticker, let interval): return "/api/v1/stocks/\(ticker)/history?interval=\(interval)"
+        case .getETFHoldings(let ticker): return "/api/v1/stocks/\(ticker)/holdings"
         case .marketSummary: return "/api/v1/stocks/market-summary"
         case .executeTrade, .getTradeHistory: return "/api/v1/trades"
         case .createOrder, .listOrders: return "/api/v1/orders"
@@ -124,7 +126,18 @@ actor APIClient {
         self.session = URLSession.shared
 
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let str = try container.decode(String.self)
+            if let date = formatter.date(from: str) { return date }
+            // Fallback without fractional seconds
+            let basic = ISO8601DateFormatter()
+            basic.formatOptions = [.withInternetDateTime]
+            if let date = basic.date(from: str) { return date }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Cannot decode date: \(str)")
+        }
         self.decoder = decoder
     }
 

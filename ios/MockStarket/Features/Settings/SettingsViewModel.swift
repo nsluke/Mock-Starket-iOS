@@ -1,7 +1,7 @@
 import SwiftUI
 import Observation
 
-@Observable
+@MainActor @Observable
 final class SettingsViewModel {
     var displayName = ""
     var isSaving = false

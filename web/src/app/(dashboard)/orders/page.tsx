@@ -1,75 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api-client';
+import { useState } from 'react';
+import { PageTransition } from '@/components/ui/PageTransition';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useOrders, useCreateOrder, useCancelOrder } from '@/hooks/use-orders';
 import { formatCurrency } from '@/lib/formatters';
-import type { Order } from '@/types/portfolio';
+import { orderSchema, type OrderFormValues } from '@/lib/schemas';
+import { FormInput } from '@/components/ui/FormInput';
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: orders = [], isLoading } = useOrders();
+  const createOrder = useCreateOrder();
+  const cancelOrder = useCancelOrder();
 
-  // Create order form
   const [showForm, setShowForm] = useState(false);
-  const [ticker, setTicker] = useState('');
-  const [side, setSide] = useState('buy');
-  const [orderType, setOrderType] = useState('limit');
-  const [shares, setShares] = useState('');
-  const [limitPrice, setLimitPrice] = useState('');
-  const [stopPrice, setStopPrice] = useState('');
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<OrderFormValues>({
+    resolver: zodResolver(orderSchema),
+    defaultValues: { side: 'buy', order_type: 'limit' },
+  });
+  const orderType = watch('order_type');
+  const side = watch('side');
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
-
-  async function loadOrders() {
-    setLoading(true);
-    try {
-      const data = await apiClient.getOrders();
-      setOrders(data || []);
-    } catch (err) {
-      console.error('Failed to load orders:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleCreate() {
-    if (!ticker || !shares || parseInt(shares) <= 0) return;
-    setCreating(true);
-    setError(null);
-
-    try {
-      await apiClient.createOrder(
-        ticker.toUpperCase(),
-        side,
-        orderType,
-        parseInt(shares),
-        orderType !== 'stop' ? limitPrice || undefined : undefined,
-        orderType !== 'limit' ? stopPrice || undefined : undefined,
-      );
-      setShowForm(false);
-      setTicker('');
-      setShares('');
-      setLimitPrice('');
-      setStopPrice('');
-      await loadOrders();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create order');
-    } finally {
-      setCreating(false);
-    }
-  }
-
-  async function handleCancel(id: string) {
-    try {
-      await apiClient.cancelOrder(id);
-      setOrders((prev) => prev.filter((o) => o.id !== id));
-    } catch (err) {
-      console.error('Failed to cancel order:', err);
-    }
+  function onSubmitOrder(data: OrderFormValues) {
+    createOrder.mutate(
+      {
+        ticker: data.ticker,
+        side: data.side,
+        orderType: data.order_type,
+        shares: data.shares,
+        limitPrice: data.limit_price || undefined,
+        stopPrice: data.stop_price || undefined,
+      },
+      {
+        onSuccess: () => {
+          setShowForm(false);
+          reset();
+        },
+      }
+    );
   }
 
   const orderTypeLabel: Record<string, string> = {
@@ -79,6 +48,7 @@ export default function OrdersPage() {
   };
 
   return (
+    <PageTransition>
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Orders</h1>
@@ -92,56 +62,32 @@ export default function OrdersPage() {
 
       {/* Create Order Form */}
       {showForm && (
-        <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-4">
+        <form onSubmit={handleSubmit(onSubmitOrder)} className="rounded-xl bg-[#161B22] border border-[#30363D] p-6 space-y-4">
           <h2 className="font-semibold">Create Order</h2>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-[#6E7681] mb-1.5">Ticker</label>
-              <input
-                type="text"
-                value={ticker}
-                onChange={(e) => setTicker(e.target.value.toUpperCase())}
-                placeholder="PIPE"
-                className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2] text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-[#6E7681] mb-1.5">Shares</label>
-              <input
-                type="number"
-                min="1"
-                value={shares}
-                onChange={(e) => setShares(e.target.value)}
-                placeholder="10"
-                className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2] text-sm"
-              />
-            </div>
+            <FormInput label="Ticker" placeholder="PIPE" error={errors.ticker?.message} {...register('ticker')} />
+            <FormInput label="Shares" type="number" min="1" placeholder="10" error={errors.shares?.message} {...register('shares')} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-[#6E7681] mb-1.5">Side</label>
               <div className="flex rounded-lg overflow-hidden border border-[#30363D]">
-                <button
-                  onClick={() => setSide('buy')}
-                  className={`flex-1 py-2 text-sm font-semibold ${side === 'buy' ? 'bg-emerald-500/20 text-emerald-400' : 'text-[#8B949E]'}`}
-                >
+                <label className={`flex-1 py-2 text-sm font-semibold text-center cursor-pointer ${side === 'buy' ? 'bg-emerald-500/20 text-emerald-400' : 'text-[#8B949E]'}`}>
+                  <input type="radio" value="buy" className="sr-only" {...register('side')} />
                   Buy
-                </button>
-                <button
-                  onClick={() => setSide('sell')}
-                  className={`flex-1 py-2 text-sm font-semibold ${side === 'sell' ? 'bg-red-500/20 text-red-400' : 'text-[#8B949E]'}`}
-                >
+                </label>
+                <label className={`flex-1 py-2 text-sm font-semibold text-center cursor-pointer ${side === 'sell' ? 'bg-red-500/20 text-red-400' : 'text-[#8B949E]'}`}>
+                  <input type="radio" value="sell" className="sr-only" {...register('side')} />
                   Sell
-                </button>
+                </label>
               </div>
             </div>
             <div>
               <label className="block text-xs text-[#6E7681] mb-1.5">Order Type</label>
               <select
-                value={orderType}
-                onChange={(e) => setOrderType(e.target.value)}
+                {...register('order_type')}
                 className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#50E3C2]"
               >
                 <option value="limit">Limit</option>
@@ -153,48 +99,32 @@ export default function OrdersPage() {
 
           <div className="grid grid-cols-2 gap-4">
             {orderType !== 'stop' && (
-              <div>
-                <label className="block text-xs text-[#6E7681] mb-1.5">Limit Price</label>
-                <input
-                  type="text"
-                  value={limitPrice}
-                  onChange={(e) => setLimitPrice(e.target.value)}
-                  placeholder="100.00"
-                  className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2] text-sm"
-                />
-              </div>
+              <FormInput label="Limit Price" placeholder="100.00" error={errors.limit_price?.message} {...register('limit_price')} />
             )}
             {orderType !== 'limit' && (
-              <div>
-                <label className="block text-xs text-[#6E7681] mb-1.5">Stop Price</label>
-                <input
-                  type="text"
-                  value={stopPrice}
-                  onChange={(e) => setStopPrice(e.target.value)}
-                  placeholder="95.00"
-                  className="w-full rounded-lg bg-[#0D1117] border border-[#30363D] px-4 py-2.5 text-white placeholder-[#6E7681] focus:outline-none focus:border-[#50E3C2] text-sm"
-                />
-              </div>
+              <FormInput label="Stop Price" placeholder="95.00" error={errors.stop_price?.message} {...register('stop_price')} />
             )}
           </div>
 
-          {error && (
-            <div className="rounded-lg bg-red-500/10 text-red-400 px-4 py-2.5 text-sm">{error}</div>
+          {createOrder.isError && (
+            <div className="rounded-lg bg-red-500/10 text-red-400 px-4 py-2.5 text-sm">
+              {createOrder.error?.message || 'Failed to create order'}
+            </div>
           )}
 
           <button
-            onClick={handleCreate}
-            disabled={creating || !ticker || !shares}
+            type="submit"
+            disabled={createOrder.isPending}
             className="w-full py-3 rounded-lg bg-[#50E3C2] text-[#0D1117] text-sm font-semibold hover:bg-[#3BC4A7] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {creating ? 'Creating...' : 'Place Order'}
+            {createOrder.isPending ? 'Creating...' : 'Place Order'}
           </button>
-        </div>
+        </form>
       )}
 
       {/* Orders List */}
       <div className="rounded-xl bg-[#161B22] border border-[#30363D] overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="p-8 text-center text-[#8B949E]">Loading orders...</div>
         ) : orders.length === 0 ? (
           <div className="p-8 text-center text-[#8B949E]">
@@ -238,7 +168,7 @@ export default function OrdersPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
-                      onClick={() => handleCancel(order.id)}
+                      onClick={() => cancelOrder.mutate(order.id)}
                       className="text-xs text-red-400 hover:text-red-300 transition-colors"
                     >
                       Cancel
@@ -251,5 +181,6 @@ export default function OrdersPage() {
         )}
       </div>
     </div>
+    </PageTransition>
   );
 }
