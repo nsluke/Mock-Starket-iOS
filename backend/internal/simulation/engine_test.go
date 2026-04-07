@@ -37,7 +37,7 @@ func (m *mockObserver) batchCount() int {
 
 func newTestEngine() *Engine {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelError}))
-	e := NewEngine(100, 0, logger) // 100ms tick, no events
+	e := NewEngine(100, 0, 150, logger) // 100ms tick, no events
 	e.AddStock("TEST", "Test Corp", "Tech", 100.0, 0.02, 0.0, 0.1)
 	return e
 }
@@ -87,7 +87,7 @@ func TestEngineTickProducesPriceUpdates(t *testing.T) {
 
 func TestEnginePricesStayPositive(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelError}))
-	e := NewEngine(10, 0, logger)
+	e := NewEngine(10, 0, 150, logger)
 	// Start at very low price with high volatility
 	e.AddStock("PENNY", "Penny Stock", "Tech", 0.05, 0.50, -0.01, 0.1)
 
@@ -103,7 +103,7 @@ func TestEnginePricesStayPositive(t *testing.T) {
 
 func TestEngineMeanReversion(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelError}))
-	e := NewEngine(10, 0, logger)
+	e := NewEngine(10, 0, 150, logger)
 	e.AddStock("MEAN", "Mean Corp", "Tech", 100.0, 0.001, 0.0, 0.5) // Strong reversion, low volatility
 
 	// Manually push price far from base
@@ -145,7 +145,7 @@ func TestEngineRunAndStop(t *testing.T) {
 
 func TestEngineMultipleStocksCorrelation(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelError}))
-	e := NewEngine(10, 0, logger)
+	e := NewEngine(10, 0, 150, logger)
 
 	// Add stocks in same sector
 	e.AddStock("A", "Stock A", "Tech", 100.0, 0.02, 0.0, 0.1)
