@@ -4,18 +4,42 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/polygon"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/shopspring/decimal"
 )
+
+// Tickers to seed — Polygon.io will provide names, sectors, descriptions, and prices.
+var tickers = []string{
+	// US Stocks
+	"AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "CRM", "ORCL", "INTC",
+	"JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY",
+	"JPM", "BAC", "GS", "V", "MA",
+	"XOM", "CVX", "COP", "SLB",
+	"WMT", "KO", "PEP", "MCD", "NKE", "SBUX", "DIS",
+	"CAT", "BA", "HON", "UPS", "GE",
+	// ETFs
+	"SPY", "QQQ", "DIA", "IWM", "VTI",
+	// Crypto
+	"X:BTCUSD", "X:ETHUSD", "X:SOLUSD", "X:DOGEUSD",
+}
 
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
 		dbURL = "postgres://mockstarket:mockstarket_dev@localhost:5432/mockstarket?sslmode=disable"
+	}
+
+	apiKey := os.Getenv("POLYGON_API_KEY")
+	if apiKey == "" {
+		fmt.Println("POLYGON_API_KEY not set — seeding with placeholder data only.")
+		fmt.Println("Set POLYGON_API_KEY to fetch real names, sectors, and descriptions from Polygon.io.")
 	}
 
 	pool, err := pgxpool.New(context.Background(), dbURL)
@@ -27,62 +51,56 @@ func main() {
 	repo := repository.New(pool)
 	ctx := context.Background()
 
-	stocks := []model.Stock{
-		// ============ STOCKS ============
-		// Tech Sector
-		{Ticker: "PLNX", Name: "Planetronix", Sector: "Tech", AssetType: "stock", BasePrice: d("142.00"), CurrentPrice: d("142.00"), DayOpen: d("142.00"), DayHigh: d("142.00"), DayLow: d("142.00"), PrevClose: d("140.50"), Volatility: d("0.025"), Drift: d("0.001"), MeanReversion: d("0.10"), Description: ptr("Leading manufacturer of interstellar navigation systems and quantum computing platforms.")},
-		{Ticker: "GWNT", Name: "Gwent Industries", Sector: "Tech", AssetType: "stock", BasePrice: d("156.00"), CurrentPrice: d("156.00"), DayOpen: d("156.00"), DayHigh: d("156.00"), DayLow: d("156.00"), PrevClose: d("154.25"), Volatility: d("0.032"), Drift: d("0.002"), MeanReversion: d("0.08"), Description: ptr("Enterprise card-based analytics and strategic decision-making software.")},
-		{Ticker: "PIPE", Name: "Pied Piper", Sector: "Tech", AssetType: "stock", BasePrice: d("267.00"), CurrentPrice: d("267.00"), DayOpen: d("267.00"), DayHigh: d("267.00"), DayLow: d("267.00"), PrevClose: d("264.80"), Volatility: d("0.040"), Drift: d("0.003"), MeanReversion: d("0.06"), Description: ptr("Revolutionary middle-out compression technology for decentralized internet infrastructure.")},
-		{Ticker: "INIT", Name: "Initech Systems", Sector: "Tech", AssetType: "stock", BasePrice: d("31.00"), CurrentPrice: d("31.00"), DayOpen: d("31.00"), DayHigh: d("31.00"), DayLow: d("31.00"), PrevClose: d("30.75"), Volatility: d("0.035"), Drift: d("-0.001"), MeanReversion: d("0.12"), Description: ptr("Legacy enterprise software solutions. Known for their TPS report management platform.")},
-		{Ticker: "LUMN", Name: "Lumon Industries", Sector: "Tech", AssetType: "stock", BasePrice: d("145.00"), CurrentPrice: d("145.00"), DayOpen: d("145.00"), DayHigh: d("145.00"), DayLow: d("145.00"), PrevClose: d("143.50"), Volatility: d("0.025"), Drift: d("0.001"), MeanReversion: d("0.10"), Description: ptr("Biotech and workplace optimization company. Pioneering consciousness-based productivity solutions.")},
-
-		// Consumer Sector
-		{Ticker: "DM", Name: "Dunder Mifflin", Sector: "Consumer", AssetType: "stock", BasePrice: d("45.00"), CurrentPrice: d("45.00"), DayOpen: d("45.00"), DayHigh: d("45.00"), DayLow: d("45.00"), PrevClose: d("44.50"), Volatility: d("0.020"), Drift: d("0.000"), MeanReversion: d("0.15"), Description: ptr("Mid-tier paper and office supply company. Strong regional presence in the Northeast.")},
-		{Ticker: "MSPC", Name: "Michael Scott Paper", Sector: "Consumer", AssetType: "stock", BasePrice: d("8.50"), CurrentPrice: d("8.50"), DayOpen: d("8.50"), DayHigh: d("8.50"), DayLow: d("8.50"), PrevClose: d("8.40"), Volatility: d("0.055"), Drift: d("-0.002"), MeanReversion: d("0.08"), Description: ptr("Scrappy paper startup disrupting the industry with competitive pricing and personal service.")},
-		{Ticker: "SWTE", Name: "Sweet Tea Co", Sector: "Consumer", AssetType: "stock", BasePrice: d("23.00"), CurrentPrice: d("23.00"), DayOpen: d("23.00"), DayHigh: d("23.00"), DayLow: d("23.00"), PrevClose: d("22.80"), Volatility: d("0.022"), Drift: d("0.001"), MeanReversion: d("0.12"), Description: ptr("Premium artisanal beverage company specializing in Southern-style sweet tea blends.")},
-		{Ticker: "CHUX", Name: "Chux Headwear", Sector: "Consumer", AssetType: "stock", BasePrice: d("12.00"), CurrentPrice: d("12.00"), DayOpen: d("12.00"), DayHigh: d("12.00"), DayLow: d("12.00"), PrevClose: d("11.85"), Volatility: d("0.050"), Drift: d("0.000"), MeanReversion: d("0.10"), Description: ptr("Trendy headwear and accessories brand popular with Gen Z consumers.")},
-
-		// Defense Sector
-		{Ticker: "ZONE", Name: "Danger Zone Defense", Sector: "Defense", AssetType: "stock", BasePrice: d("210.00"), CurrentPrice: d("210.00"), DayOpen: d("210.00"), DayHigh: d("210.00"), DayLow: d("210.00"), PrevClose: d("208.00"), Volatility: d("0.035"), Drift: d("0.002"), MeanReversion: d("0.08"), Description: ptr("Advanced aerospace and defense contractor. Specializes in next-gen fighter jet systems.")},
-		{Ticker: "STRK", Name: "Stark Industries", Sector: "Defense", AssetType: "stock", BasePrice: d("412.00"), CurrentPrice: d("412.00"), DayOpen: d("412.00"), DayHigh: d("412.00"), DayLow: d("412.00"), PrevClose: d("408.50"), Volatility: d("0.020"), Drift: d("0.002"), MeanReversion: d("0.10"), Description: ptr("Multinational defense and clean energy conglomerate. Industry leader in arc reactor technology.")},
-		{Ticker: "ACME", Name: "Acme Corporation", Sector: "Defense", AssetType: "stock", BasePrice: d("88.00"), CurrentPrice: d("88.00"), DayOpen: d("88.00"), DayHigh: d("88.00"), DayLow: d("88.00"), PrevClose: d("87.25"), Volatility: d("0.028"), Drift: d("0.000"), MeanReversion: d("0.12"), Description: ptr("Diversified industrial manufacturer. Known for creative solutions and rapid prototyping.")},
-
-		// Food Sector
-		{Ticker: "KRAB", Name: "Krusty Krab Holdings", Sector: "Food", AssetType: "stock", BasePrice: d("19.00"), CurrentPrice: d("19.00"), DayOpen: d("19.00"), DayHigh: d("19.00"), DayLow: d("19.00"), PrevClose: d("18.80"), Volatility: d("0.042"), Drift: d("0.001"), MeanReversion: d("0.10"), Description: ptr("Fast-casual seafood restaurant chain. Famous for their proprietary secret formula burger.")},
-		{Ticker: "BUBS", Name: "Bubs Concessions", Sector: "Food", AssetType: "stock", BasePrice: d("8.50"), CurrentPrice: d("8.50"), DayOpen: d("8.50"), DayHigh: d("8.50"), DayLow: d("8.50"), PrevClose: d("8.40"), Volatility: d("0.055"), Drift: d("-0.001"), MeanReversion: d("0.08"), Description: ptr("Micro-cap concession stand operator. Questionable accounting but loyal customer base.")},
-		{Ticker: "BOWL", Name: "Big Kahuna Burger", Sector: "Food", AssetType: "stock", BasePrice: d("34.00"), CurrentPrice: d("34.00"), DayOpen: d("34.00"), DayHigh: d("34.00"), DayLow: d("34.00"), PrevClose: d("33.60"), Volatility: d("0.030"), Drift: d("0.001"), MeanReversion: d("0.10"), Description: ptr("Hawaiian-themed fast food chain. That IS a tasty burger.")},
-
-		// Industrial Sector
-		{Ticker: "MOMR", Name: "Mom's Friendly Robotics", Sector: "Industrial", AssetType: "stock", BasePrice: d("340.00"), CurrentPrice: d("340.00"), DayOpen: d("340.00"), DayHigh: d("340.00"), DayLow: d("340.00"), PrevClose: d("337.50"), Volatility: d("0.030"), Drift: d("0.002"), MeanReversion: d("0.08"), Description: ptr("Leading robotics and automation manufacturer. Supplies 70% of all industrial robots worldwide.")},
-		{Ticker: "FIGG", Name: "Figgis Financial", Sector: "Industrial", AssetType: "stock", BasePrice: d("67.00"), CurrentPrice: d("67.00"), DayOpen: d("67.00"), DayHigh: d("67.00"), DayLow: d("67.00"), PrevClose: d("66.25"), Volatility: d("0.028"), Drift: d("0.000"), MeanReversion: d("0.12"), Description: ptr("Private investigation firm turned financial services company. Unconventional but effective.")},
-		{Ticker: "PDLK", Name: "Paddle King Sports", Sector: "Industrial", AssetType: "stock", BasePrice: d("34.00"), CurrentPrice: d("34.00"), DayOpen: d("34.00"), DayHigh: d("34.00"), DayLow: d("34.00"), PrevClose: d("33.75"), Volatility: d("0.040"), Drift: d("0.001"), MeanReversion: d("0.10"), Description: ptr("Premium sporting goods manufacturer specializing in paddle sports equipment and apparel.")},
-		{Ticker: "CBIO", Name: "Sebio Streaming", Sector: "Industrial", AssetType: "stock", BasePrice: d("95.00"), CurrentPrice: d("95.00"), DayOpen: d("95.00"), DayHigh: d("95.00"), DayLow: d("95.00"), PrevClose: d("94.00"), Volatility: d("0.038"), Drift: d("0.001"), MeanReversion: d("0.08"), Description: ptr("Next-generation streaming platform with AI-curated content and neural-direct viewing technology.")},
-		{Ticker: "CHSM", Name: "Chu Supply Materials", Sector: "Industrial", AssetType: "stock", BasePrice: d("52.00"), CurrentPrice: d("52.00"), DayOpen: d("52.00"), DayHigh: d("52.00"), DayLow: d("52.00"), PrevClose: d("51.50"), Volatility: d("0.025"), Drift: d("0.000"), MeanReversion: d("0.12"), Description: ptr("Wholesale building materials and supply chain logistics. Reliable dividend payer.")},
-
-		// ============ CRYPTO ============
-		{Ticker: "BTC", Name: "Bitcoin", Sector: "Crypto", AssetType: "crypto", BasePrice: d("68420.00"), CurrentPrice: d("68420.00"), DayOpen: d("68420.00"), DayHigh: d("68420.00"), DayLow: d("68420.00"), PrevClose: d("67800.00"), Volatility: d("0.045"), Drift: d("0.002"), MeanReversion: d("0.04"), Description: ptr("The original cryptocurrency. Digital gold and decentralized store of value.")},
-		{Ticker: "ETH", Name: "Ethereum", Sector: "Crypto", AssetType: "crypto", BasePrice: d("3450.00"), CurrentPrice: d("3450.00"), DayOpen: d("3450.00"), DayHigh: d("3450.00"), DayLow: d("3450.00"), PrevClose: d("3400.00"), Volatility: d("0.055"), Drift: d("0.003"), MeanReversion: d("0.05"), Description: ptr("Programmable blockchain platform. Powers DeFi, NFTs, and smart contracts.")},
-		{Ticker: "SOL", Name: "Solana", Sector: "Crypto", AssetType: "crypto", BasePrice: d("185.00"), CurrentPrice: d("185.00"), DayOpen: d("185.00"), DayHigh: d("185.00"), DayLow: d("185.00"), PrevClose: d("182.00"), Volatility: d("0.070"), Drift: d("0.003"), MeanReversion: d("0.06"), Description: ptr("High-performance blockchain with sub-second finality. Popular for memecoins and DePIN.")},
-		{Ticker: "DOGE", Name: "Dogecoin", Sector: "Crypto", AssetType: "crypto", BasePrice: d("0.42"), CurrentPrice: d("0.42"), DayOpen: d("0.42"), DayHigh: d("0.42"), DayLow: d("0.42"), PrevClose: d("0.41"), Volatility: d("0.090"), Drift: d("0.000"), MeanReversion: d("0.08"), Description: ptr("The people's crypto. Much wow. Very currency. Started as a joke, now a movement.")},
-
-		// ============ COMMODITIES ============
-		{Ticker: "GOLD", Name: "Gold", Sector: "Commodities", AssetType: "commodity", BasePrice: d("2340.00"), CurrentPrice: d("2340.00"), DayOpen: d("2340.00"), DayHigh: d("2340.00"), DayLow: d("2340.00"), PrevClose: d("2330.00"), Volatility: d("0.012"), Drift: d("0.001"), MeanReversion: d("0.15"), Description: ptr("The timeless safe-haven asset. Historically maintains value during market uncertainty.")},
-		{Ticker: "SLVR", Name: "Silver", Sector: "Commodities", AssetType: "commodity", BasePrice: d("29.50"), CurrentPrice: d("29.50"), DayOpen: d("29.50"), DayHigh: d("29.50"), DayLow: d("29.50"), PrevClose: d("29.20"), Volatility: d("0.022"), Drift: d("0.001"), MeanReversion: d("0.12"), Description: ptr("Industrial and precious metal. Used in electronics, solar panels, and jewelry.")},
-		{Ticker: "OIL", Name: "Crude Oil", Sector: "Commodities", AssetType: "commodity", BasePrice: d("78.50"), CurrentPrice: d("78.50"), DayOpen: d("78.50"), DayHigh: d("78.50"), DayLow: d("78.50"), PrevClose: d("77.80"), Volatility: d("0.030"), Drift: d("0.000"), MeanReversion: d("0.10"), Description: ptr("Black gold. Global benchmark for energy prices and economic health.")},
-
-		// ============ ETFs ============
-		{Ticker: "MKTX", Name: "Mock Total Market ETF", Sector: "ETF", AssetType: "etf", BasePrice: d("100.00"), CurrentPrice: d("100.00"), DayOpen: d("100.00"), DayHigh: d("100.00"), DayLow: d("100.00"), PrevClose: d("99.50"), Volatility: d("0.015"), Drift: d("0.001"), MeanReversion: d("0.10"), Description: ptr("Tracks all stocks in the Mock Starket. Broad market exposure in a single trade.")},
-		{Ticker: "TEKX", Name: "Mock Tech ETF", Sector: "ETF", AssetType: "etf", BasePrice: d("150.00"), CurrentPrice: d("150.00"), DayOpen: d("150.00"), DayHigh: d("150.00"), DayLow: d("150.00"), PrevClose: d("148.50"), Volatility: d("0.028"), Drift: d("0.002"), MeanReversion: d("0.08"), Description: ptr("Tracks the top tech stocks. Concentrated exposure to the technology sector.")},
-		{Ticker: "DEFX", Name: "Mock Defense ETF", Sector: "ETF", AssetType: "etf", BasePrice: d("200.00"), CurrentPrice: d("200.00"), DayOpen: d("200.00"), DayHigh: d("200.00"), DayLow: d("200.00"), PrevClose: d("198.00"), Volatility: d("0.020"), Drift: d("0.002"), MeanReversion: d("0.10"), Description: ptr("Tracks defense and aerospace stocks. Stable growth with government contract tailwinds.")},
-		{Ticker: "CPTX", Name: "Mock Crypto ETF", Sector: "ETF", AssetType: "etf", BasePrice: d("50.00"), CurrentPrice: d("50.00"), DayOpen: d("50.00"), DayHigh: d("50.00"), DayLow: d("50.00"), PrevClose: d("49.00"), Volatility: d("0.050"), Drift: d("0.002"), MeanReversion: d("0.06"), Description: ptr("Tracks major cryptocurrencies. Crypto exposure without managing wallets.")},
+	// Clean up old fictional tickers that are not in our real ticker list
+	fmt.Println("Cleaning up old tickers...")
+	realSet := make(map[string]bool, len(tickers))
+	for _, t := range tickers {
+		realSet[t] = true
 	}
 
-	fmt.Println("Seeding stocks...")
-	for _, stock := range stocks {
+	existingStocks, err := repo.GetAllStocks(ctx)
+	if err != nil {
+		log.Printf("warning: could not fetch existing stocks: %v", err)
+	} else {
+		removed := 0
+		for _, s := range existingStocks {
+			if !realSet[s.Ticker] {
+				// Delete dependent records first, then the stock
+				_, _ = pool.Exec(ctx, `DELETE FROM price_history WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM etf_holdings WHERE etf_ticker = $1 OR holding_ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM option_contracts WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM holdings WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM trades WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM orders WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM price_alerts WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM watchlist WHERE ticker = $1`, s.Ticker)
+				_, err := pool.Exec(ctx, `DELETE FROM stocks WHERE ticker = $1`, s.Ticker)
+				if err != nil {
+					log.Printf("  failed to remove %s: %v", s.Ticker, err)
+				} else {
+					removed++
+				}
+			}
+		}
+		if removed > 0 {
+			fmt.Printf("  Removed %d old tickers\n", removed)
+		}
+	}
+
+	// Build Polygon client if API key is available
+	var polygonClient *polygon.Client
+	if apiKey != "" {
+		logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelWarn}))
+		polygonClient = polygon.NewClient(apiKey, "https://api.polygon.io", 5, logger)
+	}
+
+	fmt.Println("\nSeeding stocks...")
+	for _, ticker := range tickers {
+		stock := buildStock(ctx, ticker, polygonClient)
 		if err := repo.UpsertStock(ctx, &stock); err != nil {
-			log.Printf("failed to seed stock %s: %v", stock.Ticker, err)
+			log.Printf("  failed to seed %s: %v", ticker, err)
 		} else {
-			fmt.Printf("  ✓ %s - %s ($%.2f)\n", stock.Ticker, stock.Name, stock.BasePrice.InexactFloat64())
+			fmt.Printf("  ✓ %-12s %-8s %s ($%.2f)\n", stock.Ticker, stock.Sector, stock.Name, stock.BasePrice.InexactFloat64())
 		}
 	}
 
@@ -118,7 +136,7 @@ func main() {
 			`INSERT INTO achievements (id, name, description, icon, category) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
 			a.id, a.name, a.description, a.icon, a.category)
 		if err != nil {
-			log.Printf("failed to seed achievement %s: %v", a.id, err)
+			log.Printf("  failed to seed achievement %s: %v", a.id, err)
 		} else {
 			fmt.Printf("  ✓ %s - %s\n", a.id, a.name)
 		}
@@ -126,40 +144,164 @@ func main() {
 
 	// Seed ETF compositions
 	fmt.Println("\nSeeding ETF compositions...")
-
 	etfHoldings := []struct {
 		etf, holding string
 		weight       string
 	}{
-		// MKTX - Total Market (equal weight across all stocks)
-		{"MKTX", "PLNX", "0.05"}, {"MKTX", "GWNT", "0.05"}, {"MKTX", "PIPE", "0.05"},
-		{"MKTX", "INIT", "0.05"}, {"MKTX", "LUMN", "0.05"}, {"MKTX", "DM", "0.05"},
-		{"MKTX", "MSPC", "0.05"}, {"MKTX", "SWTE", "0.05"}, {"MKTX", "CHUX", "0.05"},
-		{"MKTX", "ZONE", "0.05"}, {"MKTX", "STRK", "0.05"}, {"MKTX", "ACME", "0.05"},
-		{"MKTX", "KRAB", "0.05"}, {"MKTX", "BUBS", "0.05"}, {"MKTX", "BOWL", "0.05"},
-		{"MKTX", "MOMR", "0.05"}, {"MKTX", "FIGG", "0.05"}, {"MKTX", "PDLK", "0.05"},
-		{"MKTX", "CBIO", "0.05"}, {"MKTX", "CHSM", "0.05"},
-
-		// TEKX - Tech ETF
-		{"TEKX", "PLNX", "0.20"}, {"TEKX", "GWNT", "0.20"}, {"TEKX", "PIPE", "0.25"},
-		{"TEKX", "INIT", "0.10"}, {"TEKX", "LUMN", "0.25"},
-
-		// DEFX - Defense ETF
-		{"DEFX", "ZONE", "0.30"}, {"DEFX", "STRK", "0.45"}, {"DEFX", "ACME", "0.25"},
-
-		// CPTX - Crypto ETF
-		{"CPTX", "BTC", "0.50"}, {"CPTX", "ETH", "0.30"}, {"CPTX", "SOL", "0.15"}, {"CPTX", "DOGE", "0.05"},
+		// SPY - S&P 500 (top holdings)
+		{"SPY", "AAPL", "0.07"}, {"SPY", "MSFT", "0.07"}, {"SPY", "NVDA", "0.06"},
+		{"SPY", "AMZN", "0.04"}, {"SPY", "META", "0.03"}, {"SPY", "GOOGL", "0.04"},
+		{"SPY", "TSLA", "0.02"}, {"SPY", "JPM", "0.02"}, {"SPY", "V", "0.02"},
+		{"SPY", "UNH", "0.02"}, {"SPY", "JNJ", "0.02"}, {"SPY", "XOM", "0.02"},
+		// QQQ - Nasdaq 100
+		{"QQQ", "AAPL", "0.09"}, {"QQQ", "MSFT", "0.08"}, {"QQQ", "NVDA", "0.07"},
+		{"QQQ", "AMZN", "0.06"}, {"QQQ", "META", "0.05"}, {"QQQ", "GOOGL", "0.05"},
+		{"QQQ", "TSLA", "0.04"}, {"QQQ", "CRM", "0.03"}, {"QQQ", "INTC", "0.02"},
+		// DIA - Dow Jones
+		{"DIA", "AAPL", "0.06"}, {"DIA", "MSFT", "0.06"}, {"DIA", "UNH", "0.08"},
+		{"DIA", "GS", "0.06"}, {"DIA", "MCD", "0.05"}, {"DIA", "CAT", "0.05"},
+		{"DIA", "HON", "0.04"}, {"DIA", "BA", "0.04"}, {"DIA", "V", "0.04"},
+		{"DIA", "JPM", "0.04"}, {"DIA", "NKE", "0.03"}, {"DIA", "DIS", "0.03"},
+		// IWM - Russell 2000
+		{"IWM", "INTC", "0.10"}, {"IWM", "PFE", "0.10"}, {"IWM", "BAC", "0.10"},
+		{"IWM", "SLB", "0.10"}, {"IWM", "NKE", "0.10"}, {"IWM", "SBUX", "0.10"},
+		// VTI - Total Market
+		{"VTI", "AAPL", "0.06"}, {"VTI", "MSFT", "0.06"}, {"VTI", "NVDA", "0.05"},
+		{"VTI", "AMZN", "0.04"}, {"VTI", "META", "0.03"}, {"VTI", "GOOGL", "0.03"},
+		{"VTI", "JPM", "0.02"}, {"VTI", "JNJ", "0.02"}, {"VTI", "V", "0.02"},
+		{"VTI", "UNH", "0.02"}, {"VTI", "XOM", "0.02"}, {"VTI", "WMT", "0.02"},
 	}
 
 	for _, h := range etfHoldings {
 		if err := repo.UpsertETFHolding(ctx, h.etf, h.holding, d(h.weight)); err != nil {
-			log.Printf("failed to seed ETF holding %s->%s: %v", h.etf, h.holding, err)
+			log.Printf("  failed to seed ETF holding %s->%s: %v", h.etf, h.holding, err)
 		} else {
 			fmt.Printf("  ✓ %s holds %s (%.0f%%)\n", h.etf, h.holding, d(h.weight).InexactFloat64()*100)
 		}
 	}
 
 	fmt.Println("\nSeed complete!")
+}
+
+// buildStock creates a Stock model, fetching real data from Polygon when available.
+func buildStock(ctx context.Context, ticker string, client *polygon.Client) model.Stock {
+	stock := model.Stock{
+		Ticker:        ticker,
+		Name:          ticker,
+		Sector:        "Other",
+		AssetType:     "stock",
+		BasePrice:     decimal.Zero,
+		CurrentPrice:  decimal.Zero,
+		DayOpen:       decimal.Zero,
+		DayHigh:       decimal.Zero,
+		DayLow:        decimal.Zero,
+		PrevClose:     decimal.Zero,
+		Volatility:    d("0.0010"),
+		Drift:         d("0.0000"),
+		MeanReversion: d("0.20"),
+	}
+
+	if client == nil {
+		// No API key — use fallback data
+		fb := fallbackData[ticker]
+		if fb.Name != "" {
+			stock.Name = fb.Name
+		}
+		if fb.Sector != "" {
+			stock.Sector = fb.Sector
+		}
+		if fb.AssetType != "" {
+			stock.AssetType = fb.AssetType
+		}
+		return stock
+	}
+
+	// Fetch ticker details from Polygon
+	detail, err := client.GetTickerDetails(ctx, ticker)
+	if err != nil {
+		fmt.Printf("    (Polygon details unavailable for %s, using fallback)\n", ticker)
+		fb := fallbackData[ticker]
+		if fb.Name != "" {
+			stock.Name = fb.Name
+		}
+		if fb.Sector != "" {
+			stock.Sector = fb.Sector
+		}
+		if fb.AssetType != "" {
+			stock.AssetType = fb.AssetType
+		}
+		return stock
+	}
+
+	// Populate from Polygon data
+	stock.Name = detail.Name
+	stock.Sector = polygon.SectorFromTickerDetail(detail)
+
+	if detail.Description != "" {
+		stock.Description = ptr(detail.Description)
+	}
+
+	if detail.Branding != nil && detail.Branding.IconURL != "" {
+		logoURL := detail.Branding.IconURL + "?apiKey=" + os.Getenv("POLYGON_API_KEY")
+		stock.LogoURL = &logoURL
+	}
+
+	// Determine asset type
+	switch {
+	case detail.Market == "crypto":
+		stock.AssetType = "crypto"
+	case detail.Type == "ETF":
+		stock.AssetType = "etf"
+	default:
+		stock.AssetType = "stock"
+	}
+
+	// Fetch previous close for initial price
+	// (rate limited — sleep briefly between API calls)
+	time.Sleep(200 * time.Millisecond)
+	bar, err := client.GetPreviousClose(ctx, ticker)
+	if err == nil && bar.Close > 0 {
+		stock.BasePrice = decimal.NewFromFloat(bar.Close).Round(4)
+		stock.CurrentPrice = stock.BasePrice
+		stock.DayOpen = decimal.NewFromFloat(bar.Open).Round(4)
+		stock.DayHigh = decimal.NewFromFloat(bar.High).Round(4)
+		stock.DayLow = decimal.NewFromFloat(bar.Low).Round(4)
+		stock.PrevClose = decimal.NewFromFloat(bar.Open).Round(4)
+		stock.Volume = int64(bar.Volume)
+	}
+
+	return stock
+}
+
+// fallbackData provides names/sectors when Polygon API is unavailable.
+var fallbackData = map[string]struct {
+	Name, Sector, AssetType string
+}{
+	"AAPL": {"Apple Inc.", "Technology", "stock"}, "MSFT": {"Microsoft Corporation", "Technology", "stock"},
+	"GOOGL": {"Alphabet Inc.", "Technology", "stock"}, "AMZN": {"Amazon.com Inc.", "Technology", "stock"},
+	"NVDA": {"NVIDIA Corporation", "Technology", "stock"}, "META": {"Meta Platforms Inc.", "Technology", "stock"},
+	"TSLA": {"Tesla Inc.", "Technology", "stock"}, "CRM": {"Salesforce Inc.", "Technology", "stock"},
+	"ORCL": {"Oracle Corporation", "Technology", "stock"}, "INTC": {"Intel Corporation", "Technology", "stock"},
+	"JNJ": {"Johnson & Johnson", "Healthcare", "stock"}, "UNH": {"UnitedHealth Group", "Healthcare", "stock"},
+	"PFE": {"Pfizer Inc.", "Healthcare", "stock"}, "ABBV": {"AbbVie Inc.", "Healthcare", "stock"},
+	"MRK": {"Merck & Co.", "Healthcare", "stock"}, "LLY": {"Eli Lilly and Company", "Healthcare", "stock"},
+	"JPM": {"JPMorgan Chase & Co.", "Financial", "stock"}, "BAC": {"Bank of America Corp.", "Financial", "stock"},
+	"GS": {"Goldman Sachs Group", "Financial", "stock"}, "V": {"Visa Inc.", "Financial", "stock"},
+	"MA": {"Mastercard Inc.", "Financial", "stock"},
+	"XOM": {"Exxon Mobil Corporation", "Energy", "stock"}, "CVX": {"Chevron Corporation", "Energy", "stock"},
+	"COP": {"ConocoPhillips", "Energy", "stock"}, "SLB": {"Schlumberger Limited", "Energy", "stock"},
+	"WMT": {"Walmart Inc.", "Consumer", "stock"}, "KO": {"The Coca-Cola Company", "Consumer", "stock"},
+	"PEP": {"PepsiCo Inc.", "Consumer", "stock"}, "MCD": {"McDonald's Corporation", "Consumer", "stock"},
+	"NKE": {"NIKE Inc.", "Consumer", "stock"}, "SBUX": {"Starbucks Corporation", "Consumer", "stock"},
+	"DIS": {"The Walt Disney Company", "Consumer", "stock"},
+	"CAT": {"Caterpillar Inc.", "Industrial", "stock"}, "BA": {"The Boeing Company", "Industrial", "stock"},
+	"HON": {"Honeywell International", "Industrial", "stock"}, "UPS": {"United Parcel Service", "Industrial", "stock"},
+	"GE": {"GE Aerospace", "Industrial", "stock"},
+	"SPY": {"SPDR S&P 500 ETF Trust", "ETF", "etf"}, "QQQ": {"Invesco QQQ Trust", "ETF", "etf"},
+	"DIA": {"SPDR Dow Jones Industrial", "ETF", "etf"}, "IWM": {"iShares Russell 2000 ETF", "ETF", "etf"},
+	"VTI": {"Vanguard Total Stock Market", "ETF", "etf"},
+	"X:BTCUSD": {"Bitcoin", "Crypto", "crypto"}, "X:ETHUSD": {"Ethereum", "Crypto", "crypto"},
+	"X:SOLUSD": {"Solana", "Crypto", "crypto"}, "X:DOGEUSD": {"Dogecoin", "Crypto", "crypto"},
 }
 
 func d(s string) decimal.Decimal {

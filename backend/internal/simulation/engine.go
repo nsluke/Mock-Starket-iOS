@@ -8,62 +8,22 @@ import (
 	"sync"
 	"time"
 
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/shopspring/decimal"
 )
 
-// StockState holds the live simulation state for a single stock.
-type StockState struct {
-	Ticker             string
-	Price              float64
-	BasePrice          float64
-	Volatility         float64
-	Drift              float64
-	MeanReversionSpeed float64
-	Sector             string
-	DayOpen            float64
-	DayHigh            float64
-	DayLow             float64
-	Volume             int64
-}
-
-// PriceUpdate is broadcast after each simulation tick.
-type PriceUpdate struct {
-	Ticker    string          `json:"ticker"`
-	Price     decimal.Decimal `json:"price"`
-	Change    decimal.Decimal `json:"change"`
-	ChangePct decimal.Decimal `json:"change_pct"`
-	Volume    int64           `json:"volume"`
-	High      decimal.Decimal `json:"high"`
-	Low       decimal.Decimal `json:"low"`
-}
-
-// MarketEvent represents a simulation event that affects prices.
-type MarketEvent struct {
-	Type      string `json:"event"`
-	Ticker    string `json:"ticker,omitempty"`
-	Sector    string `json:"sector,omitempty"`
-	Headline  string `json:"headline"`
-	Impact    string `json:"impact"`
-	Magnitude string `json:"magnitude"`
-}
-
-// Observer receives simulation updates.
-type Observer interface {
-	OnPriceBatch(updates []PriceUpdate)
-	OnMarketEvent(event MarketEvent)
-}
-
 // Engine drives the stock price simulation.
+// It implements market.PriceProvider.
 type Engine struct {
 	mu            sync.RWMutex
-	stocks        map[string]*StockState
+	stocks        map[string]*market.StockState
 	sectorFactors map[string]float64
 	marketFactor  float64
 	tickInterval  time.Duration
 	ticksPerDay   int
 	eventFreq     int
 	tickCount     int64
-	observers     []Observer
+	observers     []market.Observer
 	rng           *rand.Rand
 	logger        *slog.Logger
 }
@@ -77,7 +37,7 @@ func NewEngine(tickMS int, eventFreq int, ticksPerDay int, logger *slog.Logger) 
 		ticksPerDay = 150
 	}
 	return &Engine{
-		stocks:        make(map[string]*StockState),
+		stocks:        make(map[string]*market.StockState),
 		sectorFactors: make(map[string]float64),
 		tickInterval:  time.Duration(tickMS) * time.Millisecond,
 		ticksPerDay:   ticksPerDay,
@@ -92,7 +52,7 @@ func (e *Engine) AddStock(ticker, name, sector string, price, volatility, drift,
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	e.stocks[ticker] = &StockState{
+	e.stocks[ticker] = &market.StockState{
 		Ticker:             ticker,
 		Price:              price,
 		BasePrice:          price,
@@ -108,7 +68,7 @@ func (e *Engine) AddStock(ticker, name, sector string, price, volatility, drift,
 }
 
 // AddObserver registers a listener for price updates and events.
-func (e *Engine) AddObserver(obs Observer) {
+func (e *Engine) AddObserver(obs market.Observer) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	e.observers = append(e.observers, obs)
@@ -127,7 +87,7 @@ func (e *Engine) GetPrice(ticker string) (decimal.Decimal, bool) {
 }
 
 // GetStockState returns a copy of the simulation state for a ticker.
-func (e *Engine) GetStockState(ticker string) (*StockState, bool) {
+func (e *Engine) GetStockState(ticker string) (*market.StockState, bool) {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 
@@ -140,11 +100,11 @@ func (e *Engine) GetStockState(ticker string) (*StockState, bool) {
 }
 
 // GetAllStockStates returns a copy of all stock states.
-func (e *Engine) GetAllStockStates() map[string]StockState {
+func (e *Engine) GetAllStockStates() map[string]market.StockState {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 
-	states := make(map[string]StockState, len(e.stocks))
+	states := make(map[string]market.StockState, len(e.stocks))
 	for k, v := range e.stocks {
 		states[k] = *v
 	}
@@ -211,7 +171,7 @@ func (e *Engine) tick() {
 		e.sectorFactors[sector] = e.rng.NormFloat64() * 0.2
 	}
 
-	updates := make([]PriceUpdate, 0, len(e.stocks))
+	updates := make([]market.PriceUpdate, 0, len(e.stocks))
 
 	for _, s := range e.stocks {
 		prevPrice := s.Price
@@ -264,7 +224,7 @@ func (e *Engine) tick() {
 			changePct = (change / s.DayOpen) * 100
 		}
 
-		updates = append(updates, PriceUpdate{
+		updates = append(updates, market.PriceUpdate{
 			Ticker:    s.Ticker,
 			Price:     decimal.NewFromFloat(s.Price).Round(4),
 			Change:    decimal.NewFromFloat(change).Round(4),
@@ -276,7 +236,7 @@ func (e *Engine) tick() {
 	}
 
 	// Copy observers under lock
-	observers := make([]Observer, len(e.observers))
+	observers := make([]market.Observer, len(e.observers))
 	copy(observers, e.observers)
 	e.mu.Unlock()
 
@@ -296,7 +256,7 @@ func (e *Engine) tick() {
 }
 
 // generateEvent creates a random market event.
-func (e *Engine) generateEvent() (MarketEvent, bool) {
+func (e *Engine) generateEvent() (market.MarketEvent, bool) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
@@ -307,7 +267,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 		// Stock-specific earnings event — temporary price shock, not permanent base shift
 		stock := e.randomStock()
 		if stock == nil {
-			return MarketEvent{}, false
+			return market.MarketEvent{}, false
 		}
 		positive := e.rng.Float64() > 0.4
 		magnitude := 0.005 + e.rng.Float64()*0.015 // 0.5-2% price shock
@@ -319,7 +279,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 			headline = stock.Ticker + " misses earnings expectations"
 		}
 		stock.Price *= (1 + magnitude)
-		return MarketEvent{
+		return market.MarketEvent{
 			Type:      "earnings_surprise",
 			Ticker:    stock.Ticker,
 			Headline:  headline,
@@ -345,7 +305,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 				s.Price *= (1 + shift)
 			}
 		}
-		return MarketEvent{
+		return market.MarketEvent{
 			Type:      "sector_event",
 			Sector:    sector,
 			Headline:  headline,
@@ -367,7 +327,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 		for _, s := range e.stocks {
 			s.Price *= (1 + shift)
 		}
-		return MarketEvent{
+		return market.MarketEvent{
 			Type:      "market_event",
 			Headline:  headline,
 			Impact:    impact,
@@ -375,11 +335,11 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 		}, true
 
 	default:
-		return MarketEvent{}, false
+		return market.MarketEvent{}, false
 	}
 }
 
-func (e *Engine) randomStock() *StockState {
+func (e *Engine) randomStock() *market.StockState {
 	keys := make([]string, 0, len(e.stocks))
 	for k := range e.stocks {
 		keys = append(keys, k)

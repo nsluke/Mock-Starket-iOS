@@ -3,13 +3,13 @@ package worker
 import (
 	"testing"
 
-	"github.com/luke/mockstarket/internal/simulation"
+	"github.com/luke/mockstarket/internal/market"
 )
 
 func TestStockSyncWorker_OnPriceBatch_BuffersLatest(t *testing.T) {
 	w := NewStockSyncWorker(nil, 0, nil) // repo/logger nil — only testing buffering
 
-	batch1 := []simulation.PriceUpdate{
+	batch1 := []market.PriceUpdate{
 		{Ticker: "AAPL", Price: d("150.00"), High: d("155.00"), Low: d("148.00"), Volume: 1000},
 		{Ticker: "GOOG", Price: d("2800.00"), High: d("2850.00"), Low: d("2790.00"), Volume: 500},
 	}
@@ -26,7 +26,7 @@ func TestStockSyncWorker_OnPriceBatch_BuffersLatest(t *testing.T) {
 	w.mu.Unlock()
 
 	// Second batch overwrites with newer prices
-	batch2 := []simulation.PriceUpdate{
+	batch2 := []market.PriceUpdate{
 		{Ticker: "AAPL", Price: d("152.00"), High: d("156.00"), Low: d("147.00"), Volume: 1200},
 	}
 	w.OnPriceBatch(batch2)
@@ -51,7 +51,7 @@ func TestStockSyncWorker_OnPriceBatch_BuffersLatest(t *testing.T) {
 func TestStockSyncWorker_OnPriceBatch_CapturesAllFields(t *testing.T) {
 	w := NewStockSyncWorker(nil, 0, nil)
 
-	w.OnPriceBatch([]simulation.PriceUpdate{
+	w.OnPriceBatch([]market.PriceUpdate{
 		{Ticker: "TEST", Price: d("42.50"), High: d("45.00"), Low: d("40.00"), Volume: 9999},
 	})
 

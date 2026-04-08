@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/luke/mockstarket/internal/simulation"
 	"github.com/shopspring/decimal"
@@ -14,11 +15,11 @@ import (
 // OptionsChainWorker generates option contracts for all stocks periodically.
 type OptionsChainWorker struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 	logger *slog.Logger
 }
 
-func NewOptionsChainWorker(repo *repository.Repo, engine *simulation.Engine, logger *slog.Logger) *OptionsChainWorker {
+func NewOptionsChainWorker(repo *repository.Repo, engine market.PriceProvider, logger *slog.Logger) *OptionsChainWorker {
 	return &OptionsChainWorker{repo: repo, engine: engine, logger: logger}
 }
 
@@ -51,6 +52,10 @@ func (w *OptionsChainWorker) generateAll(ctx context.Context) {
 	count := 0
 
 	for _, state := range states {
+		// Skip stocks with no price data (e.g., Polygon hasn't fetched yet)
+		if state.Price <= 0 {
+			continue
+		}
 		// Only generate options for regular stocks
 		if state.Sector == "Crypto" || state.Sector == "Commodities" || state.Sector == "ETF" {
 			continue

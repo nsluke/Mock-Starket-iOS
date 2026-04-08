@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 
-	"github.com/luke/mockstarket/internal/simulation"
+	"github.com/luke/mockstarket/internal/market"
 	ws "github.com/luke/mockstarket/internal/websocket"
 )
 
@@ -20,7 +20,7 @@ func NewSimulationBridge(hub *ws.Hub, logger *slog.Logger) *SimulationBridge {
 }
 
 // OnPriceBatch broadcasts price updates to the "market" channel.
-func (b *SimulationBridge) OnPriceBatch(updates []simulation.PriceUpdate) {
+func (b *SimulationBridge) OnPriceBatch(updates []market.PriceUpdate) {
 	data, err := json.Marshal(updates)
 	if err != nil {
 		b.logger.Error("failed to marshal price batch", "error", err)
@@ -34,7 +34,7 @@ func (b *SimulationBridge) OnPriceBatch(updates []simulation.PriceUpdate) {
 }
 
 // OnMarketEvent broadcasts market events to all connected clients.
-func (b *SimulationBridge) OnMarketEvent(event simulation.MarketEvent) {
+func (b *SimulationBridge) OnMarketEvent(event market.MarketEvent) {
 	data, err := json.Marshal(event)
 	if err != nil {
 		b.logger.Error("failed to marshal market event", "error", err)

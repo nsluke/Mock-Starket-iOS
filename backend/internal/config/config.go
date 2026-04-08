@@ -21,6 +21,13 @@ type Config struct {
 	MarketEventFreq         int
 	AdminAPIKey             string
 	MaxWSClients            int
+
+	// Market data source: "simulation" (default) or "polygon"
+	MarketDataSource    string
+	PolygonAPIKey       string
+	PolygonBaseURL      string
+	PolygonWSEnabled    bool
+	PolygonPollInterval int // milliseconds
 }
 
 func Load() (*Config, error) {
@@ -38,6 +45,12 @@ func Load() (*Config, error) {
 		MarketEventFreq:         getEnvInt("MARKET_EVENT_FREQ", 150),
 		AdminAPIKey:             getEnvStr("ADMIN_API_KEY", ""),
 		MaxWSClients:            getEnvInt("MAX_WS_CLIENTS", 1000),
+
+		MarketDataSource:    getEnvStr("MARKET_DATA_SOURCE", "simulation"),
+		PolygonAPIKey:       getEnvStr("POLYGON_API_KEY", ""),
+		PolygonBaseURL:      getEnvStr("POLYGON_BASE_URL", "https://api.polygon.io"),
+		PolygonWSEnabled:    getEnvStr("POLYGON_WS_ENABLED", "false") == "true",
+		PolygonPollInterval: getEnvInt("POLYGON_POLL_INTERVAL_MS", 30000),
 	}
 
 	if cfg.DatabaseURL == "" {

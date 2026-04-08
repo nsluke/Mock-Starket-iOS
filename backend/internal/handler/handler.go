@@ -8,11 +8,12 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/middleware"
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/polygon"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/luke/mockstarket/internal/service"
-	"github.com/luke/mockstarket/internal/simulation"
 	ws "github.com/luke/mockstarket/internal/websocket"
 	"github.com/shopspring/decimal"
 )
@@ -23,13 +24,13 @@ type Handler struct {
 	tradeSvc        *service.TradeService
 	optionsTradeSvc *service.OptionsTradeService
 	challengeSvc    *service.ChallengeService
-	engine          *simulation.Engine
+	engine          market.PriceProvider
 	hub             *ws.Hub
 	startingCash    float64
 }
 
 // New creates a new Handler.
-func New(repo *repository.Repo, tradeSvc *service.TradeService, engine *simulation.Engine, hub *ws.Hub, startingCash float64) *Handler {
+func New(repo *repository.Repo, tradeSvc *service.TradeService, engine market.PriceProvider, hub *ws.Hub, startingCash float64) *Handler {
 	return &Handler{
 		repo:         repo,
 		tradeSvc:     tradeSvc,
@@ -47,6 +48,23 @@ func (h *Handler) SetChallengeService(svc *service.ChallengeService) {
 // SetOptionsTradeService sets the options trade service.
 func (h *Handler) SetOptionsTradeService(svc *service.OptionsTradeService) {
 	h.optionsTradeSvc = svc
+}
+
+// ---- Market Status ----
+
+func (h *Handler) GetMarketStatus(w http.ResponseWriter, r *http.Request) {
+	now := time.Now()
+	session := polygon.GetMarketSession(now)
+	isOpen := session == polygon.SessionRegular
+
+	resp := map[string]interface{}{
+		"is_open":    isOpen,
+		"session":    string(session),
+		"next_open":  polygon.NextMarketOpen(now).Format(time.RFC3339),
+		"next_close": polygon.NextMarketClose(now).Format(time.RFC3339),
+		"timestamp":  now.Format(time.RFC3339),
+	}
+	writeJSON(w, http.StatusOK, resp)
 }
 
 // ---- Auth ----
