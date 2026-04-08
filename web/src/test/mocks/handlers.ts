@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://localhost';
 
 // Sample data
 export const mockStocks = [

@@ -12,13 +12,13 @@ test.describe('Portfolio Page', () => {
   test('displays portfolio summary cards', async ({ page }) => {
     await expect(page.getByText('Net Worth')).toBeVisible();
     await expect(page.getByText('$105,000.00')).toBeVisible();
-    await expect(page.getByText('Cash')).toBeVisible();
-    await expect(page.getByText('$85,000.00')).toBeVisible();
+    await expect(page.getByText('Cash').first()).toBeVisible();
+    await expect(page.getByText('$85,000.00').first()).toBeVisible();
   });
 
   test('displays holdings with position data', async ({ page }) => {
-    await expect(page.getByText('PIPE')).toBeVisible();
-    await expect(page.getByText('$15,550.00')).toBeVisible();
+    await expect(page.getByText('PIPE').first()).toBeVisible();
+    await expect(page.getByText('$15,550.00').first()).toBeVisible();
   });
 
   test('switches between holdings and trade history tabs', async ({ page }) => {

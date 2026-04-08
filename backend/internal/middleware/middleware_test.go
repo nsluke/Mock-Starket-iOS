@@ -82,7 +82,7 @@ func TestRecoverer_CatchesPanic(t *testing.T) {
 func TestRecoverer_PassesThroughNormally(t *testing.T) {
 	handler := Recoverer(discardLogger())(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, "ok")
+		_, _ = fmt.Fprint(w, "ok")
 	}))
 
 	rr := httptest.NewRecorder()

@@ -5,9 +5,22 @@ import (
 	"testing"
 )
 
+func setEnv(t *testing.T, key, value string) {
+	t.Helper()
+	if err := os.Setenv(key, value); err != nil {
+		t.Fatalf("Setenv(%s): %v", key, err)
+	}
+}
+
+func unsetEnv(t *testing.T, key string) {
+	t.Helper()
+	if err := os.Unsetenv(key); err != nil {
+		t.Fatalf("Unsetenv(%s): %v", key, err)
+	}
+}
+
 func TestLoad_RequiresDatabaseURL(t *testing.T) {
-	// Ensure DATABASE_URL is unset
-	os.Unsetenv("DATABASE_URL")
+	unsetEnv(t, "DATABASE_URL")
 
 	_, err := Load()
 	if err == nil {
@@ -16,8 +29,8 @@ func TestLoad_RequiresDatabaseURL(t *testing.T) {
 }
 
 func TestLoad_Defaults(t *testing.T) {
-	os.Setenv("DATABASE_URL", "postgres://test:test@localhost/test")
-	defer os.Unsetenv("DATABASE_URL")
+	setEnv(t, "DATABASE_URL", "postgres://test:test@localhost/test")
+	defer unsetEnv(t, "DATABASE_URL")
 
 	cfg, err := Load()
 	if err != nil {
@@ -27,14 +40,14 @@ func TestLoad_Defaults(t *testing.T) {
 	if cfg.Port != 8080 {
 		t.Errorf("default port: got %d, want 8080", cfg.Port)
 	}
-	if cfg.SimTickMS != 2000 {
-		t.Errorf("default sim tick: got %d, want 2000", cfg.SimTickMS)
+	if cfg.SimTickMS != 30000 {
+		t.Errorf("default sim tick: got %d, want 30000", cfg.SimTickMS)
 	}
 	if cfg.StartingCash != 100000 {
 		t.Errorf("default starting cash: got %f, want 100000", cfg.StartingCash)
 	}
-	if cfg.MarketEventFreq != 60 {
-		t.Errorf("default event freq: got %d, want 60", cfg.MarketEventFreq)
+	if cfg.MarketEventFreq != 150 {
+		t.Errorf("default event freq: got %d, want 150", cfg.MarketEventFreq)
 	}
 	if cfg.MaxWSClients != 1000 {
 		t.Errorf("default max ws clients: got %d, want 1000", cfg.MaxWSClients)
@@ -49,20 +62,21 @@ func TestLoad_Defaults(t *testing.T) {
 
 func TestLoad_OverridesFromEnv(t *testing.T) {
 	envs := map[string]string{
-		"DATABASE_URL":     "postgres://test:test@localhost/test",
-		"PORT":             "9090",
-		"SIM_TICK_MS":      "500",
-		"STARTING_CASH":    "50000",
+		"DATABASE_URL":      "postgres://test:test@localhost/test",
+		"PORT":              "9090",
+		"SIM_TICK_MS":       "500",
+		"STARTING_CASH":     "50000",
 		"MARKET_EVENT_FREQ": "30",
-		"MAX_WS_CLIENTS":   "500",
-		"LOG_LEVEL":        "debug",
-		"DEV_MODE":         "false",
-		"ADMIN_API_KEY":    "secret-key",
+		"MAX_WS_CLIENTS":    "500",
+		"LOG_LEVEL":         "debug",
+		"DEV_MODE":          "false",
+		"ADMIN_API_KEY":     "secret-key",
 	}
 
 	for k, v := range envs {
-		os.Setenv(k, v)
-		defer os.Unsetenv(k)
+		k, v := k, v
+		setEnv(t, k, v)
+		defer unsetEnv(t, k)
 	}
 
 	cfg, err := Load()
@@ -94,10 +108,10 @@ func TestLoad_OverridesFromEnv(t *testing.T) {
 }
 
 func TestLoad_CORSOrigins(t *testing.T) {
-	os.Setenv("DATABASE_URL", "postgres://test:test@localhost/test")
-	os.Setenv("CORS_ORIGINS", "http://localhost:3000,https://app.example.com")
-	defer os.Unsetenv("DATABASE_URL")
-	defer os.Unsetenv("CORS_ORIGINS")
+	setEnv(t, "DATABASE_URL", "postgres://test:test@localhost/test")
+	setEnv(t, "CORS_ORIGINS", "http://localhost:3000,https://app.example.com")
+	defer unsetEnv(t, "DATABASE_URL")
+	defer unsetEnv(t, "CORS_ORIGINS")
 
 	cfg, err := Load()
 	if err != nil {
@@ -116,7 +130,7 @@ func TestLoad_CORSOrigins(t *testing.T) {
 }
 
 func TestGetEnvStr_Fallback(t *testing.T) {
-	os.Unsetenv("NONEXISTENT_KEY")
+	unsetEnv(t, "NONEXISTENT_KEY")
 	val := getEnvStr("NONEXISTENT_KEY", "default")
 	if val != "default" {
 		t.Errorf("expected 'default', got %q", val)
@@ -124,8 +138,8 @@ func TestGetEnvStr_Fallback(t *testing.T) {
 }
 
 func TestGetEnvInt_InvalidValue(t *testing.T) {
-	os.Setenv("BAD_INT", "not-a-number")
-	defer os.Unsetenv("BAD_INT")
+	setEnv(t, "BAD_INT", "not-a-number")
+	defer unsetEnv(t, "BAD_INT")
 
 	val := getEnvInt("BAD_INT", 42)
 	if val != 42 {
@@ -134,8 +148,8 @@ func TestGetEnvInt_InvalidValue(t *testing.T) {
 }
 
 func TestGetEnvFloat_InvalidValue(t *testing.T) {
-	os.Setenv("BAD_FLOAT", "not-a-float")
-	defer os.Unsetenv("BAD_FLOAT")
+	setEnv(t, "BAD_FLOAT", "not-a-float")
+	defer unsetEnv(t, "BAD_FLOAT")
 
 	val := getEnvFloat("BAD_FLOAT", 3.14)
 	if val != 3.14 {

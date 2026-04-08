@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"os"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
@@ -24,7 +25,11 @@ func NewFirebaseVerifier(ctx context.Context, projectID string, credentialsFile 
 	var err error
 
 	if credentialsFile != "" {
-		app, err = firebase.NewApp(ctx, config, option.WithCredentialsFile(credentialsFile))
+		b, readErr := os.ReadFile(credentialsFile)
+		if readErr != nil {
+			return nil, fmt.Errorf("failed to read firebase credentials file: %w", readErr)
+		}
+		app, err = firebase.NewApp(ctx, config, option.WithAuthCredentialsJSON(option.ServiceAccount, b))
 	} else {
 		app, err = firebase.NewApp(ctx, config)
 	}

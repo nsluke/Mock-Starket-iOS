@@ -56,7 +56,7 @@ func main() {
 	repo := repository.New(pool)
 
 	// Simulation Engine
-	engine := simulation.NewEngine(cfg.SimTickMS, cfg.MarketEventFreq, logger)
+	engine := simulation.NewEngine(cfg.SimTickMS, cfg.MarketEventFreq, cfg.SimTicksPerDay, logger)
 
 	// Load stocks from DB into simulation
 	stocks, err := repo.GetAllStocks(context.Background())
@@ -114,6 +114,19 @@ func main() {
 	challengeSvc := service.NewChallengeService(repo, engine, logger)
 	challengeWorker := worker.NewChallengeWorker(challengeSvc, logger)
 
+	// 9. Options trade service
+	optionsTradeSvc := service.NewOptionsTradeService(repo, engine)
+
+	// 10. Options pricing worker (recalculates every 5th tick)
+	optionsPricingWorker := worker.NewOptionsPricingWorker(repo, engine, hub, logger)
+	engine.AddObserver(optionsPricingWorker)
+
+	// 11. Options chain generator (creates contracts on startup + every sim-day)
+	optionsChainWorker := worker.NewOptionsChainWorker(repo, engine, logger)
+
+	// 12. Options expiration worker (settles expired contracts)
+	optionsExpirationWorker := worker.NewOptionsExpirationWorker(repo, engine, logger)
+
 	// Firebase Auth
 	var authVerifier middleware.FirebaseAuthVerifier
 	if !cfg.DevMode {
@@ -135,6 +148,7 @@ func main() {
 	// Handlers
 	h := handler.New(repo, tradeSvc, engine, hub, cfg.StartingCash)
 	h.SetChallengeService(challengeSvc)
+	h.SetOptionsTradeService(optionsTradeSvc)
 
 	// Router
 	router := server.New(h, hub, authVerifier, cfg.CORSOrigins, logger)
@@ -170,6 +184,10 @@ func main() {
 
 	// Start challenge worker
 	go challengeWorker.Run(ctx)
+
+	// Start options workers
+	go optionsChainWorker.Run(ctx)
+	go optionsExpirationWorker.Run(ctx)
 
 	// Start stale WebSocket client cleaner
 	go func() {

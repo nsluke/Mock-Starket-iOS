@@ -320,6 +320,161 @@ struct ChallengeCheckResponse: Codable, Sendable {
     let completed: Bool
 }
 
+// MARK: - Options
+
+struct OptionContract: Codable, Identifiable, Hashable, Sendable {
+    let id: UUID
+    let ticker: String
+    let optionType: String
+    let strikePrice: Decimal
+    let expiration: Date
+    let contractSymbol: String
+    var bidPrice: Decimal
+    var askPrice: Decimal
+    var lastPrice: Decimal
+    var markPrice: Decimal
+    var openInterest: Int
+    var volume: Int
+    var impliedVol: Decimal
+    var delta: Decimal
+    var gamma: Decimal
+    var theta: Decimal
+    var vega: Decimal
+    var rho: Decimal
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, ticker, expiration, status, volume, delta, gamma, theta, vega, rho
+        case optionType = "option_type"
+        case strikePrice = "strike_price"
+        case contractSymbol = "contract_symbol"
+        case bidPrice = "bid_price"
+        case askPrice = "ask_price"
+        case lastPrice = "last_price"
+        case markPrice = "mark_price"
+        case openInterest = "open_interest"
+        case impliedVol = "implied_vol"
+    }
+
+    var isCall: Bool { optionType == "call" }
+    var isPut: Bool { optionType == "put" }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        ticker = try c.decode(String.self, forKey: .ticker)
+        optionType = try c.decode(String.self, forKey: .optionType)
+        expiration = try c.decode(Date.self, forKey: .expiration)
+        contractSymbol = try c.decode(String.self, forKey: .contractSymbol)
+        openInterest = try c.decode(Int.self, forKey: .openInterest)
+        volume = try c.decode(Int.self, forKey: .volume)
+        status = try c.decode(String.self, forKey: .status)
+        strikePrice = Self.dec(c, .strikePrice)
+        bidPrice = Self.dec(c, .bidPrice)
+        askPrice = Self.dec(c, .askPrice)
+        lastPrice = Self.dec(c, .lastPrice)
+        markPrice = Self.dec(c, .markPrice)
+        impliedVol = Self.dec(c, .impliedVol)
+        delta = Self.dec(c, .delta)
+        gamma = Self.dec(c, .gamma)
+        theta = Self.dec(c, .theta)
+        vega = Self.dec(c, .vega)
+        rho = Self.dec(c, .rho)
+    }
+
+    private static func dec(_ c: KeyedDecodingContainer<CodingKeys>, _ key: CodingKeys) -> Decimal {
+        if let s = try? c.decode(String.self, forKey: key), let d = Decimal(string: s) { return d }
+        return (try? c.decode(Decimal.self, forKey: key)) ?? 0
+    }
+}
+
+struct OptionChainResponse: Codable, Sendable {
+    let ticker: String
+    let underlyingPrice: Decimal
+    let calls: [OptionContract]
+    let puts: [OptionContract]
+
+    enum CodingKeys: String, CodingKey {
+        case ticker, calls, puts
+        case underlyingPrice = "underlying_price"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        ticker = try c.decode(String.self, forKey: .ticker)
+        calls = try c.decode([OptionContract].self, forKey: .calls)
+        puts = try c.decode([OptionContract].self, forKey: .puts)
+        if let s = try? c.decode(String.self, forKey: .underlyingPrice), let d = Decimal(string: s) {
+            underlyingPrice = d
+        } else {
+            underlyingPrice = (try? c.decode(Decimal.self, forKey: .underlyingPrice)) ?? 0
+        }
+    }
+}
+
+struct OptionPosition: Codable, Identifiable, Sendable {
+    let id: UUID
+    let portfolioID: UUID
+    let contractID: UUID
+    let quantity: Int
+    let avgCost: Decimal
+    let collateral: Decimal
+    let contract: OptionContract
+    let marketValue: Decimal
+    let pnl: Decimal
+    let pnlPct: Decimal
+    let isLong: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id, quantity, collateral, contract
+        case portfolioID = "portfolio_id"
+        case contractID = "contract_id"
+        case avgCost = "avg_cost"
+        case marketValue = "market_value"
+        case pnl
+        case pnlPct = "pnl_pct"
+        case isLong = "is_long"
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        portfolioID = try c.decode(UUID.self, forKey: .portfolioID)
+        contractID = try c.decode(UUID.self, forKey: .contractID)
+        quantity = try c.decode(Int.self, forKey: .quantity)
+        contract = try c.decode(OptionContract.self, forKey: .contract)
+        isLong = try c.decode(Bool.self, forKey: .isLong)
+        avgCost = Self.dec(c, .avgCost)
+        collateral = Self.dec(c, .collateral)
+        marketValue = Self.dec(c, .marketValue)
+        pnl = Self.dec(c, .pnl)
+        pnlPct = Self.dec(c, .pnlPct)
+    }
+
+    private static func dec(_ c: KeyedDecodingContainer<CodingKeys>, _ key: CodingKeys) -> Decimal {
+        if let s = try? c.decode(String.self, forKey: key), let d = Decimal(string: s) { return d }
+        return (try? c.decode(Decimal.self, forKey: key)) ?? 0
+    }
+}
+
+struct OptionTrade: Codable, Identifiable, Sendable {
+    let id: UUID
+    let userID: UUID
+    let contractID: UUID
+    let side: String
+    let quantity: Int
+    let price: Decimal
+    let total: Decimal
+    let createdAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case id, side, quantity, price, total
+        case userID = "user_id"
+        case contractID = "contract_id"
+        case createdAt = "created_at"
+    }
+}
+
 // MARK: - Price Point (Charts)
 
 struct PricePoint: Codable, Identifiable, Sendable {

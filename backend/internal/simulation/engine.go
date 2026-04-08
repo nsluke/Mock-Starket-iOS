@@ -60,6 +60,7 @@ type Engine struct {
 	sectorFactors map[string]float64
 	marketFactor  float64
 	tickInterval  time.Duration
+	ticksPerDay   int
 	eventFreq     int
 	tickCount     int64
 	observers     []Observer
@@ -68,11 +69,18 @@ type Engine struct {
 }
 
 // NewEngine creates a simulation engine with the given tick interval.
-func NewEngine(tickMS int, eventFreq int, logger *slog.Logger) *Engine {
+// ticksPerDay controls simulation speed: volatility/drift params represent
+// daily magnitudes, and dt = 1/ticksPerDay normalizes each tick accordingly.
+// With default 150 ticks/day at 2s/tick, one simulated day ≈ 5 real minutes.
+func NewEngine(tickMS int, eventFreq int, ticksPerDay int, logger *slog.Logger) *Engine {
+	if ticksPerDay <= 0 {
+		ticksPerDay = 150
+	}
 	return &Engine{
 		stocks:        make(map[string]*StockState),
 		sectorFactors: make(map[string]float64),
 		tickInterval:  time.Duration(tickMS) * time.Millisecond,
+		ticksPerDay:   ticksPerDay,
 		eventFreq:     eventFreq,
 		rng:           rand.New(rand.NewSource(time.Now().UnixNano())),
 		logger:        logger,
@@ -118,6 +126,43 @@ func (e *Engine) GetPrice(ticker string) (decimal.Decimal, bool) {
 	return decimal.NewFromFloat(s.Price).Round(4), true
 }
 
+// GetStockState returns a copy of the simulation state for a ticker.
+func (e *Engine) GetStockState(ticker string) (*StockState, bool) {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+
+	s, ok := e.stocks[ticker]
+	if !ok {
+		return nil, false
+	}
+	cp := *s
+	return &cp, true
+}
+
+// GetAllStockStates returns a copy of all stock states.
+func (e *Engine) GetAllStockStates() map[string]StockState {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+
+	states := make(map[string]StockState, len(e.stocks))
+	for k, v := range e.stocks {
+		states[k] = *v
+	}
+	return states
+}
+
+// GetTicksPerDay returns the number of ticks per simulated day.
+func (e *Engine) GetTicksPerDay() int {
+	return e.ticksPerDay
+}
+
+// GetTickCount returns the current tick count.
+func (e *Engine) GetTickCount() int64 {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
+	return e.tickCount
+}
+
 // GetAllPrices returns current prices for all stocks.
 func (e *Engine) GetAllPrices() map[string]decimal.Decimal {
 	e.mu.RLock()
@@ -153,12 +198,11 @@ func (e *Engine) tick() {
 	e.mu.Lock()
 
 	e.tickCount++
-	dt := e.tickInterval.Seconds()
 
-	// Generate market-wide factor (shared noise)
+	dt := 1.0 / float64(e.ticksPerDay)
+
+	// Generate market-wide and sector noise (small shared factors)
 	e.marketFactor = e.rng.NormFloat64() * 0.3
-
-	// Generate per-sector factors
 	sectors := make(map[string]bool)
 	for _, s := range e.stocks {
 		sectors[s.Sector] = true
@@ -172,16 +216,29 @@ func (e *Engine) tick() {
 	for _, s := range e.stocks {
 		prevPrice := s.Price
 
-		// Geometric Brownian Motion with mean reversion:
-		// dP = kappa * (base - P) * dt + sigma * P * sqrt(dt) * Z
+		// Simple per-tick model:
+		// - Volatility is the per-tick standard deviation as a fraction of price
+		//   e.g. 0.0001 = 0.01% per tick
+		// - Noise is a blend of individual + market + sector factors
+		// - Mean reversion gently pulls price back toward base
 		individualNoise := e.rng.NormFloat64()
 		combinedNoise := 0.5*individualNoise + 0.3*e.marketFactor + 0.2*e.sectorFactors[s.Sector]
 
-		meanReversionTerm := s.MeanReversionSpeed * (s.BasePrice - s.Price) * dt
-		diffusionTerm := s.Volatility * s.Price * math.Sqrt(dt) * combinedNoise
-		driftTerm := s.Drift * s.Price * dt
+		noise := s.Volatility * s.Price * combinedNoise
+		meanReversion := s.MeanReversionSpeed * (s.BasePrice - s.Price) * dt
+		drift := s.Drift * s.Price * dt
 
-		s.Price += meanReversionTerm + diffusionTerm + driftTerm
+		dp := noise + meanReversion + drift
+
+		// Cap per-tick change at ±0.5%
+		maxChange := s.Price * 0.005
+		if dp > maxChange {
+			dp = maxChange
+		} else if dp < -maxChange {
+			dp = -maxChange
+		}
+
+		s.Price += dp
 
 		// Ensure price stays positive (floor at $0.01)
 		if s.Price < 0.01 {
@@ -247,13 +304,13 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 
 	switch {
 	case roll < 0.3:
-		// Stock-specific earnings event
+		// Stock-specific earnings event — temporary price shock, not permanent base shift
 		stock := e.randomStock()
 		if stock == nil {
 			return MarketEvent{}, false
 		}
 		positive := e.rng.Float64() > 0.4
-		magnitude := 0.05 + e.rng.Float64()*0.15 // 5-20% shift
+		magnitude := 0.005 + e.rng.Float64()*0.015 // 0.5-2% price shock
 		impact := "positive"
 		headline := stock.Ticker + " reports strong quarterly earnings"
 		if !positive {
@@ -261,8 +318,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 			impact = "negative"
 			headline = stock.Ticker + " misses earnings expectations"
 		}
-		stock.BasePrice *= (1 + magnitude)
-		stock.Volatility *= 1.5 // Spike volatility temporarily
+		stock.Price *= (1 + magnitude)
 		return MarketEvent{
 			Type:      "earnings_surprise",
 			Ticker:    stock.Ticker,
@@ -272,11 +328,11 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 		}, true
 
 	case roll < 0.5:
-		// Sector event
+		// Sector event — temporary price shock
 		sectors := []string{"Tech", "Consumer", "Defense", "Food", "Industrial"}
 		sector := sectors[e.rng.Intn(len(sectors))]
 		positive := e.rng.Float64() > 0.5
-		shift := 0.03 + e.rng.Float64()*0.07
+		shift := 0.002 + e.rng.Float64()*0.008 // 0.2-1% price shock
 		impact := "positive"
 		headline := sector + " sector surges on strong demand"
 		if !positive {
@@ -286,7 +342,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 		}
 		for _, s := range e.stocks {
 			if s.Sector == sector {
-				s.BasePrice *= (1 + shift)
+				s.Price *= (1 + shift)
 			}
 		}
 		return MarketEvent{
@@ -298,9 +354,9 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 		}, true
 
 	case roll < 0.65:
-		// Market-wide event
+		// Market-wide event — temporary price shock
 		positive := e.rng.Float64() > 0.5
-		shift := 0.02 + e.rng.Float64()*0.05
+		shift := 0.001 + e.rng.Float64()*0.004 // 0.1-0.5% price shock
 		impact := "positive"
 		headline := "Federal Reserve signals accommodative policy"
 		if !positive {
@@ -309,7 +365,7 @@ func (e *Engine) generateEvent() (MarketEvent, bool) {
 			headline = "Global markets tumble on economic uncertainty"
 		}
 		for _, s := range e.stocks {
-			s.BasePrice *= (1 + shift)
+			s.Price *= (1 + shift)
 		}
 		return MarketEvent{
 			Type:      "market_event",

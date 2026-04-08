@@ -16,6 +16,7 @@ type Config struct {
 	CORSOrigins             []string
 	LogLevel                string
 	SimTickMS               int
+	SimTicksPerDay          int
 	StartingCash            float64
 	MarketEventFreq         int
 	AdminAPIKey             string
@@ -31,9 +32,10 @@ func Load() (*Config, error) {
 		DevMode:                 getEnvStr("DEV_MODE", "true") == "true",
 		CORSOrigins:             strings.Split(getEnvStr("CORS_ORIGINS", "http://localhost:3000"), ","),
 		LogLevel:                getEnvStr("LOG_LEVEL", "info"),
-		SimTickMS:               getEnvInt("SIM_TICK_MS", 2000),
+		SimTickMS:               getEnvInt("SIM_TICK_MS", 30000),
+		SimTicksPerDay:          getEnvInt("SIM_TICKS_PER_DAY", 150),
 		StartingCash:            getEnvFloat("STARTING_CASH", 100000),
-		MarketEventFreq:         getEnvInt("MARKET_EVENT_FREQ", 60),
+		MarketEventFreq:         getEnvInt("MARKET_EVENT_FREQ", 150),
 		AdminAPIKey:             getEnvStr("ADMIN_API_KEY", ""),
 		MaxWSClients:            getEnvInt("MAX_WS_CLIENTS", 1000),
 	}

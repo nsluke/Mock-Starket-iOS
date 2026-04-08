@@ -68,6 +68,17 @@ enum APIEndpoint {
     case checkChallenge
     case claimChallenge(id: UUID)
 
+    // Options
+    case getOptionChain(ticker: String, expiration: String?)
+    case getOptionExpirations(ticker: String)
+    case getOptionContract(id: UUID)
+    case executeOptionsTrade
+    case getOptionsTradeHistory(limit: Int, offset: Int)
+    case getOptionsPositions
+    case createOptionsOrder
+    case listOptionsOrders
+    case cancelOptionsOrder(id: UUID)
+
     // System
     case health
 
@@ -96,17 +107,26 @@ enum APIEndpoint {
         case .getTodaysChallenge: return "/api/v1/challenges/today"
         case .checkChallenge: return "/api/v1/challenges/check"
         case .claimChallenge(let id): return "/api/v1/challenges/\(id)/claim"
+        case .getOptionChain(let ticker, let expiration):
+            if let exp = expiration { return "/api/v1/stocks/\(ticker)/options?expiration=\(exp)" }
+            return "/api/v1/stocks/\(ticker)/options"
+        case .getOptionExpirations(let ticker): return "/api/v1/stocks/\(ticker)/options/expirations"
+        case .getOptionContract(let id): return "/api/v1/options/\(id)"
+        case .executeOptionsTrade, .getOptionsTradeHistory: return "/api/v1/options/trades"
+        case .getOptionsPositions: return "/api/v1/options/positions"
+        case .createOptionsOrder, .listOptionsOrders: return "/api/v1/options/orders"
+        case .cancelOptionsOrder(let id): return "/api/v1/options/orders/\(id)"
         case .health: return "/api/v1/system/health"
         }
     }
 
     var method: String {
         switch self {
-        case .register, .createGuest, .executeTrade, .createOrder, .createAlert, .addToWatchlist, .checkChallenge, .claimChallenge:
+        case .register, .createGuest, .executeTrade, .createOrder, .createAlert, .addToWatchlist, .checkChallenge, .claimChallenge, .executeOptionsTrade, .createOptionsOrder:
             return "POST"
         case .updateMe:
             return "PUT"
-        case .deleteMe, .cancelOrder, .deleteAlert, .removeFromWatchlist:
+        case .deleteMe, .cancelOrder, .deleteAlert, .removeFromWatchlist, .cancelOptionsOrder:
             return "DELETE"
         default:
             return "GET"

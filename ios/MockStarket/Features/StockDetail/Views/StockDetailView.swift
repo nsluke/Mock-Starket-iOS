@@ -84,6 +84,28 @@ struct StockDetailView: View {
                     .padding(.horizontal)
                 }
 
+                // Options chain link (stocks only)
+                if viewModel.stock?.assetType == "stock" {
+                    NavigationLink {
+                        OptionsChainView(ticker: ticker)
+                    } label: {
+                        HStack {
+                            Image(systemName: "chart.bar.doc.horizontal")
+                            Text("View Options Chain")
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundStyle(Theme.textTertiary)
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.accent)
+                        .padding()
+                        .background(Theme.accent.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.horizontal)
+                }
+
                 // Trade buttons
                 tradeButtons
 
