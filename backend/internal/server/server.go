@@ -57,7 +57,7 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 
 		client := ws.NewClient(conn, hub, userID, logger)
 		if !hub.Register(client) {
-			conn.Close()
+			_ = conn.Close()
 			return
 		}
 

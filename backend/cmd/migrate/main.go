@@ -20,7 +20,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create migrator: %v", err)
 	}
-	defer m.Close()
+	defer func() {
+		if srcErr, dbErr := m.Close(); srcErr != nil || dbErr != nil {
+			log.Printf("warning: migrator close errors: src=%v db=%v", srcErr, dbErr)
+		}
+	}()
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: migrate [up|down|version]")
@@ -37,7 +41,9 @@ func main() {
 	case "down":
 		steps := 1
 		if len(os.Args) > 2 {
-			fmt.Sscanf(os.Args[2], "%d", &steps)
+			if _, err := fmt.Sscanf(os.Args[2], "%d", &steps); err != nil {
+				log.Fatalf("invalid steps %q: %v", os.Args[2], err)
+			}
 		}
 		if err := m.Steps(-steps); err != nil {
 			log.Fatalf("migration down failed: %v", err)
