@@ -10,8 +10,9 @@ export function useStocks() {
     queryKey: ['stocks'],
     queryFn: async () => {
       const data = await apiClient.getStocks();
-      setStocks(data);
-      return data;
+      const stocks = data ?? [];
+      setStocks(stocks);
+      return stocks;
     },
   });
 }
@@ -27,7 +28,10 @@ export function useStock(ticker: string) {
 export function useStockHistory(ticker: string, interval: string) {
   return useQuery<PricePoint[]>({
     queryKey: ['stock-history', ticker, interval],
-    queryFn: () => apiClient.getStockHistory(ticker, interval),
+    queryFn: async () => {
+      const data = await apiClient.getStockHistory(ticker, interval);
+      return data ?? [];
+    },
     enabled: !!ticker,
   });
 }
@@ -35,7 +39,10 @@ export function useStockHistory(ticker: string, interval: string) {
 export function useETFHoldings(ticker: string, assetType?: string) {
   return useQuery<ETFHolding[]>({
     queryKey: ['etf-holdings', ticker],
-    queryFn: () => apiClient.getETFHoldings(ticker),
+    queryFn: async () => {
+      const data = await apiClient.getETFHoldings(ticker);
+      return data ?? [];
+    },
     enabled: !!ticker && assetType === 'etf',
   });
 }
@@ -50,5 +57,20 @@ export function useMarketSummary() {
       setSummary(data);
       return data;
     },
+  });
+}
+
+interface MarketStatusResponse {
+  is_open: boolean;
+  session: string;
+  next_open: string;
+  next_close: string;
+}
+
+export function useMarketStatus() {
+  return useQuery<MarketStatusResponse>({
+    queryKey: ['market-status'],
+    queryFn: () => apiClient.request<MarketStatusResponse>('/api/v1/market/status'),
+    refetchInterval: 60_000, // refresh every minute
   });
 }

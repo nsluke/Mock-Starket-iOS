@@ -43,9 +43,19 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
     var volume: Int64
     let volatility: Decimal
     let description: String?
+    let logoURL: String?
+
+    /// Display-friendly ticker: strips "X:" prefix and "USD" suffix from crypto tickers.
+    var displayTicker: String {
+        if ticker.hasPrefix("X:") && ticker.hasSuffix("USD") {
+            return String(ticker.dropFirst(2).dropLast(3))
+        }
+        return ticker
+    }
 
     enum CodingKeys: String, CodingKey {
         case ticker, name, sector, volume, volatility, description
+        case logoURL = "logo_url"
         case assetType = "asset_type"
         case basePrice = "base_price"
         case currentPrice = "current_price"
@@ -55,11 +65,12 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
         case prevClose = "prev_close"
     }
 
-    init(ticker: String, name: String, sector: String, assetType: String = "stock", basePrice: Decimal, currentPrice: Decimal, dayOpen: Decimal, dayHigh: Decimal, dayLow: Decimal, prevClose: Decimal, volume: Int64, volatility: Decimal, description: String? = nil) {
+    init(ticker: String, name: String, sector: String, assetType: String = "stock", basePrice: Decimal, currentPrice: Decimal, dayOpen: Decimal, dayHigh: Decimal, dayLow: Decimal, prevClose: Decimal, volume: Int64, volatility: Decimal, description: String? = nil, logoURL: String? = nil) {
         self.ticker = ticker; self.name = name; self.sector = sector; self.assetType = assetType
         self.basePrice = basePrice; self.currentPrice = currentPrice; self.dayOpen = dayOpen
         self.dayHigh = dayHigh; self.dayLow = dayLow; self.prevClose = prevClose
         self.volume = volume; self.volatility = volatility; self.description = description
+        self.logoURL = logoURL
     }
 
     init(from decoder: Decoder) throws {
@@ -77,6 +88,7 @@ struct Stock: Codable, Identifiable, Hashable, Sendable {
         volume = try c.decode(Int64.self, forKey: .volume)
         volatility = try Self.decimalFromStringOrNumber(c, forKey: .volatility)
         description = try c.decodeIfPresent(String.self, forKey: .description)
+        logoURL = try c.decodeIfPresent(String.self, forKey: .logoURL)
     }
 
     /// Decodes a Decimal that may come as a JSON string or number.
