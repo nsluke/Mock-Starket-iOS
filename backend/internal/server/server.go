@@ -64,13 +64,17 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 		client.Run()
 	})
 
+	// Public API routes (no auth required)
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Post("/auth/register", h.Register)
+		r.Post("/auth/guest", h.CreateGuest)
+	})
+
 	// Authenticated API routes
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Use(mw.FirebaseAuth(authVerifier))
 
 		// Auth
-		r.Post("/auth/register", h.Register)
-		r.Post("/auth/guest", h.CreateGuest)
 		r.Get("/auth/me", h.GetMe)
 		r.Put("/auth/me", h.UpdateMe)
 		r.Delete("/auth/me", h.DeleteMe)
