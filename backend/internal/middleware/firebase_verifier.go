@@ -29,7 +29,7 @@ func NewFirebaseVerifier(ctx context.Context, projectID string, credentialsFile 
 		if readErr != nil {
 			return nil, fmt.Errorf("failed to read firebase credentials file: %w", readErr)
 		}
-		app, err = firebase.NewApp(ctx, config, option.WithCredentialsJSON(b))
+		app, err = firebase.NewApp(ctx, config, option.WithAuthCredentialsJSON(option.ServiceAccount, b))
 	} else {
 		app, err = firebase.NewApp(ctx, config)
 	}
