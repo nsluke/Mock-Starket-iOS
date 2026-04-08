@@ -66,14 +66,14 @@ func main() {
 		for _, s := range existingStocks {
 			if !realSet[s.Ticker] {
 				// Delete dependent records first, then the stock
-				pool.Exec(ctx, `DELETE FROM price_history WHERE ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM etf_holdings WHERE etf_ticker = $1 OR holding_ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM option_contracts WHERE ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM holdings WHERE ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM trades WHERE ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM orders WHERE ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM price_alerts WHERE ticker = $1`, s.Ticker)
-				pool.Exec(ctx, `DELETE FROM watchlist WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM price_history WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM etf_holdings WHERE etf_ticker = $1 OR holding_ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM option_contracts WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM holdings WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM trades WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM orders WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM price_alerts WHERE ticker = $1`, s.Ticker)
+				_, _ = pool.Exec(ctx, `DELETE FROM watchlist WHERE ticker = $1`, s.Ticker)
 				_, err := pool.Exec(ctx, `DELETE FROM stocks WHERE ticker = $1`, s.Ticker)
 				if err != nil {
 					log.Printf("  failed to remove %s: %v", s.Ticker, err)
