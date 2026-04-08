@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 
 struct MarketView: View {
     @State private var viewModel = MarketViewModel()
@@ -68,6 +69,20 @@ struct MarketView: View {
         .scrollContentBackground(.hidden)
         .background(Theme.background)
         .navigationTitle("Market")
+        .toolbar {
+            if let portfolio = viewModel.portfolio {
+                ToolbarItem(placement: .topBarTrailing) {
+                    VStack(alignment: .trailing, spacing: 1) {
+                        Text(portfolio.portfolio.cash.currencyFormatted)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Theme.textPrimary)
+                        Text("Cash")
+                            .font(.caption2)
+                            .foregroundStyle(Theme.textTertiary)
+                    }
+                }
+            }
+        }
         .searchable(text: $viewModel.searchText, prompt: "Search stocks...")
         .refreshable {
             await viewModel.loadStocks()
@@ -85,29 +100,51 @@ struct MarketView: View {
 struct StockRowView: View {
     let stock: Stock
 
+    private var showsSparkline: Bool {
+        stock.assetType == "stock" || stock.assetType == "commodity"
+    }
+
     var body: some View {
         HStack(spacing: 12) {
-            // Ticker badge
-            Text(stock.ticker)
-                .font(.system(.caption, design: .monospaced, weight: .bold))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Theme.accent.opacity(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+            // Logo or ticker badge
+            if let logoURL = stock.logoURL, let url = URL(string: logoURL) {
+                AsyncImage(url: url) { image in
+                    image.resizable().aspectRatio(contentMode: .fit)
+                } placeholder: {
+                    Text(stock.displayTicker.prefix(2))
+                        .font(.system(.caption2, design: .monospaced, weight: .bold))
+                        .foregroundStyle(Theme.accent)
+                }
+                .frame(width: 32, height: 32)
+                .clipShape(Circle())
+                .background(Circle().fill(Theme.cardBackground))
+            } else {
+                Text(stock.displayTicker.prefix(2))
+                    .font(.system(.caption, design: .monospaced, weight: .bold))
+                    .foregroundStyle(Theme.accent)
+                    .frame(width: 32, height: 32)
+                    .background(Theme.accent.opacity(0.15))
+                    .clipShape(Circle())
+            }
 
-            // Name
+            // Name & ticker
             VStack(alignment: .leading, spacing: 2) {
+                Text(stock.displayTicker)
+                    .font(.system(.caption, design: .monospaced, weight: .bold))
+                    .foregroundStyle(Theme.accent)
                 Text(stock.name)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(Theme.textPrimary)
                     .lineLimit(1)
-                Text(stock.sector)
-                    .font(.caption2)
-                    .foregroundStyle(Theme.textTertiary)
             }
 
             Spacer()
+
+            // Sparkline (stocks & commodities only)
+            if showsSparkline {
+                SparklineView(ticker: stock.ticker, isUp: stock.isUp)
+                    .frame(width: 60, height: 30)
+            }
 
             // Price and change
             VStack(alignment: .trailing, spacing: 2) {
@@ -127,6 +164,71 @@ struct StockRowView: View {
         }
         .padding(.vertical, 4)
     }
+}
+
+// MARK: - Sparkline
+
+struct SparklineView: View {
+    let ticker: String
+    let isUp: Bool
+
+    @State private var points: [Decimal] = []
+
+    private var lineColor: Color {
+        isUp ? Theme.positive : Theme.negative
+    }
+
+    var body: some View {
+        Group {
+            if points.count >= 2 {
+                Chart(Array(points.enumerated()), id: \.offset) { index, price in
+                    LineMark(
+                        x: .value("T", index),
+                        y: .value("P", price)
+                    )
+                    .foregroundStyle(lineColor)
+                    .interpolationMethod(.catmullRom)
+                }
+                .chartXAxis(.hidden)
+                .chartYAxis(.hidden)
+                .chartYScale(domain: .automatic(includesZero: false))
+                .chartLegend(.hidden)
+            } else {
+                Color.clear
+            }
+        }
+        .task(id: ticker) {
+            await loadSparkline()
+        }
+    }
+
+    private func loadSparkline() async {
+        if let cached = SparklineCache.shared.get(ticker) {
+            points = cached
+            return
+        }
+        let token = AuthManager.shared.currentToken
+        do {
+            let history: [PricePoint] = try await APIClient.shared.request(
+                .getStockHistory(ticker: ticker, interval: "5m"),
+                token: token
+            )
+            let prices = history.map(\.close)
+            SparklineCache.shared.set(ticker, prices: prices)
+            points = prices
+        } catch {
+            // Silently fail — row still shows price data
+        }
+    }
+}
+
+@MainActor
+final class SparklineCache {
+    static let shared = SparklineCache()
+    private var cache: [String: [Decimal]] = [:]
+
+    func get(_ ticker: String) -> [Decimal]? { cache[ticker] }
+    func set(_ ticker: String, prices: [Decimal]) { cache[ticker] = prices }
 }
 
 struct MarketSummaryCard: View {

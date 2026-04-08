@@ -37,6 +37,9 @@ func NewClient(apiKey, baseURL string, rateLimit int, logger *slog.Logger) *Clie
 	if rateLimit <= 0 {
 		rateLimit = 5
 	}
+	if logger == nil {
+		logger = slog.Default()
+	}
 	return &Client{
 		apiKey:  apiKey,
 		baseURL: strings.TrimRight(baseURL, "/"),

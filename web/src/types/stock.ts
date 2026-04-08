@@ -12,6 +12,15 @@ export interface Stock {
   volume: number;
   volatility: string;
   description?: string;
+  logo_url?: string;
+}
+
+/** Display-friendly ticker: strips "X:" prefix and "USD" suffix from crypto tickers */
+export function displayTicker(ticker: string): string {
+  if (ticker.startsWith('X:') && ticker.endsWith('USD')) {
+    return ticker.slice(2, -3);
+  }
+  return ticker;
 }
 
 export interface PriceUpdate {
