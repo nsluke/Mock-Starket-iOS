@@ -23,7 +23,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   signOut: () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('mockstarket_token');
+      document.cookie = 'mockstarket_token=; path=/; max-age=0';
     }
+    // Fire-and-forget Firebase sign out
+    import('@/lib/auth-service').then(({ signOut }) => signOut()).catch(() => {});
     set({ user: null, token: null });
   },
 }));

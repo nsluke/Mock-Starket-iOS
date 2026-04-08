@@ -86,7 +86,13 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.repo.CreateUser(r.Context(), firebaseUID, req.DisplayName, req.IsGuest)
 	if err != nil {
-		writeError(w, http.StatusConflict, "user already exists")
+		// User already exists — return existing user (idempotent register)
+		existing, getErr := h.repo.GetUserByFirebaseUID(r.Context(), firebaseUID)
+		if getErr != nil {
+			writeError(w, http.StatusConflict, "user already exists")
+			return
+		}
+		writeJSON(w, http.StatusOK, existing)
 		return
 	}
 
@@ -106,7 +112,13 @@ func (h *Handler) CreateGuest(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.repo.CreateUser(r.Context(), firebaseUID, "Guest Trader", true)
 	if err != nil {
-		writeError(w, http.StatusConflict, "user already exists")
+		// Guest already exists — return existing user
+		existing, getErr := h.repo.GetUserByFirebaseUID(r.Context(), firebaseUID)
+		if getErr != nil {
+			writeError(w, http.StatusConflict, "user already exists")
+			return
+		}
+		writeJSON(w, http.StatusOK, existing)
 		return
 	}
 

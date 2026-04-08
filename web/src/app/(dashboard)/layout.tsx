@@ -49,6 +49,27 @@ export default function DashboardLayout({
     tokenRestored.current = true;
   }
 
+  // Listen for Firebase auth state changes to refresh tokens
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+    import('firebase/auth').then(({ onAuthStateChanged }) => {
+      import('@/lib/firebase').then(({ auth }) => {
+        unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          if (firebaseUser) {
+            const freshToken = await firebaseUser.getIdToken();
+            apiClient.setToken(freshToken);
+            useAuthStore.getState().setToken(freshToken);
+            localStorage.setItem('mockstarket_token', freshToken);
+            document.cookie = `mockstarket_token=${freshToken}; path=/; max-age=${60 * 60 * 24 * 30}`;
+          }
+        });
+      });
+    }).catch(() => {
+      // Firebase not configured — using dev mode tokens
+    });
+    return () => unsubscribe?.();
+  }, []);
+
   useEffect(() => {
     if (!token) return;
 
