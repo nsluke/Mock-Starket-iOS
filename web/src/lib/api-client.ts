@@ -57,15 +57,15 @@ class APIClient {
   }
 
   getStock(ticker: string) {
-    return this.request<any>(`/api/v1/stocks/${ticker}`);
+    return this.request<any>(`/api/v1/stocks/${encodeURIComponent(ticker)}`);
   }
 
   getStockHistory(ticker: string, interval: string = '1m') {
-    return this.request<any[]>(`/api/v1/stocks/${ticker}/history?interval=${interval}`);
+    return this.request<any[]>(`/api/v1/stocks/${encodeURIComponent(ticker)}/history?interval=${interval}`);
   }
 
   getETFHoldings(ticker: string) {
-    return this.request<any[]>(`/api/v1/stocks/${ticker}/holdings`);
+    return this.request<any[]>(`/api/v1/stocks/${encodeURIComponent(ticker)}/holdings`);
   }
 
   getMarketSummary() {
@@ -148,7 +148,7 @@ class APIClient {
   }
 
   removeFromWatchlist(ticker: string) {
-    return this.request<any>(`/api/v1/watchlist/${ticker}`, { method: 'DELETE' });
+    return this.request<any>(`/api/v1/watchlist/${encodeURIComponent(ticker)}`, { method: 'DELETE' });
   }
 
   // Challenges
@@ -172,11 +172,11 @@ class APIClient {
   // Options
   getOptionChain(ticker: string, expiration?: string) {
     const params = expiration ? `?expiration=${expiration}` : '';
-    return this.request<any>(`/api/v1/stocks/${ticker}/options${params}`);
+    return this.request<any>(`/api/v1/stocks/${encodeURIComponent(ticker)}/options${params}`);
   }
 
   getOptionExpirations(ticker: string) {
-    return this.request<string[]>(`/api/v1/stocks/${ticker}/options/expirations`);
+    return this.request<string[]>(`/api/v1/stocks/${encodeURIComponent(ticker)}/options/expirations`);
   }
 
   getOptionContract(id: string) {
