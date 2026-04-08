@@ -6,8 +6,10 @@
 *.tfvars
 *.tfstate
 *.tfstate.backup
+*.tfstate.*.backup
 .terraform/
 .terraform.lock.hcl
+tfplan*
 
 # OS
 .DS_Store
@@ -30,6 +32,8 @@ Thumbs.db
 # =========================
 backend/bin/
 backend/tmp/
+backend/seed
+backend/.next/
 backend/vendor/
 *.exe
 *.exe~

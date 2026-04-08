@@ -49,7 +49,7 @@ struct StockDetailView: View {
 
                                 Spacer()
 
-                                Text("\((Decimal(string: holding.weight) ?? 0) * 100)%")
+                                Text(verbatim: "\((Decimal(string: holding.weight) ?? 0) * 100)%")
                                     .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(Theme.textPrimary)
                             }

@@ -6,83 +6,16 @@ struct MarketView: View {
 
     var body: some View {
         List {
-            // Market Summary Card
-            if let summary = viewModel.marketSummary {
-                MarketSummaryCard(summary: summary)
-                    .listRowBackground(Theme.surface)
-            }
-
-            // Asset Category Filter
-            Section {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(AssetCategory.allCases) { category in
-                            SectorChip(title: category.rawValue, isSelected: viewModel.selectedCategory == category) {
-                                viewModel.selectedCategory = category
-                                viewModel.selectedSector = nil
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 4)
-                }
-                .listRowBackground(Theme.surface)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
-            }
-
-            // Sector Filter
-            if viewModel.availableSectors.count > 1 {
-                Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            SectorChip(title: "All Sectors", isSelected: viewModel.selectedSector == nil) {
-                                viewModel.selectedSector = nil
-                            }
-                            ForEach(viewModel.availableSectors, id: \.self) { sector in
-                                SectorChip(title: sector, isSelected: viewModel.selectedSector == sector) {
-                                    viewModel.selectedSector = sector
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 4)
-                    }
-                    .listRowBackground(Theme.surface)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                }
-            }
-
-            // Stock List
-            Section {
-                ForEach(viewModel.filteredStocks) { stock in
-                    NavigationLink(value: stock) {
-                        StockRowView(stock: stock)
-                    }
-                    .listRowBackground(Theme.surface)
-                }
-            } header: {
-                Text(viewModel.selectedCategory == .all ? "All Assets" : viewModel.selectedCategory.rawValue)
-                    .foregroundStyle(Theme.textSecondary)
-            }
+            marketSummarySection
+            categoryFilterSection
+            sectorFilterSection
+            stockListSection
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Theme.background)
         .navigationTitle("Market")
-        .toolbar {
-            if let portfolio = viewModel.portfolio {
-                ToolbarItem(placement: .topBarTrailing) {
-                    VStack(alignment: .trailing, spacing: 1) {
-                        Text(portfolio.portfolio.cash.currencyFormatted)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Theme.textPrimary)
-                        Text("Cash")
-                            .font(.caption2)
-                            .foregroundStyle(Theme.textTertiary)
-                    }
-                }
-            }
-        }
+        .toolbar { cashToolbar }
         .searchable(text: $viewModel.searchText, prompt: "Search stocks...")
         .refreshable {
             await viewModel.loadStocks()
@@ -93,6 +26,87 @@ struct MarketView: View {
         .task {
             await viewModel.loadStocks()
             viewModel.subscribeToUpdates()
+        }
+    }
+
+    @ViewBuilder
+    private var marketSummarySection: some View {
+        if let summary = viewModel.marketSummary {
+            MarketSummaryCard(summary: summary)
+                .listRowBackground(Theme.surface)
+        }
+    }
+
+    private var categoryFilterSection: some View {
+        Section {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(AssetCategory.allCases) { category in
+                        SectorChip(title: category.rawValue, isSelected: viewModel.selectedCategory == category) {
+                            viewModel.selectedCategory = category
+                            viewModel.selectedSector = nil
+                        }
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
+            .listRowBackground(Theme.surface)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8))
+        }
+    }
+
+    @ViewBuilder
+    private var sectorFilterSection: some View {
+        if viewModel.availableSectors.count > 1 {
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        SectorChip(title: "All Sectors", isSelected: viewModel.selectedSector == nil) {
+                            viewModel.selectedSector = nil
+                        }
+                        ForEach(viewModel.availableSectors, id: \.self) { sector in
+                            SectorChip(title: sector, isSelected: viewModel.selectedSector == sector) {
+                                viewModel.selectedSector = sector
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+                .listRowBackground(Theme.surface)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+            }
+        }
+    }
+
+    private var stockListSection: some View {
+        Section {
+            ForEach(viewModel.filteredStocks) { stock in
+                NavigationLink(value: stock) {
+                    StockRowView(stock: stock)
+                }
+                .listRowBackground(Theme.surface)
+            }
+        } header: {
+            Text(viewModel.selectedCategory == .all ? "All Assets" : viewModel.selectedCategory.rawValue)
+                .foregroundStyle(Theme.textSecondary)
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var cashToolbar: some ToolbarContent {
+        if let portfolio = viewModel.portfolio {
+            ToolbarItem(placement: .topBarTrailing) {
+                VStack(alignment: .trailing, spacing: 1) {
+                    Text(portfolio.portfolio.cash.currencyFormatted)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Theme.textPrimary)
+                    Text("Cash")
+                        .font(.caption2)
+                        .foregroundStyle(Theme.textTertiary)
+                }
+            }
         }
     }
 }
@@ -117,7 +131,7 @@ struct StockRowView: View {
                 }
                 .frame(width: 32, height: 32)
                 .clipShape(Circle())
-                .background(Circle().fill(Theme.cardBackground))
+                .background(Circle().fill(Theme.surfaceElevated))
             } else {
                 Text(stock.displayTicker.prefix(2))
                     .font(.system(.caption, design: .monospaced, weight: .bold))
