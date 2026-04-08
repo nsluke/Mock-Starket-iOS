@@ -27,14 +27,14 @@ func TestLoad_Defaults(t *testing.T) {
 	if cfg.Port != 8080 {
 		t.Errorf("default port: got %d, want 8080", cfg.Port)
 	}
-	if cfg.SimTickMS != 2000 {
-		t.Errorf("default sim tick: got %d, want 2000", cfg.SimTickMS)
+	if cfg.SimTickMS != 30000 {
+		t.Errorf("default sim tick: got %d, want 30000", cfg.SimTickMS)
 	}
 	if cfg.StartingCash != 100000 {
 		t.Errorf("default starting cash: got %f, want 100000", cfg.StartingCash)
 	}
-	if cfg.MarketEventFreq != 60 {
-		t.Errorf("default event freq: got %d, want 60", cfg.MarketEventFreq)
+	if cfg.MarketEventFreq != 150 {
+		t.Errorf("default event freq: got %d, want 150", cfg.MarketEventFreq)
 	}
 	if cfg.MaxWSClients != 1000 {
 		t.Errorf("default max ws clients: got %d, want 1000", cfg.MaxWSClients)
