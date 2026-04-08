@@ -65,10 +65,8 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 	})
 
 	// Public API routes (no auth required)
-	r.Route("/api/v1", func(r chi.Router) {
-		r.Post("/auth/register", h.Register)
-		r.Post("/auth/guest", h.CreateGuest)
-	})
+	r.Post("/api/v1/auth/register", h.Register)
+	r.Post("/api/v1/auth/guest", h.CreateGuest)
 
 	// Authenticated API routes
 	r.Route("/api/v1", func(r chi.Router) {
