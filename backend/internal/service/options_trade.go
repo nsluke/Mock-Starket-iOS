@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/luke/mockstarket/internal/simulation"
 	"github.com/shopspring/decimal"
@@ -18,11 +19,11 @@ var (
 // OptionsTradeService handles options trade execution and validation.
 type OptionsTradeService struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 }
 
 // NewOptionsTradeService creates a new options trade service.
-func NewOptionsTradeService(repo *repository.Repo, engine *simulation.Engine) *OptionsTradeService {
+func NewOptionsTradeService(repo *repository.Repo, engine market.PriceProvider) *OptionsTradeService {
 	return &OptionsTradeService{repo: repo, engine: engine}
 }
 

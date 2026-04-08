@@ -6,22 +6,22 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/repository"
-	"github.com/luke/mockstarket/internal/simulation"
 	"github.com/shopspring/decimal"
 )
 
 // TradeService handles trade execution and validation.
 type TradeService struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 
 	// Optional achievement callback, set after construction to avoid circular deps
 	onTradeExecuted func(ctx context.Context, userID uuid.UUID)
 }
 
 // NewTradeService creates a new trade service.
-func NewTradeService(repo *repository.Repo, engine *simulation.Engine) *TradeService {
+func NewTradeService(repo *repository.Repo, engine market.PriceProvider) *TradeService {
 	return &TradeService{repo: repo, engine: engine}
 }
 

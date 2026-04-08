@@ -10,21 +10,21 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/repository"
-	"github.com/luke/mockstarket/internal/simulation"
 	"github.com/shopspring/decimal"
 )
 
 // ChallengeService handles daily challenge generation, evaluation, and claiming.
 type ChallengeService struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 	logger *slog.Logger
 	rng    *rand.Rand
 }
 
 // NewChallengeService creates a new challenge service.
-func NewChallengeService(repo *repository.Repo, engine *simulation.Engine, logger *slog.Logger) *ChallengeService {
+func NewChallengeService(repo *repository.Repo, engine market.PriceProvider, logger *slog.Logger) *ChallengeService {
 	return &ChallengeService{
 		repo:   repo,
 		engine: engine,

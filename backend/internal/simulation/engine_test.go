@@ -8,22 +8,23 @@ import (
 	"testing"
 	"time"
 
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/shopspring/decimal"
 )
 
 type mockObserver struct {
 	mu       sync.Mutex
-	batches  [][]PriceUpdate
-	events   []MarketEvent
+	batches  [][]market.PriceUpdate
+	events   []market.MarketEvent
 }
 
-func (m *mockObserver) OnPriceBatch(updates []PriceUpdate) {
+func (m *mockObserver) OnPriceBatch(updates []market.PriceUpdate) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.batches = append(m.batches, updates)
 }
 
-func (m *mockObserver) OnMarketEvent(event MarketEvent) {
+func (m *mockObserver) OnMarketEvent(event market.MarketEvent) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.events = append(m.events, event)

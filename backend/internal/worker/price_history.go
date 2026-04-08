@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/luke/mockstarket/internal/repository"
-	"github.com/luke/mockstarket/internal/simulation"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/shopspring/decimal"
 )
 
@@ -65,7 +65,7 @@ func NewPriceHistoryWorker(repo *repository.Repo, logger *slog.Logger) *PriceHis
 }
 
 // OnPriceBatch receives every simulation tick and buffers the data.
-func (w *PriceHistoryWorker) OnPriceBatch(updates []simulation.PriceUpdate) {
+func (w *PriceHistoryWorker) OnPriceBatch(updates []market.PriceUpdate) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
@@ -94,7 +94,7 @@ func (w *PriceHistoryWorker) OnPriceBatch(updates []simulation.PriceUpdate) {
 }
 
 // OnMarketEvent is a no-op for this worker.
-func (w *PriceHistoryWorker) OnMarketEvent(_ simulation.MarketEvent) {}
+func (w *PriceHistoryWorker) OnMarketEvent(_ market.MarketEvent) {}
 
 // Run starts the flush loops. Blocks until context is cancelled.
 func (w *PriceHistoryWorker) Run(ctx context.Context) {

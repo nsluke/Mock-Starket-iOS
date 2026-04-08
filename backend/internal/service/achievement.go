@@ -5,8 +5,8 @@ import (
 	"log/slog"
 
 	"github.com/google/uuid"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/repository"
-	"github.com/luke/mockstarket/internal/simulation"
 	ws "github.com/luke/mockstarket/internal/websocket"
 	"github.com/shopspring/decimal"
 )
@@ -14,7 +14,7 @@ import (
 // AchievementService evaluates and grants achievements based on user actions.
 type AchievementService struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 	hub    *ws.Hub
 	logger *slog.Logger
 
@@ -22,7 +22,7 @@ type AchievementService struct {
 }
 
 // NewAchievementService creates a new achievement evaluator.
-func NewAchievementService(repo *repository.Repo, engine *simulation.Engine, hub *ws.Hub, startingCash float64, logger *slog.Logger) *AchievementService {
+func NewAchievementService(repo *repository.Repo, engine market.PriceProvider, hub *ws.Hub, startingCash float64, logger *slog.Logger) *AchievementService {
 	return &AchievementService{
 		repo:         repo,
 		engine:       engine,

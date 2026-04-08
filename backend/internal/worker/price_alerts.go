@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/luke/mockstarket/internal/repository"
-	"github.com/luke/mockstarket/internal/simulation"
+	"github.com/luke/mockstarket/internal/market"
 	ws "github.com/luke/mockstarket/internal/websocket"
 	"github.com/shopspring/decimal"
 )
@@ -33,7 +33,7 @@ func NewPriceAlertWorker(repo *repository.Repo, hub *ws.Hub, logger *slog.Logger
 }
 
 // OnPriceBatch updates prices and checks alerts.
-func (w *PriceAlertWorker) OnPriceBatch(updates []simulation.PriceUpdate) {
+func (w *PriceAlertWorker) OnPriceBatch(updates []market.PriceUpdate) {
 	w.mu.Lock()
 	for _, u := range updates {
 		w.prices[u.Ticker] = u.Price
@@ -48,7 +48,7 @@ func (w *PriceAlertWorker) OnPriceBatch(updates []simulation.PriceUpdate) {
 }
 
 // OnMarketEvent is a no-op for this worker.
-func (w *PriceAlertWorker) OnMarketEvent(_ simulation.MarketEvent) {}
+func (w *PriceAlertWorker) OnMarketEvent(_ market.MarketEvent) {}
 
 func (w *PriceAlertWorker) checkAlerts(prices map[string]decimal.Decimal) {
 	ctx := context.Background()

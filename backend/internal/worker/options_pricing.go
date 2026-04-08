@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/luke/mockstarket/internal/repository"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/simulation"
 	ws "github.com/luke/mockstarket/internal/websocket"
 	"github.com/shopspring/decimal"
@@ -16,18 +17,18 @@ import (
 // OptionsPricingWorker recalculates option prices and greeks on each price tick.
 type OptionsPricingWorker struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 	hub    *ws.Hub
 	logger *slog.Logger
 	mu     sync.Mutex
 	count  int64
 }
 
-func NewOptionsPricingWorker(repo *repository.Repo, engine *simulation.Engine, hub *ws.Hub, logger *slog.Logger) *OptionsPricingWorker {
+func NewOptionsPricingWorker(repo *repository.Repo, engine market.PriceProvider, hub *ws.Hub, logger *slog.Logger) *OptionsPricingWorker {
 	return &OptionsPricingWorker{repo: repo, engine: engine, hub: hub, logger: logger}
 }
 
-func (w *OptionsPricingWorker) OnPriceBatch(_ []simulation.PriceUpdate) {
+func (w *OptionsPricingWorker) OnPriceBatch(_ []market.PriceUpdate) {
 	w.mu.Lock()
 	w.count++
 	tick := w.count
@@ -60,7 +61,7 @@ func (w *OptionsPricingWorker) OnPriceBatch(_ []simulation.PriceUpdate) {
 	for i := range contracts {
 		c := &contracts[i]
 		state, ok := states[c.Ticker]
-		if !ok {
+		if !ok || state.Price <= 0 {
 			continue
 		}
 
@@ -118,4 +119,4 @@ func (w *OptionsPricingWorker) OnPriceBatch(_ []simulation.PriceUpdate) {
 	}
 }
 
-func (w *OptionsPricingWorker) OnMarketEvent(_ simulation.MarketEvent) {}
+func (w *OptionsPricingWorker) OnMarketEvent(_ market.MarketEvent) {}

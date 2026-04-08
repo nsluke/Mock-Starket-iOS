@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/luke/mockstarket/internal/simulation"
 	"github.com/shopspring/decimal"
@@ -13,11 +14,11 @@ import (
 // OptionsExpirationWorker settles expired option contracts.
 type OptionsExpirationWorker struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 	logger *slog.Logger
 }
 
-func NewOptionsExpirationWorker(repo *repository.Repo, engine *simulation.Engine, logger *slog.Logger) *OptionsExpirationWorker {
+func NewOptionsExpirationWorker(repo *repository.Repo, engine market.PriceProvider, logger *slog.Logger) *OptionsExpirationWorker {
 	return &OptionsExpirationWorker{repo: repo, engine: engine, logger: logger}
 }
 

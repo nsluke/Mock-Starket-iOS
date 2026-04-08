@@ -75,6 +75,9 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 		r.Put("/auth/me", h.UpdateMe)
 		r.Delete("/auth/me", h.DeleteMe)
 
+		// Market Status
+		r.Get("/market/status", h.GetMarketStatus)
+
 		// Stocks
 		r.Get("/stocks", h.ListStocks)
 		r.Get("/stocks/market-summary", h.GetMarketSummary)

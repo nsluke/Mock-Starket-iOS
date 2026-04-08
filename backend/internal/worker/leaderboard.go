@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/luke/mockstarket/internal/repository"
-	"github.com/luke/mockstarket/internal/simulation"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/shopspring/decimal"
 )
 
@@ -15,14 +15,14 @@ import (
 // portfolio net worth (cash + holdings at live prices).
 type LeaderboardWorker struct {
 	repo   *repository.Repo
-	engine *simulation.Engine
+	engine market.PriceProvider
 	logger *slog.Logger
 
 	startingCash decimal.Decimal
 }
 
 // NewLeaderboardWorker creates a new leaderboard computation worker.
-func NewLeaderboardWorker(repo *repository.Repo, engine *simulation.Engine, startingCash float64, logger *slog.Logger) *LeaderboardWorker {
+func NewLeaderboardWorker(repo *repository.Repo, engine market.PriceProvider, startingCash float64, logger *slog.Logger) *LeaderboardWorker {
 	return &LeaderboardWorker{
 		repo:         repo,
 		engine:       engine,

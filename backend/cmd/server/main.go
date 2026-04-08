@@ -13,7 +13,9 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/luke/mockstarket/internal/config"
 	"github.com/luke/mockstarket/internal/handler"
+	"github.com/luke/mockstarket/internal/market"
 	"github.com/luke/mockstarket/internal/middleware"
+	"github.com/luke/mockstarket/internal/polygon"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/luke/mockstarket/internal/server"
 	"github.com/luke/mockstarket/internal/service"
@@ -55,25 +57,63 @@ func main() {
 	// Repository
 	repo := repository.New(pool)
 
-	// Simulation Engine
-	engine := simulation.NewEngine(cfg.SimTickMS, cfg.MarketEventFreq, cfg.SimTicksPerDay, logger)
-
-	// Load stocks from DB into simulation
+	// Load stocks from DB
 	stocks, err := repo.GetAllStocks(context.Background())
 	if err != nil {
 		logger.Error("failed to load stocks", "error", err)
 		os.Exit(1)
 	}
-	for _, s := range stocks {
-		engine.AddStock(
-			s.Ticker, s.Name, s.Sector,
-			s.CurrentPrice.InexactFloat64(),
-			s.Volatility.InexactFloat64(),
-			s.Drift.InexactFloat64(),
-			s.MeanReversion.InexactFloat64(),
-		)
+
+	// Initialize market data provider (simulation or polygon)
+	var provider market.PriceProvider
+
+	switch cfg.MarketDataSource {
+	case "polygon":
+		if cfg.PolygonAPIKey == "" {
+			logger.Error("POLYGON_API_KEY is required when MARKET_DATA_SOURCE=polygon")
+			os.Exit(1)
+		}
+		polygonClient := polygon.NewClient(cfg.PolygonAPIKey, cfg.PolygonBaseURL, 5, logger)
+		feed := polygon.NewMarketFeed(polygonClient, polygon.FeedConfig{
+			WSEnabled:    cfg.PolygonWSEnabled,
+			PollInterval: time.Duration(cfg.PolygonPollInterval) * time.Millisecond,
+		}, logger)
+		// Only track real tickers that Polygon.io will recognize
+		realTickers := map[string]bool{
+			"AAPL": true, "MSFT": true, "GOOGL": true, "AMZN": true, "NVDA": true,
+			"META": true, "TSLA": true, "CRM": true, "ORCL": true, "INTC": true,
+			"JNJ": true, "UNH": true, "PFE": true, "ABBV": true, "MRK": true, "LLY": true,
+			"JPM": true, "BAC": true, "GS": true, "V": true, "MA": true,
+			"XOM": true, "CVX": true, "COP": true, "SLB": true,
+			"WMT": true, "KO": true, "PEP": true, "MCD": true, "NKE": true, "SBUX": true, "DIS": true,
+			"CAT": true, "BA": true, "HON": true, "UPS": true, "GE": true,
+			"SPY": true, "QQQ": true, "DIA": true, "IWM": true, "VTI": true,
+			"X:BTCUSD": true, "X:ETHUSD": true, "X:SOLUSD": true, "X:DOGEUSD": true,
+		}
+		tracked := 0
+		for _, s := range stocks {
+			if realTickers[s.Ticker] {
+				feed.TrackTicker(s.Ticker, s.Sector, s.AssetType)
+				tracked++
+			}
+		}
+		provider = feed
+		logger.Info("using polygon.io market data", "tickers", tracked, "ws_enabled", cfg.PolygonWSEnabled)
+
+	default: // "simulation"
+		engine := simulation.NewEngine(cfg.SimTickMS, cfg.MarketEventFreq, cfg.SimTicksPerDay, logger)
+		for _, s := range stocks {
+			engine.AddStock(
+				s.Ticker, s.Name, s.Sector,
+				s.CurrentPrice.InexactFloat64(),
+				s.Volatility.InexactFloat64(),
+				s.Drift.InexactFloat64(),
+				s.MeanReversion.InexactFloat64(),
+			)
+		}
+		provider = engine
+		logger.Info("using simulation engine", "count", len(stocks))
 	}
-	logger.Info("loaded stocks into simulation", "count", len(stocks))
 
 	// WebSocket Hub
 	hub := ws.NewHub(cfg.MaxWSClients, logger)
@@ -82,50 +122,50 @@ func main() {
 
 	// 1. WebSocket bridge (broadcasts prices to connected clients)
 	bridge := worker.NewSimulationBridge(hub, logger)
-	engine.AddObserver(bridge)
+	provider.AddObserver(bridge)
 
 	// 2. Price history worker (persists OHLCV to database)
 	priceHistoryWorker := worker.NewPriceHistoryWorker(repo, logger)
-	engine.AddObserver(priceHistoryWorker)
+	provider.AddObserver(priceHistoryWorker)
 
 	// 3. Price alert worker (evaluates alert conditions)
 	priceAlertWorker := worker.NewPriceAlertWorker(repo, hub, logger)
-	engine.AddObserver(priceAlertWorker)
+	provider.AddObserver(priceAlertWorker)
 
 	// Services
-	tradeSvc := service.NewTradeService(repo, engine)
+	tradeSvc := service.NewTradeService(repo, provider)
 
 	// 4. Achievement service
-	achievementSvc := service.NewAchievementService(repo, engine, hub, cfg.StartingCash, logger)
+	achievementSvc := service.NewAchievementService(repo, provider, hub, cfg.StartingCash, logger)
 	tradeSvc.SetOnTradeExecuted(achievementSvc.OnTradeExecuted)
 
 	// 5. Order matching worker (evaluates limit/stop orders)
 	orderMatchingWorker := worker.NewOrderMatchingWorker(repo, tradeSvc, hub, logger)
-	engine.AddObserver(orderMatchingWorker)
+	provider.AddObserver(orderMatchingWorker)
 
 	// 6. Leaderboard worker (computes rankings periodically)
-	leaderboardWorker := worker.NewLeaderboardWorker(repo, engine, cfg.StartingCash, logger)
+	leaderboardWorker := worker.NewLeaderboardWorker(repo, provider, cfg.StartingCash, logger)
 
 	// 7. Stock sync worker (persists live prices back to stocks table)
 	stockSyncWorker := worker.NewStockSyncWorker(repo, 5*time.Second, logger)
-	engine.AddObserver(stockSyncWorker)
+	provider.AddObserver(stockSyncWorker)
 
 	// 8. Challenge service and worker
-	challengeSvc := service.NewChallengeService(repo, engine, logger)
+	challengeSvc := service.NewChallengeService(repo, provider, logger)
 	challengeWorker := worker.NewChallengeWorker(challengeSvc, logger)
 
 	// 9. Options trade service
-	optionsTradeSvc := service.NewOptionsTradeService(repo, engine)
+	optionsTradeSvc := service.NewOptionsTradeService(repo, provider)
 
 	// 10. Options pricing worker (recalculates every 5th tick)
-	optionsPricingWorker := worker.NewOptionsPricingWorker(repo, engine, hub, logger)
-	engine.AddObserver(optionsPricingWorker)
+	optionsPricingWorker := worker.NewOptionsPricingWorker(repo, provider, hub, logger)
+	provider.AddObserver(optionsPricingWorker)
 
 	// 11. Options chain generator (creates contracts on startup + every sim-day)
-	optionsChainWorker := worker.NewOptionsChainWorker(repo, engine, logger)
+	optionsChainWorker := worker.NewOptionsChainWorker(repo, provider, logger)
 
 	// 12. Options expiration worker (settles expired contracts)
-	optionsExpirationWorker := worker.NewOptionsExpirationWorker(repo, engine, logger)
+	optionsExpirationWorker := worker.NewOptionsExpirationWorker(repo, provider, logger)
 
 	// Firebase Auth
 	var authVerifier middleware.FirebaseAuthVerifier
@@ -146,7 +186,7 @@ func main() {
 	}
 
 	// Handlers
-	h := handler.New(repo, tradeSvc, engine, hub, cfg.StartingCash)
+	h := handler.New(repo, tradeSvc, provider, hub, cfg.StartingCash)
 	h.SetChallengeService(challengeSvc)
 	h.SetOptionsTradeService(optionsTradeSvc)
 
@@ -166,10 +206,10 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Start simulation engine
+	// Start market data provider
 	go func() {
-		if err := engine.Run(ctx); err != nil && err != context.Canceled {
-			logger.Error("simulation engine error", "error", err)
+		if err := provider.Run(ctx); err != nil && err != context.Canceled {
+			logger.Error("market data provider error", "error", err)
 		}
 	}()
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/luke/mockstarket/internal/service"
-	"github.com/luke/mockstarket/internal/simulation"
+	"github.com/luke/mockstarket/internal/market"
 	ws "github.com/luke/mockstarket/internal/websocket"
 	"github.com/shopspring/decimal"
 )
@@ -36,7 +36,7 @@ func NewOrderMatchingWorker(repo *repository.Repo, tradeSvc *service.TradeServic
 }
 
 // OnPriceBatch updates the latest prices and triggers order matching.
-func (w *OrderMatchingWorker) OnPriceBatch(updates []simulation.PriceUpdate) {
+func (w *OrderMatchingWorker) OnPriceBatch(updates []market.PriceUpdate) {
 	w.mu.Lock()
 	for _, u := range updates {
 		w.prices[u.Ticker] = u.Price
@@ -51,7 +51,7 @@ func (w *OrderMatchingWorker) OnPriceBatch(updates []simulation.PriceUpdate) {
 }
 
 // OnMarketEvent is a no-op for this worker.
-func (w *OrderMatchingWorker) OnMarketEvent(_ simulation.MarketEvent) {}
+func (w *OrderMatchingWorker) OnMarketEvent(_ market.MarketEvent) {}
 
 // matchOrders fetches all open orders and checks if any should be filled.
 func (w *OrderMatchingWorker) matchOrders(prices map[string]decimal.Decimal) {
