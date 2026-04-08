@@ -55,8 +55,10 @@ export function PayoffDiagram({ optionType, strike, premium, isLong, underlyingP
   const plotW = width - padding.left - padding.right;
   const plotH = height - padding.top - padding.bottom;
 
-  const minX = points[0]?.x ?? 0;
-  const maxX = points[points.length - 1]?.x ?? 1;
+  if (points.length === 0) return null;
+
+  const minX = points[0].x;
+  const maxX = points[points.length - 1].x;
   const minY = Math.min(...points.map((p) => p.y));
   const maxY = Math.max(...points.map((p) => p.y));
   const yRange = Math.max(maxY - minY, 1);

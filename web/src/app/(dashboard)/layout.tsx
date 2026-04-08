@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
@@ -37,16 +37,17 @@ export default function DashboardLayout({
   const { updatePrices } = useMarketStore();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Restore token from localStorage
+  // Restore token synchronously so API calls in child components have it immediately
+  const tokenRestored = useRef(false);
+  if (!tokenRestored.current && typeof window !== 'undefined') {
     const savedToken = localStorage.getItem('mockstarket_token');
     if (savedToken) {
       apiClient.setToken(savedToken);
       useAuthStore.getState().setToken(savedToken);
-      // Ensure cookie is set for middleware
       document.cookie = `mockstarket_token=${savedToken}; path=/; max-age=${60 * 60 * 24 * 30}`;
     }
-  }, []);
+    tokenRestored.current = true;
+  }
 
   useEffect(() => {
     if (!token) return;

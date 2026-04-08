@@ -14,6 +14,7 @@ export function useStocks() {
       setStocks(stocks);
       return stocks;
     },
+    refetchInterval: 30_000, // Poll every 30s to keep prices fresh
   });
 }
 

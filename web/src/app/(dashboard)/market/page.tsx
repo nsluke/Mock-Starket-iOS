@@ -40,7 +40,8 @@ export default function MarketPage() {
 
   // Available sectors based on current asset type filter
   const availableSectors = useMemo(() => {
-    const pool = assetFilter === 'all' ? stocks : stocks.filter((s) => s.asset_type === assetFilter);
+    const all = stocks || [];
+    const pool = assetFilter === 'all' ? all : all.filter((s) => s.asset_type === assetFilter);
     const unique = [...new Set(pool.map((s) => s.sector))].sort();
     return unique;
   }, [stocks, assetFilter]);
@@ -51,7 +52,7 @@ export default function MarketPage() {
   }, [assetFilter]);
 
   const filtered = useMemo(() => {
-    let result = stocks;
+    let result = stocks || [];
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter((s) => s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
@@ -74,7 +75,7 @@ export default function MarketPage() {
   // Sector breakdown for pie chart (by count of stocks, excluding ETFs)
   const sectorData = useMemo(() => {
     const counts: Record<string, number> = {};
-    stocks.forEach((s) => {
+    (stocks || []).forEach((s) => {
       if (s.asset_type === 'etf') return;
       const key = s.sector || s.asset_type;
       counts[key] = (counts[key] || 0) + 1;

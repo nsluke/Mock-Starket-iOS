@@ -16,12 +16,13 @@ export default function WatchlistPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [search, setSearch] = useState('');
 
+  const allStocks = stocks || [];
   const watchedStocks = watchedTickers
-    .map((ticker) => stocks.find((s) => s.ticker === ticker))
+    .map((ticker) => allStocks.find((s) => s.ticker === ticker))
     .filter(Boolean);
 
   const searchResults = search.length > 0
-    ? stocks.filter(
+    ? allStocks.filter(
         (s) =>
           !watchedTickers.includes(s.ticker) &&
           (s.ticker.toLowerCase().includes(search.toLowerCase()) ||
