@@ -60,13 +60,24 @@ type TickerDetailResponse struct {
 
 // TickerDetail holds reference data for a ticker.
 type TickerDetail struct {
-	Ticker      string `json:"ticker"`
-	Name        string `json:"name"`
-	Market      string `json:"market"`        // "stocks", "crypto", "fx"
-	Locale      string `json:"locale"`        // "us"
-	Type        string `json:"type"`          // "CS" (common stock), "ETF", "CRYPTO"
-	SICCode     string `json:"sic_code"`
-	Description string `json:"description"`
+	Ticker         string          `json:"ticker"`
+	Name           string          `json:"name"`
+	Market         string          `json:"market"`          // "stocks", "crypto", "fx"
+	Locale         string          `json:"locale"`          // "us", "global"
+	Type           string          `json:"type"`            // "CS" (common stock), "ETF"
+	Active         bool            `json:"active"`
+	SICCode        string          `json:"sic_code"`
+	SICDescription string          `json:"sic_description"` // e.g. "ELECTRONIC COMPUTERS"
+	Description    string          `json:"description"`
+	HomepageURL    string          `json:"homepage_url"`
+	MarketCap      float64         `json:"market_cap"`
+	Branding       *TickerBranding `json:"branding"`
+}
+
+// TickerBranding holds logo/icon URLs from Polygon.
+type TickerBranding struct {
+	LogoURL string `json:"logo_url"`
+	IconURL string `json:"icon_url"`
 }
 
 // MarketStatusResponse is the response from GET /v1/marketstatus/now.

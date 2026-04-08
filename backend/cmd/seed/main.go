@@ -4,18 +4,42 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/luke/mockstarket/internal/model"
+	"github.com/luke/mockstarket/internal/polygon"
 	"github.com/luke/mockstarket/internal/repository"
 	"github.com/shopspring/decimal"
 )
+
+// Tickers to seed — Polygon.io will provide names, sectors, descriptions, and prices.
+var tickers = []string{
+	// US Stocks
+	"AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "CRM", "ORCL", "INTC",
+	"JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY",
+	"JPM", "BAC", "GS", "V", "MA",
+	"XOM", "CVX", "COP", "SLB",
+	"WMT", "KO", "PEP", "MCD", "NKE", "SBUX", "DIS",
+	"CAT", "BA", "HON", "UPS", "GE",
+	// ETFs
+	"SPY", "QQQ", "DIA", "IWM", "VTI",
+	// Crypto
+	"X:BTCUSD", "X:ETHUSD", "X:SOLUSD", "X:DOGEUSD",
+}
 
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
 		dbURL = "postgres://mockstarket:mockstarket_dev@localhost:5432/mockstarket?sslmode=disable"
+	}
+
+	apiKey := os.Getenv("POLYGON_API_KEY")
+	if apiKey == "" {
+		fmt.Println("POLYGON_API_KEY not set — seeding with placeholder data only.")
+		fmt.Println("Set POLYGON_API_KEY to fetch real names, sectors, and descriptions from Polygon.io.")
 	}
 
 	pool, err := pgxpool.New(context.Background(), dbURL)
@@ -27,80 +51,56 @@ func main() {
 	repo := repository.New(pool)
 	ctx := context.Background()
 
-	// When using MARKET_DATA_SOURCE=polygon, prices are fetched live from Polygon.io.
-	// The prices below are approximate reference values for simulation mode.
-	// Volatility/Drift/MeanReversion are used only in simulation mode.
-
-	stocks := []model.Stock{
-		// ============ TECHNOLOGY ============
-		{Ticker: "AAPL", Name: "Apple Inc.", Sector: "Technology", AssetType: "stock", BasePrice: d("195.00"), CurrentPrice: d("195.00"), DayOpen: d("195.00"), DayHigh: d("195.00"), DayLow: d("195.00"), PrevClose: d("194.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Consumer electronics, software, and services. Maker of iPhone, Mac, and Apple Watch.")},
-		{Ticker: "MSFT", Name: "Microsoft Corporation", Sector: "Technology", AssetType: "stock", BasePrice: d("420.00"), CurrentPrice: d("420.00"), DayOpen: d("420.00"), DayHigh: d("420.00"), DayLow: d("420.00"), PrevClose: d("418.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Enterprise software, cloud computing (Azure), and AI. Owns LinkedIn, GitHub, Xbox.")},
-		{Ticker: "GOOGL", Name: "Alphabet Inc.", Sector: "Technology", AssetType: "stock", BasePrice: d("175.00"), CurrentPrice: d("175.00"), DayOpen: d("175.00"), DayHigh: d("175.00"), DayLow: d("175.00"), PrevClose: d("174.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Parent company of Google. Search, advertising, cloud, YouTube, and Waymo autonomous vehicles.")},
-		{Ticker: "AMZN", Name: "Amazon.com Inc.", Sector: "Technology", AssetType: "stock", BasePrice: d("185.00"), CurrentPrice: d("185.00"), DayOpen: d("185.00"), DayHigh: d("185.00"), DayLow: d("185.00"), PrevClose: d("184.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("E-commerce, cloud computing (AWS), streaming, and AI. The everything store.")},
-		{Ticker: "NVDA", Name: "NVIDIA Corporation", Sector: "Technology", AssetType: "stock", BasePrice: d("880.00"), CurrentPrice: d("880.00"), DayOpen: d("880.00"), DayHigh: d("880.00"), DayLow: d("880.00"), PrevClose: d("875.00"), Volatility: d("0.00015"), Drift: d("0.0002"), MeanReversion: d("0.18"), Description: ptr("GPU and AI chip leader. Powers data centers, gaming, autonomous vehicles, and AI training.")},
-		{Ticker: "META", Name: "Meta Platforms Inc.", Sector: "Technology", AssetType: "stock", BasePrice: d("500.00"), CurrentPrice: d("500.00"), DayOpen: d("500.00"), DayHigh: d("500.00"), DayLow: d("500.00"), PrevClose: d("497.00"), Volatility: d("0.00012"), Drift: d("0.0001"), MeanReversion: d("0.18"), Description: ptr("Social media (Facebook, Instagram, WhatsApp) and metaverse (Reality Labs). Ad-driven revenue.")},
-		{Ticker: "TSLA", Name: "Tesla Inc.", Sector: "Technology", AssetType: "stock", BasePrice: d("245.00"), CurrentPrice: d("245.00"), DayOpen: d("245.00"), DayHigh: d("245.00"), DayLow: d("245.00"), PrevClose: d("243.00"), Volatility: d("0.0002"), Drift: d("0.0001"), MeanReversion: d("0.15"), Description: ptr("Electric vehicles, energy storage, and solar. Also developing autonomous driving and robotics.")},
-		{Ticker: "CRM", Name: "Salesforce Inc.", Sector: "Technology", AssetType: "stock", BasePrice: d("270.00"), CurrentPrice: d("270.00"), DayOpen: d("270.00"), DayHigh: d("270.00"), DayLow: d("270.00"), PrevClose: d("268.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Cloud-based CRM platform. Enterprise software for sales, service, marketing, and analytics.")},
-		{Ticker: "ORCL", Name: "Oracle Corporation", Sector: "Technology", AssetType: "stock", BasePrice: d("125.00"), CurrentPrice: d("125.00"), DayOpen: d("125.00"), DayHigh: d("125.00"), DayLow: d("125.00"), PrevClose: d("124.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Enterprise database, cloud infrastructure, and applications. Growing cloud business.")},
-		{Ticker: "INTC", Name: "Intel Corporation", Sector: "Technology", AssetType: "stock", BasePrice: d("32.00"), CurrentPrice: d("32.00"), DayOpen: d("32.00"), DayHigh: d("32.00"), DayLow: d("32.00"), PrevClose: d("31.50"), Volatility: d("0.00015"), Drift: d("-0.0001"), MeanReversion: d("0.22"), Description: ptr("Semiconductor manufacturer. CPUs, data center chips, and foundry services. Turnaround in progress.")},
-
-		// ============ HEALTHCARE ============
-		{Ticker: "JNJ", Name: "Johnson & Johnson", Sector: "Healthcare", AssetType: "stock", BasePrice: d("155.00"), CurrentPrice: d("155.00"), DayOpen: d("155.00"), DayHigh: d("155.00"), DayLow: d("155.00"), PrevClose: d("154.00"), Volatility: d("0.00006"), Drift: d("0.0000"), MeanReversion: d("0.25"), Description: ptr("Pharmaceutical, medical devices, and consumer health products. Defensive dividend stock.")},
-		{Ticker: "UNH", Name: "UnitedHealth Group", Sector: "Healthcare", AssetType: "stock", BasePrice: d("520.00"), CurrentPrice: d("520.00"), DayOpen: d("520.00"), DayHigh: d("520.00"), DayLow: d("520.00"), PrevClose: d("517.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Largest US health insurer. Also owns Optum health services and technology division.")},
-		{Ticker: "PFE", Name: "Pfizer Inc.", Sector: "Healthcare", AssetType: "stock", BasePrice: d("28.00"), CurrentPrice: d("28.00"), DayOpen: d("28.00"), DayHigh: d("28.00"), DayLow: d("28.00"), PrevClose: d("27.75"), Volatility: d("0.0001"), Drift: d("-0.0001"), MeanReversion: d("0.22"), Description: ptr("Global pharmaceutical company. Vaccines, oncology, and rare disease treatments.")},
-		{Ticker: "ABBV", Name: "AbbVie Inc.", Sector: "Healthcare", AssetType: "stock", BasePrice: d("170.00"), CurrentPrice: d("170.00"), DayOpen: d("170.00"), DayHigh: d("170.00"), DayLow: d("170.00"), PrevClose: d("169.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Biopharmaceutical company. Immunology, oncology, and neuroscience therapeutics.")},
-		{Ticker: "MRK", Name: "Merck & Co.", Sector: "Healthcare", AssetType: "stock", BasePrice: d("125.00"), CurrentPrice: d("125.00"), DayOpen: d("125.00"), DayHigh: d("125.00"), DayLow: d("125.00"), PrevClose: d("124.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Global pharma leader. Keytruda cancer immunotherapy and animal health division.")},
-		{Ticker: "LLY", Name: "Eli Lilly and Company", Sector: "Healthcare", AssetType: "stock", BasePrice: d("780.00"), CurrentPrice: d("780.00"), DayOpen: d("780.00"), DayHigh: d("780.00"), DayLow: d("780.00"), PrevClose: d("775.00"), Volatility: d("0.00012"), Drift: d("0.0002"), MeanReversion: d("0.18"), Description: ptr("Pharmaceutical company. GLP-1 diabetes/obesity drugs driving massive growth.")},
-
-		// ============ FINANCIAL ============
-		{Ticker: "JPM", Name: "JPMorgan Chase & Co.", Sector: "Financial", AssetType: "stock", BasePrice: d("195.00"), CurrentPrice: d("195.00"), DayOpen: d("195.00"), DayHigh: d("195.00"), DayLow: d("195.00"), PrevClose: d("194.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Largest US bank. Investment banking, commercial banking, asset management.")},
-		{Ticker: "BAC", Name: "Bank of America Corp.", Sector: "Financial", AssetType: "stock", BasePrice: d("35.00"), CurrentPrice: d("35.00"), DayOpen: d("35.00"), DayHigh: d("35.00"), DayLow: d("35.00"), PrevClose: d("34.75"), Volatility: d("0.0001"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Major US bank. Consumer banking, wealth management, and global markets.")},
-		{Ticker: "GS", Name: "Goldman Sachs Group", Sector: "Financial", AssetType: "stock", BasePrice: d("385.00"), CurrentPrice: d("385.00"), DayOpen: d("385.00"), DayHigh: d("385.00"), DayLow: d("385.00"), PrevClose: d("382.00"), Volatility: d("0.00012"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Global investment bank. Trading, advisory, asset management, and consumer banking.")},
-		{Ticker: "V", Name: "Visa Inc.", Sector: "Financial", AssetType: "stock", BasePrice: d("280.00"), CurrentPrice: d("280.00"), DayOpen: d("280.00"), DayHigh: d("280.00"), DayLow: d("280.00"), PrevClose: d("278.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Global payments technology. Processes billions of transactions annually.")},
-		{Ticker: "MA", Name: "Mastercard Inc.", Sector: "Financial", AssetType: "stock", BasePrice: d("460.00"), CurrentPrice: d("460.00"), DayOpen: d("460.00"), DayHigh: d("460.00"), DayLow: d("460.00"), PrevClose: d("457.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Global payment network. Digital payments, cybersecurity, and data analytics.")},
-
-		// ============ ENERGY ============
-		{Ticker: "XOM", Name: "Exxon Mobil Corporation", Sector: "Energy", AssetType: "stock", BasePrice: d("105.00"), CurrentPrice: d("105.00"), DayOpen: d("105.00"), DayHigh: d("105.00"), DayLow: d("105.00"), PrevClose: d("104.00"), Volatility: d("0.0001"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Integrated oil and gas. Upstream exploration, refining, and chemical manufacturing.")},
-		{Ticker: "CVX", Name: "Chevron Corporation", Sector: "Energy", AssetType: "stock", BasePrice: d("155.00"), CurrentPrice: d("155.00"), DayOpen: d("155.00"), DayHigh: d("155.00"), DayLow: d("155.00"), PrevClose: d("154.00"), Volatility: d("0.0001"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Integrated energy company. Oil, natural gas, and growing renewable energy portfolio.")},
-		{Ticker: "COP", Name: "ConocoPhillips", Sector: "Energy", AssetType: "stock", BasePrice: d("115.00"), CurrentPrice: d("115.00"), DayOpen: d("115.00"), DayHigh: d("115.00"), DayLow: d("115.00"), PrevClose: d("114.00"), Volatility: d("0.00012"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Independent E&P company. Focused on low-cost oil and gas production.")},
-		{Ticker: "SLB", Name: "Schlumberger Limited", Sector: "Energy", AssetType: "stock", BasePrice: d("48.00"), CurrentPrice: d("48.00"), DayOpen: d("48.00"), DayHigh: d("48.00"), DayLow: d("48.00"), PrevClose: d("47.50"), Volatility: d("0.00012"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Oilfield services. Technology, drilling, and production solutions for oil and gas.")},
-
-		// ============ CONSUMER ============
-		{Ticker: "WMT", Name: "Walmart Inc.", Sector: "Consumer", AssetType: "stock", BasePrice: d("165.00"), CurrentPrice: d("165.00"), DayOpen: d("165.00"), DayHigh: d("165.00"), DayLow: d("165.00"), PrevClose: d("164.00"), Volatility: d("0.00006"), Drift: d("0.0001"), MeanReversion: d("0.25"), Description: ptr("World's largest retailer. Grocery, general merchandise, e-commerce, and Sam's Club.")},
-		{Ticker: "KO", Name: "The Coca-Cola Company", Sector: "Consumer", AssetType: "stock", BasePrice: d("60.00"), CurrentPrice: d("60.00"), DayOpen: d("60.00"), DayHigh: d("60.00"), DayLow: d("60.00"), PrevClose: d("59.75"), Volatility: d("0.00005"), Drift: d("0.0000"), MeanReversion: d("0.25"), Description: ptr("Global beverage company. Coke, Sprite, Fanta, and 200+ brands in 200+ countries.")},
-		{Ticker: "PEP", Name: "PepsiCo Inc.", Sector: "Consumer", AssetType: "stock", BasePrice: d("170.00"), CurrentPrice: d("170.00"), DayOpen: d("170.00"), DayHigh: d("170.00"), DayLow: d("170.00"), PrevClose: d("169.00"), Volatility: d("0.00005"), Drift: d("0.0000"), MeanReversion: d("0.25"), Description: ptr("Beverages and snacks. Pepsi, Lay's, Gatorade, Quaker, and Frito-Lay brands.")},
-		{Ticker: "MCD", Name: "McDonald's Corporation", Sector: "Consumer", AssetType: "stock", BasePrice: d("290.00"), CurrentPrice: d("290.00"), DayOpen: d("290.00"), DayHigh: d("290.00"), DayLow: d("290.00"), PrevClose: d("288.00"), Volatility: d("0.00006"), Drift: d("0.0001"), MeanReversion: d("0.22"), Description: ptr("Global fast-food chain. 40,000+ restaurants in 100+ countries. Franchise model.")},
-		{Ticker: "NKE", Name: "NIKE Inc.", Sector: "Consumer", AssetType: "stock", BasePrice: d("95.00"), CurrentPrice: d("95.00"), DayOpen: d("95.00"), DayHigh: d("95.00"), DayLow: d("95.00"), PrevClose: d("94.50"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Athletic footwear, apparel, and equipment. World's largest sportswear company.")},
-		{Ticker: "SBUX", Name: "Starbucks Corporation", Sector: "Consumer", AssetType: "stock", BasePrice: d("92.00"), CurrentPrice: d("92.00"), DayOpen: d("92.00"), DayHigh: d("92.00"), DayLow: d("92.00"), PrevClose: d("91.50"), Volatility: d("0.0001"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Global coffeehouse chain. 35,000+ stores. Loyalty program and mobile ordering leader.")},
-		{Ticker: "DIS", Name: "The Walt Disney Company", Sector: "Consumer", AssetType: "stock", BasePrice: d("110.00"), CurrentPrice: d("110.00"), DayOpen: d("110.00"), DayHigh: d("110.00"), DayLow: d("110.00"), PrevClose: d("109.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Entertainment conglomerate. Theme parks, streaming (Disney+), Marvel, Star Wars, Pixar.")},
-
-		// ============ INDUSTRIAL ============
-		{Ticker: "CAT", Name: "Caterpillar Inc.", Sector: "Industrial", AssetType: "stock", BasePrice: d("340.00"), CurrentPrice: d("340.00"), DayOpen: d("340.00"), DayHigh: d("340.00"), DayLow: d("340.00"), PrevClose: d("338.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Construction and mining equipment. Diesel engines, turbines, locomotives.")},
-		{Ticker: "BA", Name: "The Boeing Company", Sector: "Industrial", AssetType: "stock", BasePrice: d("190.00"), CurrentPrice: d("190.00"), DayOpen: d("190.00"), DayHigh: d("190.00"), DayLow: d("190.00"), PrevClose: d("188.00"), Volatility: d("0.00015"), Drift: d("0.0000"), MeanReversion: d("0.18"), Description: ptr("Aerospace and defense. Commercial aircraft, military systems, and space technology.")},
-		{Ticker: "HON", Name: "Honeywell International", Sector: "Industrial", AssetType: "stock", BasePrice: d("200.00"), CurrentPrice: d("200.00"), DayOpen: d("200.00"), DayHigh: d("200.00"), DayLow: d("200.00"), PrevClose: d("199.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Diversified industrial conglomerate. Aerospace, building tech, materials, and safety.")},
-		{Ticker: "UPS", Name: "United Parcel Service", Sector: "Industrial", AssetType: "stock", BasePrice: d("145.00"), CurrentPrice: d("145.00"), DayOpen: d("145.00"), DayHigh: d("145.00"), DayLow: d("145.00"), PrevClose: d("144.00"), Volatility: d("0.00008"), Drift: d("0.0000"), MeanReversion: d("0.22"), Description: ptr("Global package delivery and supply chain management. E-commerce logistics backbone.")},
-		{Ticker: "GE", Name: "GE Aerospace", Sector: "Industrial", AssetType: "stock", BasePrice: d("160.00"), CurrentPrice: d("160.00"), DayOpen: d("160.00"), DayHigh: d("160.00"), DayLow: d("160.00"), PrevClose: d("159.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Aviation engines and services. Spun off from the original General Electric conglomerate.")},
-
-		// ============ ETFs ============
-		{Ticker: "SPY", Name: "SPDR S&P 500 ETF Trust", Sector: "ETF", AssetType: "etf", BasePrice: d("510.00"), CurrentPrice: d("510.00"), DayOpen: d("510.00"), DayHigh: d("510.00"), DayLow: d("510.00"), PrevClose: d("508.00"), Volatility: d("0.00006"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Tracks the S&P 500 index. The most traded ETF in the world.")},
-		{Ticker: "QQQ", Name: "Invesco QQQ Trust", Sector: "ETF", AssetType: "etf", BasePrice: d("440.00"), CurrentPrice: d("440.00"), DayOpen: d("440.00"), DayHigh: d("440.00"), DayLow: d("440.00"), PrevClose: d("438.00"), Volatility: d("0.00008"), Drift: d("0.0001"), MeanReversion: d("0.18"), Description: ptr("Tracks the Nasdaq-100 index. Heavy tech weighting.")},
-		{Ticker: "DIA", Name: "SPDR Dow Jones Industrial", Sector: "ETF", AssetType: "etf", BasePrice: d("390.00"), CurrentPrice: d("390.00"), DayOpen: d("390.00"), DayHigh: d("390.00"), DayLow: d("390.00"), PrevClose: d("388.00"), Volatility: d("0.00006"), Drift: d("0.0001"), MeanReversion: d("0.22"), Description: ptr("Tracks the Dow Jones Industrial Average. 30 blue-chip US stocks.")},
-		{Ticker: "IWM", Name: "iShares Russell 2000 ETF", Sector: "ETF", AssetType: "etf", BasePrice: d("200.00"), CurrentPrice: d("200.00"), DayOpen: d("200.00"), DayHigh: d("200.00"), DayLow: d("200.00"), PrevClose: d("199.00"), Volatility: d("0.0001"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Tracks Russell 2000 small-cap index. Broad small-cap US equity exposure.")},
-		{Ticker: "VTI", Name: "Vanguard Total Stock Market", Sector: "ETF", AssetType: "etf", BasePrice: d("260.00"), CurrentPrice: d("260.00"), DayOpen: d("260.00"), DayHigh: d("260.00"), DayLow: d("260.00"), PrevClose: d("259.00"), Volatility: d("0.00006"), Drift: d("0.0001"), MeanReversion: d("0.20"), Description: ptr("Tracks entire US stock market. Large, mid, and small-cap exposure.")},
-
-		// ============ CRYPTO ============
-		{Ticker: "X:BTCUSD", Name: "Bitcoin", Sector: "Crypto", AssetType: "crypto", BasePrice: d("68000.00"), CurrentPrice: d("68000.00"), DayOpen: d("68000.00"), DayHigh: d("68000.00"), DayLow: d("68000.00"), PrevClose: d("67500.00"), Volatility: d("0.00015"), Drift: d("0.0001"), MeanReversion: d("0.12"), Description: ptr("The original cryptocurrency. Digital gold and decentralized store of value.")},
-		{Ticker: "X:ETHUSD", Name: "Ethereum", Sector: "Crypto", AssetType: "crypto", BasePrice: d("3500.00"), CurrentPrice: d("3500.00"), DayOpen: d("3500.00"), DayHigh: d("3500.00"), DayLow: d("3500.00"), PrevClose: d("3450.00"), Volatility: d("0.0002"), Drift: d("0.0001"), MeanReversion: d("0.12"), Description: ptr("Programmable blockchain platform. Powers DeFi, NFTs, and smart contracts.")},
-		{Ticker: "X:SOLUSD", Name: "Solana", Sector: "Crypto", AssetType: "crypto", BasePrice: d("180.00"), CurrentPrice: d("180.00"), DayOpen: d("180.00"), DayHigh: d("180.00"), DayLow: d("180.00"), PrevClose: d("178.00"), Volatility: d("0.00025"), Drift: d("0.0001"), MeanReversion: d("0.15"), Description: ptr("High-performance blockchain with sub-second finality.")},
-		{Ticker: "X:DOGEUSD", Name: "Dogecoin", Sector: "Crypto", AssetType: "crypto", BasePrice: d("0.15"), CurrentPrice: d("0.15"), DayOpen: d("0.15"), DayHigh: d("0.15"), DayLow: d("0.15"), PrevClose: d("0.14"), Volatility: d("0.0003"), Drift: d("0.0000"), MeanReversion: d("0.18"), Description: ptr("The people's crypto. Much wow. Very currency.")},
+	// Clean up old fictional tickers that are not in our real ticker list
+	fmt.Println("Cleaning up old tickers...")
+	realSet := make(map[string]bool, len(tickers))
+	for _, t := range tickers {
+		realSet[t] = true
 	}
 
-	fmt.Println("Seeding stocks...")
-	for _, stock := range stocks {
+	existingStocks, err := repo.GetAllStocks(ctx)
+	if err != nil {
+		log.Printf("warning: could not fetch existing stocks: %v", err)
+	} else {
+		removed := 0
+		for _, s := range existingStocks {
+			if !realSet[s.Ticker] {
+				// Delete dependent records first, then the stock
+				pool.Exec(ctx, `DELETE FROM price_history WHERE ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM etf_holdings WHERE etf_ticker = $1 OR holding_ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM option_contracts WHERE ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM holdings WHERE ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM trades WHERE ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM orders WHERE ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM price_alerts WHERE ticker = $1`, s.Ticker)
+				pool.Exec(ctx, `DELETE FROM watchlist WHERE ticker = $1`, s.Ticker)
+				_, err := pool.Exec(ctx, `DELETE FROM stocks WHERE ticker = $1`, s.Ticker)
+				if err != nil {
+					log.Printf("  failed to remove %s: %v", s.Ticker, err)
+				} else {
+					removed++
+				}
+			}
+		}
+		if removed > 0 {
+			fmt.Printf("  Removed %d old tickers\n", removed)
+		}
+	}
+
+	// Build Polygon client if API key is available
+	var polygonClient *polygon.Client
+	if apiKey != "" {
+		logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelWarn}))
+		polygonClient = polygon.NewClient(apiKey, "https://api.polygon.io", 5, logger)
+	}
+
+	fmt.Println("\nSeeding stocks...")
+	for _, ticker := range tickers {
+		stock := buildStock(ctx, ticker, polygonClient)
 		if err := repo.UpsertStock(ctx, &stock); err != nil {
-			log.Printf("failed to seed stock %s: %v", stock.Ticker, err)
+			log.Printf("  failed to seed %s: %v", ticker, err)
 		} else {
-			fmt.Printf("  ✓ %s - %s ($%.2f)\n", stock.Ticker, stock.Name, stock.BasePrice.InexactFloat64())
+			fmt.Printf("  ✓ %-12s %-8s %s ($%.2f)\n", stock.Ticker, stock.Sector, stock.Name, stock.BasePrice.InexactFloat64())
 		}
 	}
 
@@ -136,7 +136,7 @@ func main() {
 			`INSERT INTO achievements (id, name, description, icon, category) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
 			a.id, a.name, a.description, a.icon, a.category)
 		if err != nil {
-			log.Printf("failed to seed achievement %s: %v", a.id, err)
+			log.Printf("  failed to seed achievement %s: %v", a.id, err)
 		} else {
 			fmt.Printf("  ✓ %s - %s\n", a.id, a.name)
 		}
@@ -144,32 +144,27 @@ func main() {
 
 	// Seed ETF compositions
 	fmt.Println("\nSeeding ETF compositions...")
-
 	etfHoldings := []struct {
 		etf, holding string
 		weight       string
 	}{
-		// SPY - S&P 500 (top holdings by weight)
+		// SPY - S&P 500 (top holdings)
 		{"SPY", "AAPL", "0.07"}, {"SPY", "MSFT", "0.07"}, {"SPY", "NVDA", "0.06"},
 		{"SPY", "AMZN", "0.04"}, {"SPY", "META", "0.03"}, {"SPY", "GOOGL", "0.04"},
 		{"SPY", "TSLA", "0.02"}, {"SPY", "JPM", "0.02"}, {"SPY", "V", "0.02"},
 		{"SPY", "UNH", "0.02"}, {"SPY", "JNJ", "0.02"}, {"SPY", "XOM", "0.02"},
-
-		// QQQ - Nasdaq 100 (tech-heavy)
+		// QQQ - Nasdaq 100
 		{"QQQ", "AAPL", "0.09"}, {"QQQ", "MSFT", "0.08"}, {"QQQ", "NVDA", "0.07"},
 		{"QQQ", "AMZN", "0.06"}, {"QQQ", "META", "0.05"}, {"QQQ", "GOOGL", "0.05"},
 		{"QQQ", "TSLA", "0.04"}, {"QQQ", "CRM", "0.03"}, {"QQQ", "INTC", "0.02"},
-
 		// DIA - Dow Jones
 		{"DIA", "AAPL", "0.06"}, {"DIA", "MSFT", "0.06"}, {"DIA", "UNH", "0.08"},
 		{"DIA", "GS", "0.06"}, {"DIA", "MCD", "0.05"}, {"DIA", "CAT", "0.05"},
 		{"DIA", "HON", "0.04"}, {"DIA", "BA", "0.04"}, {"DIA", "V", "0.04"},
 		{"DIA", "JPM", "0.04"}, {"DIA", "NKE", "0.03"}, {"DIA", "DIS", "0.03"},
-
-		// IWM - Russell 2000 (equal-ish weight, small caps aren't in our list but use what we have)
+		// IWM - Russell 2000
 		{"IWM", "INTC", "0.10"}, {"IWM", "PFE", "0.10"}, {"IWM", "BAC", "0.10"},
 		{"IWM", "SLB", "0.10"}, {"IWM", "NKE", "0.10"}, {"IWM", "SBUX", "0.10"},
-
 		// VTI - Total Market
 		{"VTI", "AAPL", "0.06"}, {"VTI", "MSFT", "0.06"}, {"VTI", "NVDA", "0.05"},
 		{"VTI", "AMZN", "0.04"}, {"VTI", "META", "0.03"}, {"VTI", "GOOGL", "0.03"},
@@ -179,13 +174,134 @@ func main() {
 
 	for _, h := range etfHoldings {
 		if err := repo.UpsertETFHolding(ctx, h.etf, h.holding, d(h.weight)); err != nil {
-			log.Printf("failed to seed ETF holding %s->%s: %v", h.etf, h.holding, err)
+			log.Printf("  failed to seed ETF holding %s->%s: %v", h.etf, h.holding, err)
 		} else {
 			fmt.Printf("  ✓ %s holds %s (%.0f%%)\n", h.etf, h.holding, d(h.weight).InexactFloat64()*100)
 		}
 	}
 
 	fmt.Println("\nSeed complete!")
+}
+
+// buildStock creates a Stock model, fetching real data from Polygon when available.
+func buildStock(ctx context.Context, ticker string, client *polygon.Client) model.Stock {
+	stock := model.Stock{
+		Ticker:        ticker,
+		Name:          ticker,
+		Sector:        "Other",
+		AssetType:     "stock",
+		BasePrice:     decimal.Zero,
+		CurrentPrice:  decimal.Zero,
+		DayOpen:       decimal.Zero,
+		DayHigh:       decimal.Zero,
+		DayLow:        decimal.Zero,
+		PrevClose:     decimal.Zero,
+		Volatility:    d("0.0010"),
+		Drift:         d("0.0000"),
+		MeanReversion: d("0.20"),
+	}
+
+	if client == nil {
+		// No API key — use fallback data
+		fb := fallbackData[ticker]
+		if fb.Name != "" {
+			stock.Name = fb.Name
+		}
+		if fb.Sector != "" {
+			stock.Sector = fb.Sector
+		}
+		if fb.AssetType != "" {
+			stock.AssetType = fb.AssetType
+		}
+		return stock
+	}
+
+	// Fetch ticker details from Polygon
+	detail, err := client.GetTickerDetails(ctx, ticker)
+	if err != nil {
+		fmt.Printf("    (Polygon details unavailable for %s, using fallback)\n", ticker)
+		fb := fallbackData[ticker]
+		if fb.Name != "" {
+			stock.Name = fb.Name
+		}
+		if fb.Sector != "" {
+			stock.Sector = fb.Sector
+		}
+		if fb.AssetType != "" {
+			stock.AssetType = fb.AssetType
+		}
+		return stock
+	}
+
+	// Populate from Polygon data
+	stock.Name = detail.Name
+	stock.Sector = polygon.SectorFromTickerDetail(detail)
+
+	if detail.Description != "" {
+		stock.Description = ptr(detail.Description)
+	}
+
+	if detail.Branding != nil && detail.Branding.IconURL != "" {
+		logoURL := detail.Branding.IconURL + "?apiKey=" + os.Getenv("POLYGON_API_KEY")
+		stock.LogoURL = &logoURL
+	}
+
+	// Determine asset type
+	switch {
+	case detail.Market == "crypto":
+		stock.AssetType = "crypto"
+	case detail.Type == "ETF":
+		stock.AssetType = "etf"
+	default:
+		stock.AssetType = "stock"
+	}
+
+	// Fetch previous close for initial price
+	// (rate limited — sleep briefly between API calls)
+	time.Sleep(200 * time.Millisecond)
+	bar, err := client.GetPreviousClose(ctx, ticker)
+	if err == nil && bar.Close > 0 {
+		stock.BasePrice = decimal.NewFromFloat(bar.Close).Round(4)
+		stock.CurrentPrice = stock.BasePrice
+		stock.DayOpen = decimal.NewFromFloat(bar.Open).Round(4)
+		stock.DayHigh = decimal.NewFromFloat(bar.High).Round(4)
+		stock.DayLow = decimal.NewFromFloat(bar.Low).Round(4)
+		stock.PrevClose = decimal.NewFromFloat(bar.Open).Round(4)
+		stock.Volume = int64(bar.Volume)
+	}
+
+	return stock
+}
+
+// fallbackData provides names/sectors when Polygon API is unavailable.
+var fallbackData = map[string]struct {
+	Name, Sector, AssetType string
+}{
+	"AAPL": {"Apple Inc.", "Technology", "stock"}, "MSFT": {"Microsoft Corporation", "Technology", "stock"},
+	"GOOGL": {"Alphabet Inc.", "Technology", "stock"}, "AMZN": {"Amazon.com Inc.", "Technology", "stock"},
+	"NVDA": {"NVIDIA Corporation", "Technology", "stock"}, "META": {"Meta Platforms Inc.", "Technology", "stock"},
+	"TSLA": {"Tesla Inc.", "Technology", "stock"}, "CRM": {"Salesforce Inc.", "Technology", "stock"},
+	"ORCL": {"Oracle Corporation", "Technology", "stock"}, "INTC": {"Intel Corporation", "Technology", "stock"},
+	"JNJ": {"Johnson & Johnson", "Healthcare", "stock"}, "UNH": {"UnitedHealth Group", "Healthcare", "stock"},
+	"PFE": {"Pfizer Inc.", "Healthcare", "stock"}, "ABBV": {"AbbVie Inc.", "Healthcare", "stock"},
+	"MRK": {"Merck & Co.", "Healthcare", "stock"}, "LLY": {"Eli Lilly and Company", "Healthcare", "stock"},
+	"JPM": {"JPMorgan Chase & Co.", "Financial", "stock"}, "BAC": {"Bank of America Corp.", "Financial", "stock"},
+	"GS": {"Goldman Sachs Group", "Financial", "stock"}, "V": {"Visa Inc.", "Financial", "stock"},
+	"MA": {"Mastercard Inc.", "Financial", "stock"},
+	"XOM": {"Exxon Mobil Corporation", "Energy", "stock"}, "CVX": {"Chevron Corporation", "Energy", "stock"},
+	"COP": {"ConocoPhillips", "Energy", "stock"}, "SLB": {"Schlumberger Limited", "Energy", "stock"},
+	"WMT": {"Walmart Inc.", "Consumer", "stock"}, "KO": {"The Coca-Cola Company", "Consumer", "stock"},
+	"PEP": {"PepsiCo Inc.", "Consumer", "stock"}, "MCD": {"McDonald's Corporation", "Consumer", "stock"},
+	"NKE": {"NIKE Inc.", "Consumer", "stock"}, "SBUX": {"Starbucks Corporation", "Consumer", "stock"},
+	"DIS": {"The Walt Disney Company", "Consumer", "stock"},
+	"CAT": {"Caterpillar Inc.", "Industrial", "stock"}, "BA": {"The Boeing Company", "Industrial", "stock"},
+	"HON": {"Honeywell International", "Industrial", "stock"}, "UPS": {"United Parcel Service", "Industrial", "stock"},
+	"GE": {"GE Aerospace", "Industrial", "stock"},
+	"SPY": {"SPDR S&P 500 ETF Trust", "ETF", "etf"}, "QQQ": {"Invesco QQQ Trust", "ETF", "etf"},
+	"DIA": {"SPDR Dow Jones Industrial", "ETF", "etf"}, "IWM": {"iShares Russell 2000 ETF", "ETF", "etf"},
+	"VTI": {"Vanguard Total Stock Market", "ETF", "etf"},
+	"X:BTCUSD": {"Bitcoin", "Crypto", "crypto"}, "X:ETHUSD": {"Ethereum", "Crypto", "crypto"},
+	"X:SOLUSD": {"Solana", "Crypto", "crypto"}, "X:DOGEUSD": {"Dogecoin", "Crypto", "crypto"},
 }
 
 func d(s string) decimal.Decimal {
