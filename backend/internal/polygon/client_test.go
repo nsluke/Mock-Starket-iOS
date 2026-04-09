@@ -19,7 +19,7 @@ func TestClient_GetPreviousClose(t *testing.T) {
 			},
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer srv.Close()
 
@@ -51,7 +51,7 @@ func TestClient_GetTickerDetails(t *testing.T) {
 			},
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer srv.Close()
 
@@ -72,7 +72,7 @@ func TestClient_GetPreviousClose_NoResults(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		resp := PreviousCloseResponse{Status: "OK", ResultsCount: 0, Results: nil}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer srv.Close()
 
@@ -86,7 +86,7 @@ func TestClient_GetPreviousClose_NoResults(t *testing.T) {
 func TestClient_RateLimitError(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusTooManyRequests)
-		w.Write([]byte(`{"status":"ERROR","message":"rate limit exceeded"}`))
+		_, _ = w.Write([]byte(`{"status":"ERROR","message":"rate limit exceeded"}`))
 	}))
 	defer srv.Close()
 
