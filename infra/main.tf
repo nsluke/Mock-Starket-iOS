@@ -30,7 +30,7 @@ data "aws_subnets" "default" {
 
 resource "aws_security_group" "db" {
   name        = "mockstarket-db"
-  description = "RDS PostgreSQL access"
+  description = "RDS PostgreSQL access from App Runner"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -145,7 +145,26 @@ resource "aws_iam_role" "ecs_infrastructure" {
 
 resource "aws_iam_role_policy_attachment" "ecs_infrastructure" {
   role       = aws_iam_role.ecs_infrastructure.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonECSInfrastructureRoleforExpressGatewayServices"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSInfrastructureRoleforExpressGatewayServices"
+}
+
+# Express Mode infrastructure role also needs CloudWatch Logs access
+resource "aws_iam_role_policy" "ecs_infrastructure_logs" {
+  name = "cloudwatch-logs"
+  role = aws_iam_role.ecs_infrastructure.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:DescribeLogGroups",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ]
+      Resource = "*"
+    }]
+  })
 }
 
 # ---------- ECS Express Mode: Backend API ----------
@@ -264,17 +283,17 @@ resource "aws_ecs_express_gateway_service" "web" {
 # ---------- Outputs ----------
 
 output "api_url" {
-  value       = aws_ecs_express_gateway_service.backend.service_url
+  value       = try(aws_ecs_express_gateway_service.backend.ingress_paths[0].endpoint, "pending")
   description = "Backend API URL (HTTPS)"
 }
 
 output "web_url" {
-  value       = aws_ecs_express_gateway_service.web.service_url
+  value       = try(aws_ecs_express_gateway_service.web.ingress_paths[0].endpoint, "pending")
   description = "Web frontend URL (HTTPS)"
 }
 
 output "ws_url" {
-  value       = "wss://${replace(aws_ecs_express_gateway_service.backend.service_url, "https://", "")}/ws"
+  value       = try("wss://${replace(aws_ecs_express_gateway_service.backend.ingress_paths[0].endpoint, "https://", "")}/ws", "pending")
   description = "WebSocket URL for real-time prices"
 }
 
