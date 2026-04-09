@@ -33,8 +33,8 @@ export class WebSocketClient {
   connect(token: string) {
     this.token = token;
 
-    // Skip WebSocket if URL is not configured or points to a non-WS endpoint
-    if (!WS_URL || WS_URL === 'ws://localhost:8080/ws') {
+    // Skip WebSocket if URL is not configured
+    if (!WS_URL) {
       this.setStatus('disconnected');
       return;
     }

@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 }
@@ -30,14 +30,14 @@ data "aws_subnets" "default" {
 
 resource "aws_security_group" "db" {
   name        = "mockstarket-db"
-  description = "RDS PostgreSQL access from App Runner"
+  description = "RDS PostgreSQL access"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # App Runner VPC connector will restrict this
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -67,7 +67,7 @@ resource "aws_db_instance" "postgres" {
   password = var.db_password
 
   vpc_security_group_ids = [aws_security_group.db.id]
-  publicly_accessible    = true # Needed for App Runner without VPC connector
+  publicly_accessible    = true
   skip_final_snapshot    = true
 
   backup_retention_period = 7
@@ -76,7 +76,7 @@ resource "aws_db_instance" "postgres" {
   tags = { Name = "mockstarket" }
 }
 
-# ---------- ECR Repository ----------
+# ---------- ECR Repositories ----------
 
 resource "aws_ecr_repository" "backend" {
   name                 = "mockstarket-backend"
@@ -88,118 +88,6 @@ resource "aws_ecr_repository" "backend" {
   }
 }
 
-# ---------- Secrets Manager ----------
-
-resource "aws_secretsmanager_secret" "polygon_api_key" {
-  name                    = "mockstarket/polygon-api-key"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "polygon_api_key" {
-  secret_id     = aws_secretsmanager_secret.polygon_api_key.id
-  secret_string = var.polygon_api_key
-}
-
-# ---------- App Runner ----------
-
-resource "aws_iam_role" "apprunner_ecr" {
-  name = "mockstarket-apprunner-ecr"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = { Service = "build.apprunner.amazonaws.com" }
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "apprunner_ecr" {
-  role       = aws_iam_role.apprunner_ecr.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
-}
-
-resource "aws_iam_role" "apprunner_instance" {
-  name = "mockstarket-apprunner-instance"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = { Service = "tasks.apprunner.amazonaws.com" }
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "apprunner_secrets" {
-  name = "secrets-access"
-  role = aws_iam_role.apprunner_instance.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect   = "Allow"
-      Action   = ["secretsmanager:GetSecretValue"]
-      Resource = [aws_secretsmanager_secret.polygon_api_key.arn]
-    }]
-  })
-}
-
-resource "aws_apprunner_service" "backend" {
-  service_name = "mockstarket-api"
-
-  source_configuration {
-    authentication_configuration {
-      access_role_arn = aws_iam_role.apprunner_ecr.arn
-    }
-
-    image_repository {
-      image_identifier      = "${aws_ecr_repository.backend.repository_url}:latest"
-      image_repository_type = "ECR"
-
-      image_configuration {
-        port = "8080"
-
-        runtime_environment_variables = {
-          PORT                    = "8080"
-          DATABASE_URL            = "postgres://${aws_db_instance.postgres.username}:${var.db_password}@${aws_db_instance.postgres.endpoint}/${aws_db_instance.postgres.db_name}?sslmode=require"
-          MARKET_DATA_SOURCE      = "polygon"
-          POLYGON_API_KEY         = var.polygon_api_key
-          POLYGON_BASE_URL        = "https://api.polygon.io"
-          POLYGON_WS_ENABLED      = "false"
-          POLYGON_POLL_INTERVAL_MS = "30000"
-          DEV_MODE                = "true"
-          CORS_ORIGINS            = "*"
-          LOG_LEVEL               = "info"
-          STARTING_CASH           = "100000"
-          MAX_WS_CLIENTS          = "1000"
-        }
-      }
-    }
-
-    auto_deployments_enabled = false
-  }
-
-  instance_configuration {
-    cpu               = "0.25 vCPU"
-    memory            = "0.5 GB"
-    instance_role_arn = aws_iam_role.apprunner_instance.arn
-  }
-
-  health_check_configuration {
-    protocol            = "TCP"
-    interval            = 10
-    timeout             = 5
-    healthy_threshold   = 1
-    unhealthy_threshold = 10
-  }
-
-  tags = { Name = "mockstarket-api" }
-
-  depends_on = [aws_iam_role_policy_attachment.apprunner_ecr]
-}
-
-# ---------- ECR + App Runner for Web Frontend ----------
-
 resource "aws_ecr_repository" "web" {
   name                 = "mockstarket-web"
   image_tag_mutability = "MUTABLE"
@@ -210,59 +98,184 @@ resource "aws_ecr_repository" "web" {
   }
 }
 
-resource "aws_apprunner_service" "web" {
-  service_name = "mockstarket-web"
+# ---------- CloudWatch Log Groups ----------
 
-  source_configuration {
-    authentication_configuration {
-      access_role_arn = aws_iam_role.apprunner_ecr.arn
+resource "aws_cloudwatch_log_group" "backend" {
+  name              = "/aws/ecs/mockstarket-api"
+  retention_in_days = 14
+}
+
+resource "aws_cloudwatch_log_group" "web" {
+  name              = "/aws/ecs/mockstarket-web"
+  retention_in_days = 14
+}
+
+# ---------- IAM: ECS Task Execution Role ----------
+
+resource "aws_iam_role" "ecs_execution" {
+  name = "mockstarket-ecs-execution"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "ecs-tasks.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_execution" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# ---------- IAM: ECS Express Infrastructure Role ----------
+
+resource "aws_iam_role" "ecs_infrastructure" {
+  name = "mockstarket-ecs-infrastructure"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "ecs.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_infrastructure" {
+  role       = aws_iam_role.ecs_infrastructure.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECSInfrastructureRoleforExpressGatewayServices"
+}
+
+# ---------- ECS Express Mode: Backend API ----------
+
+resource "aws_ecs_express_gateway_service" "backend" {
+  service_name           = "mockstarket-api"
+  execution_role_arn     = aws_iam_role.ecs_execution.arn
+  infrastructure_role_arn = aws_iam_role.ecs_infrastructure.arn
+
+  cpu    = "256"
+  memory = "512"
+
+  health_check_path = "/api/v1/system/health"
+
+  primary_container {
+    image          = "${aws_ecr_repository.backend.repository_url}:latest"
+    container_port = 8080
+
+    aws_logs_configuration {
+      log_group         = aws_cloudwatch_log_group.backend.name
+      log_stream_prefix = "ecs"
     }
 
-    image_repository {
-      image_identifier      = "${aws_ecr_repository.web.repository_url}:latest"
-      image_repository_type = "ECR"
-
-      image_configuration {
-        port = "3000"
-
-        runtime_environment_variables = {
-          NEXT_PUBLIC_API_URL = "https://${aws_apprunner_service.backend.service_url}"
-          NEXT_PUBLIC_WS_URL  = "wss://${aws_apprunner_service.backend.service_url}/ws"
-        }
-      }
+    environment {
+      name  = "PORT"
+      value = "8080"
     }
-
-    auto_deployments_enabled = false
+    environment {
+      name  = "DATABASE_URL"
+      value = "postgres://${aws_db_instance.postgres.username}:${var.db_password}@${aws_db_instance.postgres.endpoint}/${aws_db_instance.postgres.db_name}?sslmode=require"
+    }
+    environment {
+      name  = "MARKET_DATA_SOURCE"
+      value = "polygon"
+    }
+    environment {
+      name  = "POLYGON_API_KEY"
+      value = var.polygon_api_key
+    }
+    environment {
+      name  = "POLYGON_BASE_URL"
+      value = "https://api.polygon.io"
+    }
+    environment {
+      name  = "POLYGON_WS_ENABLED"
+      value = "false"
+    }
+    environment {
+      name  = "POLYGON_POLL_INTERVAL_MS"
+      value = "30000"
+    }
+    environment {
+      name  = "DEV_MODE"
+      value = "true"
+    }
+    environment {
+      name  = "CORS_ORIGINS"
+      value = "*"
+    }
+    environment {
+      name  = "LOG_LEVEL"
+      value = "info"
+    }
+    environment {
+      name  = "STARTING_CASH"
+      value = "100000"
+    }
+    environment {
+      name  = "MAX_WS_CLIENTS"
+      value = "1000"
+    }
   }
 
-  instance_configuration {
-    cpu    = "0.25 vCPU"
-    memory = "1 GB"
+  scaling_target {
+    min_task_count            = 1
+    max_task_count            = 5
+    auto_scaling_metric       = "AVERAGE_CPU"
+    auto_scaling_target_value = 70
   }
 
-  health_check_configuration {
-    protocol            = "TCP"
-    interval            = 10
-    timeout             = 5
-    healthy_threshold   = 1
-    unhealthy_threshold = 10
+  tags = { Name = "mockstarket-api" }
+}
+
+# ---------- ECS Express Mode: Web Frontend ----------
+
+resource "aws_ecs_express_gateway_service" "web" {
+  service_name           = "mockstarket-web"
+  execution_role_arn     = aws_iam_role.ecs_execution.arn
+  infrastructure_role_arn = aws_iam_role.ecs_infrastructure.arn
+
+  cpu    = "256"
+  memory = "512"
+
+  health_check_path = "/"
+
+  primary_container {
+    image          = "${aws_ecr_repository.web.repository_url}:latest"
+    container_port = 3000
+
+    aws_logs_configuration {
+      log_group         = aws_cloudwatch_log_group.web.name
+      log_stream_prefix = "ecs"
+    }
+  }
+
+  scaling_target {
+    min_task_count            = 1
+    max_task_count            = 3
+    auto_scaling_metric       = "AVERAGE_CPU"
+    auto_scaling_target_value = 70
   }
 
   tags = { Name = "mockstarket-web" }
-
-  depends_on = [aws_iam_role_policy_attachment.apprunner_ecr]
 }
 
 # ---------- Outputs ----------
 
 output "api_url" {
-  value       = "https://${aws_apprunner_service.backend.service_url}"
-  description = "Backend API URL"
+  value       = aws_ecs_express_gateway_service.backend.service_url
+  description = "Backend API URL (HTTPS)"
 }
 
 output "web_url" {
-  value       = "https://${aws_apprunner_service.web.service_url}"
-  description = "Web frontend URL"
+  value       = aws_ecs_express_gateway_service.web.service_url
+  description = "Web frontend URL (HTTPS)"
+}
+
+output "ws_url" {
+  value       = "wss://${replace(aws_ecs_express_gateway_service.backend.service_url, "https://", "")}/ws"
+  description = "WebSocket URL for real-time prices"
 }
 
 output "ecr_backend" {
