@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-import { BarChart3, Briefcase, ClipboardList, Trophy, Star, Bell, Target, Award, Settings } from 'lucide-react';
+import { BarChart3, Briefcase, ClipboardList, Trophy, Star, Bell, Target, Award, Settings, Menu, X } from 'lucide-react';
 import { apiClient } from '@/lib/api-client';
 import { wsClient } from '@/lib/websocket-client';
 import { toast } from '@/lib/toast';
@@ -33,6 +33,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { token } = useAuthStore();
   const { updatePrices } = useMarketStore();
   const queryClient = useQueryClient();
@@ -185,14 +186,56 @@ export default function DashboardLayout({
         {children}
       </main>
 
+      {/* Mobile "More" slide-up menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <div className="absolute bottom-14 left-0 right-0 bg-[#161B22] border-t border-[#30363D] rounded-t-2xl p-4 space-y-1 animate-in slide-in-from-bottom">
+            {sidebarExtras.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    pathname === item.href
+                      ? 'bg-[#21262D] text-white'
+                      : 'text-[#8B949E] hover:bg-[#21262D] hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+            <div className="border-t border-[#30363D] pt-1 mt-1">
+              <Link
+                href="/settings"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  pathname === '/settings'
+                    ? 'bg-[#21262D] text-white'
+                    : 'text-[#8B949E] hover:bg-[#21262D] hover:text-white'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 flex border-t border-[#30363D] bg-[#161B22]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 flex border-t border-[#30363D] bg-[#161B22] z-50">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setMobileMenuOpen(false)}
               className={`flex-1 flex flex-col items-center py-2 text-xs ${
                 pathname === item.href ? 'text-[#50E3C2]' : 'text-[#6E7681]'
               }`}
@@ -202,6 +245,15 @@ export default function DashboardLayout({
             </Link>
           );
         })}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className={`flex-1 flex flex-col items-center py-2 text-xs ${
+            mobileMenuOpen ? 'text-[#50E3C2]' : 'text-[#6E7681]'
+          }`}
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5 mb-0.5" /> : <Menu className="w-5 h-5 mb-0.5" />}
+          More
+        </button>
       </nav>
     </div>
   );
