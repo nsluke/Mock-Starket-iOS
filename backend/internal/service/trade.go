@@ -46,10 +46,14 @@ func (s *TradeService) ExecuteTrade(ctx context.Context, userID uuid.UUID, req T
 		return nil, fmt.Errorf("side must be 'buy' or 'sell'")
 	}
 
-	// Get current price from simulation engine
+	// Get current price from price provider, fall back to DB
 	price, ok := s.engine.GetPrice(req.Ticker)
 	if !ok {
-		return nil, fmt.Errorf("stock %s not found", req.Ticker)
+		stock, err := s.repo.GetStockByTicker(ctx, req.Ticker)
+		if err != nil {
+			return nil, fmt.Errorf("stock %s not found", req.Ticker)
+		}
+		price = stock.CurrentPrice
 	}
 
 	total := price.Mul(decimal.NewFromInt(int64(req.Shares)))

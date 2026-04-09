@@ -442,10 +442,12 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate ticker exists
+	// Validate ticker exists (check price provider, then DB)
 	if _, ok := h.engine.GetPrice(req.Ticker); !ok {
-		writeError(w, http.StatusBadRequest, "stock "+req.Ticker+" not found")
-		return
+		if _, err := h.repo.GetStockByTicker(r.Context(), req.Ticker); err != nil {
+			writeError(w, http.StatusBadRequest, "stock "+req.Ticker+" not found")
+			return
+		}
 	}
 
 	order, err := h.repo.CreateOrder(r.Context(), user.ID, req.Ticker, req.Side, req.OrderType, req.Shares, req.LimitPrice, req.StopPrice)
