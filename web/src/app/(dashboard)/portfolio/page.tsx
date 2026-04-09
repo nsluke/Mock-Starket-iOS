@@ -14,8 +14,10 @@ const PortfolioChart = dynamic(() => import('@/components/charts/PortfolioChart'
 
 export default function PortfolioPage() {
   const { data, isLoading } = usePortfolio();
-  const { data: trades = [] } = useTradeHistory(20, 0);
-  const { data: portfolioHistory = [] } = usePortfolioHistory(100);
+  const { data: rawTrades } = useTradeHistory(20, 0);
+  const { data: rawHistory } = usePortfolioHistory(100);
+  const trades = rawTrades ?? [];
+  const portfolioHistory = rawHistory ?? [];
   const [tab, setTab] = useState<'holdings' | 'options' | 'history'>('holdings');
 
   if (isLoading) {

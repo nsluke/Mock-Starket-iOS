@@ -13,7 +13,10 @@ export function usePortfolio() {
 export function usePortfolioHistory(limit = 100) {
   return useQuery<any[]>({
     queryKey: ['portfolio-history', limit],
-    queryFn: () => apiClient.getPortfolioHistory(limit),
+    queryFn: async () => {
+      const data = await apiClient.getPortfolioHistory(limit);
+      return data ?? [];
+    },
   });
 }
 
