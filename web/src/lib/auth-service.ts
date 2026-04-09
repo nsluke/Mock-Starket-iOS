@@ -79,14 +79,21 @@ export async function signInWithApple(): Promise<string> {
 }
 
 /** Phone number sign in — Step 1: send verification code */
+let recaptchaVerifier: RecaptchaVerifier | null = null;
+
 export async function sendPhoneVerification(
   phoneNumber: string,
   recaptchaContainerId: string
 ): Promise<ConfirmationResult> {
-  const verifier = new RecaptchaVerifier(auth, recaptchaContainerId, {
+  // Clear previous verifier to avoid "already rendered" error
+  if (recaptchaVerifier) {
+    recaptchaVerifier.clear();
+    recaptchaVerifier = null;
+  }
+  recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainerId, {
     size: 'invisible',
   });
-  return signInWithPhoneNumber(auth, phoneNumber, verifier);
+  return signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
 }
 
 /** Phone number sign in — Step 2: verify the code */
