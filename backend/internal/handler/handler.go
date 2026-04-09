@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -212,7 +213,7 @@ func (h *Handler) ListStocks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetStock(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 	stock, err := h.repo.GetStockByTicker(r.Context(), ticker)
 	if err != nil {
 		writeError(w, http.StatusNotFound, "stock not found")
@@ -227,7 +228,7 @@ func (h *Handler) GetStock(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetStockHistory(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 	interval := r.URL.Query().Get("interval")
 	if interval == "" {
 		interval = "1m"
@@ -299,7 +300,7 @@ func (h *Handler) GetMarketSummary(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetETFHoldings(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 
 	holdings, err := h.repo.GetETFHoldings(r.Context(), ticker)
 	if err != nil {
@@ -732,7 +733,7 @@ func (h *Handler) RemoveFromWatchlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 	if err := h.repo.RemoveFromWatchlist(r.Context(), user.ID, ticker); err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to remove from watchlist")
 		return
@@ -830,6 +831,17 @@ func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getUserFromContext(r *http.Request) (*model.User, error) {
 	firebaseUID := middleware.GetFirebaseUID(r.Context())
 	return h.repo.GetUserByFirebaseUID(r.Context(), firebaseUID)
+}
+
+// tickerParam extracts and URL-decodes the {ticker} path parameter.
+// Handles encoded tickers like X%3ABTCUSD -> X:BTCUSD.
+func tickerParam(r *http.Request) string {
+	raw := chi.URLParam(r, "ticker")
+	decoded, err := url.PathUnescape(raw)
+	if err != nil {
+		return raw
+	}
+	return decoded
 }
 
 func writeJSON(w http.ResponseWriter, status int, data interface{}) {
