@@ -255,6 +255,33 @@ export const handlers = [
     HttpResponse.json({ completed: false })
   ),
 
+  // Market Status
+  http.get(`${API_URL}/api/v1/market/status`, () =>
+    HttpResponse.json({
+      is_open: true,
+      session: 'regular',
+      next_open: '2026-04-09T13:30:00Z',
+      next_close: '2026-04-08T20:00:00Z',
+    })
+  ),
+
+  // Options
+  http.get(`${API_URL}/api/v1/stocks/:ticker/options/expirations`, () =>
+    HttpResponse.json([])
+  ),
+  http.get(`${API_URL}/api/v1/stocks/:ticker/options`, () =>
+    HttpResponse.json({ calls: [], puts: [] })
+  ),
+  http.get(`${API_URL}/api/v1/options/positions`, () =>
+    HttpResponse.json([])
+  ),
+  http.get(`${API_URL}/api/v1/options/trades`, () =>
+    HttpResponse.json([])
+  ),
+  http.get(`${API_URL}/api/v1/options/orders`, () =>
+    HttpResponse.json([])
+  ),
+
   // Watchlist
   http.get(`${API_URL}/api/v1/watchlist`, () =>
     HttpResponse.json(['PIPE', 'BREW'])

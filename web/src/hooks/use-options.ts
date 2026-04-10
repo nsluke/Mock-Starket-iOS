@@ -6,7 +6,10 @@ import type { OptionChainResponse, OptionPosition, OptionTrade, OptionOrder } fr
 export function useOptionExpirations(ticker: string) {
   return useQuery<string[]>({
     queryKey: ['option-expirations', ticker],
-    queryFn: () => apiClient.getOptionExpirations(ticker),
+    queryFn: async () => {
+      const data = await apiClient.getOptionExpirations(ticker);
+      return data ?? [];
+    },
     enabled: !!ticker,
   });
 }
@@ -23,21 +26,30 @@ export function useOptionChain(ticker: string, expiration?: string) {
 export function useOptionsPositions() {
   return useQuery<OptionPosition[]>({
     queryKey: ['options-positions'],
-    queryFn: () => apiClient.getOptionsPositions(),
+    queryFn: async () => {
+      const data = await apiClient.getOptionsPositions();
+      return data ?? [];
+    },
   });
 }
 
 export function useOptionsTradeHistory(limit = 50, offset = 0) {
   return useQuery<OptionTrade[]>({
     queryKey: ['options-trades', limit, offset],
-    queryFn: () => apiClient.getOptionsTradeHistory(limit, offset),
+    queryFn: async () => {
+      const data = await apiClient.getOptionsTradeHistory(limit, offset);
+      return data ?? [];
+    },
   });
 }
 
 export function useOptionsOrders() {
   return useQuery<OptionOrder[]>({
     queryKey: ['options-orders'],
-    queryFn: () => apiClient.getOptionsOrders(),
+    queryFn: async () => {
+      const data = await apiClient.getOptionsOrders();
+      return data ?? [];
+    },
   });
 }
 

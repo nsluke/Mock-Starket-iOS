@@ -78,24 +78,11 @@ func main() {
 			WSEnabled:    cfg.PolygonWSEnabled,
 			PollInterval: time.Duration(cfg.PolygonPollInterval) * time.Millisecond,
 		}, logger)
-		// Only track real tickers that Polygon.io will recognize
-		realTickers := map[string]bool{
-			"AAPL": true, "MSFT": true, "GOOGL": true, "AMZN": true, "NVDA": true,
-			"META": true, "TSLA": true, "CRM": true, "ORCL": true, "INTC": true,
-			"JNJ": true, "UNH": true, "PFE": true, "ABBV": true, "MRK": true, "LLY": true,
-			"JPM": true, "BAC": true, "GS": true, "V": true, "MA": true,
-			"XOM": true, "CVX": true, "COP": true, "SLB": true,
-			"WMT": true, "KO": true, "PEP": true, "MCD": true, "NKE": true, "SBUX": true, "DIS": true,
-			"CAT": true, "BA": true, "HON": true, "UPS": true, "GE": true,
-			"SPY": true, "QQQ": true, "DIA": true, "IWM": true, "VTI": true,
-			"X:BTCUSD": true, "X:ETHUSD": true, "X:SOLUSD": true, "X:DOGEUSD": true,
-		}
+		// Track all stocks from DB — the seed script now only creates real tickers
 		tracked := 0
 		for _, s := range stocks {
-			if realTickers[s.Ticker] {
-				feed.TrackTicker(s.Ticker, s.Sector, s.AssetType)
-				tracked++
-			}
+			feed.TrackTicker(s.Ticker, s.Sector, s.AssetType)
+			tracked++
 		}
 		provider = feed
 		logger.Info("using polygon.io market data", "tickers", tracked, "ws_enabled", cfg.PolygonWSEnabled)

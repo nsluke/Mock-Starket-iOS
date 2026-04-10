@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import { useStocks, useMarketSummary } from '@/hooks/use-stocks';
+import { useStocks, useMarketSummary, useMarketStatus } from '@/hooks/use-stocks';
 import { useMarketStore } from '@/stores/market-store';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useSort } from '@/hooks/use-sort';
@@ -11,13 +11,13 @@ import { TableSkeleton } from '@/components/ui/TableSkeleton';
 import { PieChart, COLORS } from '@/components/charts/PieChart';
 import { formatCurrency, formatPercent, priceChangeColor, priceChangeBg } from '@/lib/formatters';
 import type { Stock } from '@/types/stock';
+import { displayTicker } from '@/types/stock';
 
 const assetFilters = [
   { value: 'all', label: 'All' },
   { value: 'stock', label: 'Stocks' },
   { value: 'etf', label: 'ETFs' },
   { value: 'crypto', label: 'Crypto' },
-  { value: 'commodity', label: 'Commodities' },
 ];
 
 export default function MarketPage() {
@@ -31,6 +31,7 @@ export default function MarketPage() {
 
   const { isLoading: stocksLoading } = useStocks();
   const { data: summary } = useMarketSummary();
+  const { data: marketStatus } = useMarketStatus();
 
   // Sync debounced value to store
   useEffect(() => {
@@ -39,7 +40,8 @@ export default function MarketPage() {
 
   // Available sectors based on current asset type filter
   const availableSectors = useMemo(() => {
-    const pool = assetFilter === 'all' ? stocks : stocks.filter((s) => s.asset_type === assetFilter);
+    const all = stocks || [];
+    const pool = assetFilter === 'all' ? all : all.filter((s) => s.asset_type === assetFilter);
     const unique = [...new Set(pool.map((s) => s.sector))].sort();
     return unique;
   }, [stocks, assetFilter]);
@@ -50,7 +52,7 @@ export default function MarketPage() {
   }, [assetFilter]);
 
   const filtered = useMemo(() => {
-    let result = stocks;
+    let result = stocks || [];
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter((s) => s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q));
@@ -61,7 +63,11 @@ export default function MarketPage() {
     if (sectorFilter !== 'all') {
       result = result.filter((s: Stock) => s.sector === sectorFilter);
     }
-    return result;
+    return result.map((s) => {
+      const change = parseFloat(s.current_price) - parseFloat(s.day_open);
+      const changePct = parseFloat(s.day_open) !== 0 ? (change / parseFloat(s.day_open)) * 100 : 0;
+      return { ...s, _changePct: changePct };
+    });
   }, [stocks, searchQuery, assetFilter, sectorFilter]);
 
   const { sorted: displayed, sortKey, sortDirection, onSort } = useSort(filtered, 'ticker', 'asc');
@@ -69,7 +75,7 @@ export default function MarketPage() {
   // Sector breakdown for pie chart (by count of stocks, excluding ETFs)
   const sectorData = useMemo(() => {
     const counts: Record<string, number> = {};
-    stocks.forEach((s) => {
+    (stocks || []).forEach((s) => {
       if (s.asset_type === 'etf') return;
       const key = s.sector || s.asset_type;
       counts[key] = (counts[key] || 0) + 1;
@@ -82,7 +88,19 @@ export default function MarketPage() {
   return (
     <PageTransition>
     <div className="p-6 max-w-6xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Market</h1>
+      <div className="flex items-center gap-3">
+        <h1 className="text-2xl font-bold">Market</h1>
+        {marketStatus && (
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+            marketStatus.is_open
+              ? 'bg-emerald-400/10 text-emerald-400'
+              : 'bg-[#8B949E]/10 text-[#8B949E]'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${marketStatus.is_open ? 'bg-emerald-400 animate-pulse' : 'bg-[#6E7681]'}`} />
+            {marketStatus.is_open ? 'Market Open' : marketStatus.session === 'pre_market' ? 'Pre-Market' : marketStatus.session === 'after_hours' ? 'After Hours' : 'Market Closed'}
+          </span>
+        )}
+      </div>
 
       {/* Market Summary */}
       {summary && (
@@ -181,15 +199,14 @@ export default function MarketPage() {
               <th className="text-right px-4 py-3 cursor-pointer hover:text-white select-none" onClick={() => onSort('current_price')}>
                 Price {sortKey === 'current_price' && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
-              <th className="text-right px-4 py-3 cursor-pointer hover:text-white select-none" onClick={() => onSort('name')}>
-                Change {sortKey === 'name' && (sortDirection === 'asc' ? '↑' : '↓')}
+              <th className="text-right px-4 py-3 cursor-pointer hover:text-white select-none" onClick={() => onSort('_changePct' as any)}>
+                Change {sortKey === ('_changePct' as any) && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
             </tr>
           </thead>
           <tbody>
             {displayed.map((stock) => {
-              const change = parseFloat(stock.current_price) - parseFloat(stock.day_open);
-              const changePct = parseFloat(stock.day_open) !== 0 ? (change / parseFloat(stock.day_open)) * 100 : 0;
+              const changePct = stock._changePct;
 
               return (
                 <tr
@@ -198,10 +215,19 @@ export default function MarketPage() {
                 >
                   <td className="px-4 py-3">
                     <Link href={`/stock/${stock.ticker}`} className="flex items-center gap-3">
-                      <span className="rounded bg-[#50E3C2]/10 px-2 py-1 text-xs font-mono font-bold text-[#50E3C2]">
-                        {stock.ticker}
-                      </span>
-                      <span className="text-sm font-medium text-white">{stock.name}</span>
+                      {stock.logo_url ? (
+                        <img src={stock.logo_url} alt="" className="w-8 h-8 rounded-full bg-[#21262D] object-contain" />
+                      ) : (
+                        <span className="w-8 h-8 rounded-full bg-[#50E3C2]/10 flex items-center justify-center text-xs font-bold text-[#50E3C2]">
+                          {displayTicker(stock.ticker).slice(0, 2)}
+                        </span>
+                      )}
+                      <div className="min-w-0">
+                        <span className="text-xs font-mono font-bold text-[#50E3C2]">
+                          {displayTicker(stock.ticker)}
+                        </span>
+                        <p className="text-sm font-medium text-white truncate">{stock.name}</p>
+                      </div>
                     </Link>
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">

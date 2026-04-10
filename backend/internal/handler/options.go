@@ -17,7 +17,7 @@ import (
 
 // GetOptionChain returns the option chain for a stock.
 func (h *Handler) GetOptionChain(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 
 	var expiration *time.Time
 	if expStr := r.URL.Query().Get("expiration"); expStr != "" {
@@ -69,7 +69,7 @@ func (h *Handler) GetOptionChain(w http.ResponseWriter, r *http.Request) {
 
 // GetOptionExpirations returns available expiration dates for a stock's options.
 func (h *Handler) GetOptionExpirations(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 
 	expirations, err := h.repo.GetOptionExpirations(r.Context(), ticker)
 	if err != nil {

@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -86,7 +87,13 @@ func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.repo.CreateUser(r.Context(), firebaseUID, req.DisplayName, req.IsGuest)
 	if err != nil {
-		writeError(w, http.StatusConflict, "user already exists")
+		// User already exists — return existing user (idempotent register)
+		existing, getErr := h.repo.GetUserByFirebaseUID(r.Context(), firebaseUID)
+		if getErr != nil {
+			writeError(w, http.StatusConflict, "user already exists")
+			return
+		}
+		writeJSON(w, http.StatusOK, existing)
 		return
 	}
 
@@ -106,7 +113,13 @@ func (h *Handler) CreateGuest(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.repo.CreateUser(r.Context(), firebaseUID, "Guest Trader", true)
 	if err != nil {
-		writeError(w, http.StatusConflict, "user already exists")
+		// Guest already exists — return existing user
+		existing, getErr := h.repo.GetUserByFirebaseUID(r.Context(), firebaseUID)
+		if getErr != nil {
+			writeError(w, http.StatusConflict, "user already exists")
+			return
+		}
+		writeJSON(w, http.StatusOK, existing)
 		return
 	}
 
@@ -200,7 +213,7 @@ func (h *Handler) ListStocks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetStock(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 	stock, err := h.repo.GetStockByTicker(r.Context(), ticker)
 	if err != nil {
 		writeError(w, http.StatusNotFound, "stock not found")
@@ -215,7 +228,7 @@ func (h *Handler) GetStock(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetStockHistory(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 	interval := r.URL.Query().Get("interval")
 	if interval == "" {
 		interval = "1m"
@@ -287,7 +300,7 @@ func (h *Handler) GetMarketSummary(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetETFHoldings(w http.ResponseWriter, r *http.Request) {
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 
 	holdings, err := h.repo.GetETFHoldings(r.Context(), ticker)
 	if err != nil {
@@ -429,10 +442,12 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate ticker exists
+	// Validate ticker exists (check price provider, then DB)
 	if _, ok := h.engine.GetPrice(req.Ticker); !ok {
-		writeError(w, http.StatusBadRequest, "stock "+req.Ticker+" not found")
-		return
+		if _, err := h.repo.GetStockByTicker(r.Context(), req.Ticker); err != nil {
+			writeError(w, http.StatusBadRequest, "stock "+req.Ticker+" not found")
+			return
+		}
 	}
 
 	order, err := h.repo.CreateOrder(r.Context(), user.ID, req.Ticker, req.Side, req.OrderType, req.Shares, req.LimitPrice, req.StopPrice)
@@ -720,7 +735,7 @@ func (h *Handler) RemoveFromWatchlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ticker := chi.URLParam(r, "ticker")
+	ticker := tickerParam(r)
 	if err := h.repo.RemoveFromWatchlist(r.Context(), user.ID, ticker); err != nil {
 		writeError(w, http.StatusInternalServerError, "failed to remove from watchlist")
 		return
@@ -818,6 +833,17 @@ func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) getUserFromContext(r *http.Request) (*model.User, error) {
 	firebaseUID := middleware.GetFirebaseUID(r.Context())
 	return h.repo.GetUserByFirebaseUID(r.Context(), firebaseUID)
+}
+
+// tickerParam extracts and URL-decodes the {ticker} path parameter.
+// Handles encoded tickers like X%3ABTCUSD -> X:BTCUSD.
+func tickerParam(r *http.Request) string {
+	raw := chi.URLParam(r, "ticker")
+	decoded, err := url.PathUnescape(raw)
+	if err != nil {
+		return raw
+	}
+	return decoded
 }
 
 func writeJSON(w http.ResponseWriter, status int, data interface{}) {

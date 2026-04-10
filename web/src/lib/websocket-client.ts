@@ -32,6 +32,13 @@ export class WebSocketClient {
 
   connect(token: string) {
     this.token = token;
+
+    // Skip WebSocket if URL is not configured
+    if (!WS_URL) {
+      this.setStatus('disconnected');
+      return;
+    }
+
     this.ws = new WebSocket(`${WS_URL}?user_id=${token}`);
 
     this.ws.onopen = () => {

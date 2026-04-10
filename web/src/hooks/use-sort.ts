@@ -7,6 +7,7 @@ export function useSort<T>(data: T[], defaultKey: keyof T, defaultDir: SortDirec
   const [sortDirection, setSortDirection] = useState<SortDirection>(defaultDir);
 
   const sorted = useMemo(() => {
+    if (!data) return [];
     return [...data].sort((a, b) => {
       const aVal = a[sortKey];
       const bVal = b[sortKey];

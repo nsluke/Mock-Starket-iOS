@@ -14,11 +14,10 @@ test.describe('Market Page', () => {
 
   test('displays search input and asset filters', async ({ page }) => {
     await expect(page.getByPlaceholder('Search stocks...')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'All' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'All', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Stocks' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'ETFs' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Crypto' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Commodities' })).toBeVisible();
   });
 
   test('displays stock table with headers', async ({ page }) => {

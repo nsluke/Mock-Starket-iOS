@@ -14,8 +14,10 @@ const PortfolioChart = dynamic(() => import('@/components/charts/PortfolioChart'
 
 export default function PortfolioPage() {
   const { data, isLoading } = usePortfolio();
-  const { data: trades = [] } = useTradeHistory(20, 0);
-  const { data: portfolioHistory = [] } = usePortfolioHistory(100);
+  const { data: rawTrades } = useTradeHistory(20, 0);
+  const { data: rawHistory } = usePortfolioHistory(100);
+  const trades = rawTrades ?? [];
+  const portfolioHistory = rawHistory ?? [];
   const [tab, setTab] = useState<'holdings' | 'options' | 'history'>('holdings');
 
   if (isLoading) {
@@ -34,8 +36,9 @@ export default function PortfolioPage() {
   }
 
   const netWorth = parseFloat(data.net_worth);
-  const cash = parseFloat(data.portfolio.cash);
-  const invested = parseFloat(data.invested);
+  const positions = data.positions || [];
+  const cash = parseFloat(data.portfolio?.cash || '0');
+  const invested = parseFloat(data.invested || '0');
   const totalPnl = netWorth - 100000;
   const totalPnlPct = (totalPnl / 100000) * 100;
 
@@ -64,7 +67,7 @@ export default function PortfolioPage() {
           <p className="text-xs text-[#6E7681] mb-1">Invested</p>
           <p className="text-xl font-bold">{formatCurrency(invested)}</p>
           <p className="text-xs text-[#6E7681] mt-1">
-            {data.positions.length} position{data.positions.length !== 1 ? 's' : ''}
+            {positions.length} position{positions.length !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-4">
@@ -92,12 +95,12 @@ export default function PortfolioPage() {
       )}
 
       {/* Portfolio Breakdown */}
-      {data.positions.length > 0 && (
+      {positions.length > 0 && (
         <div className="rounded-xl bg-[#161B22] border border-[#30363D] p-6">
           <h2 className="font-semibold mb-4">Portfolio Breakdown</h2>
           <PieChart
             data={[
-              ...data.positions.map((pos, i) => ({
+              ...positions.map((pos, i) => ({
                 label: pos.ticker,
                 value: parseFloat(pos.market_value),
                 color: COLORS[i % COLORS.length],
@@ -146,7 +149,7 @@ export default function PortfolioPage() {
       {/* Holdings Table */}
       {tab === 'holdings' && (
         <div className="rounded-xl bg-[#161B22] border border-[#30363D] overflow-hidden">
-          {data.positions.length === 0 ? (
+          {positions.length === 0 ? (
             <div className="p-8 text-center text-[#8B949E]">
               <p>No positions yet.</p>
               <Link href="/market" className="text-[#50E3C2] hover:underline mt-1 inline-block">
@@ -165,7 +168,7 @@ export default function PortfolioPage() {
                 </tr>
               </thead>
               <tbody>
-                {data.positions.map((pos) => (
+                {positions.map((pos) => (
                   <tr
                     key={pos.id}
                     className="border-b border-[#21262D] hover:bg-[#21262D] transition-colors"

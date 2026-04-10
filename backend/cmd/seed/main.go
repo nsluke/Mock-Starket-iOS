@@ -17,17 +17,27 @@ import (
 
 // Tickers to seed — Polygon.io will provide names, sectors, descriptions, and prices.
 var tickers = []string{
-	// US Stocks
+	// Technology
 	"AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "CRM", "ORCL", "INTC",
-	"JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY",
-	"JPM", "BAC", "GS", "V", "MA",
-	"XOM", "CVX", "COP", "SLB",
-	"WMT", "KO", "PEP", "MCD", "NKE", "SBUX", "DIS",
-	"CAT", "BA", "HON", "UPS", "GE",
+	"AMD", "ADBE", "NFLX", "CSCO", "AVGO", "QCOM", "IBM", "NOW", "UBER", "SQ",
+	"SHOP", "COIN", "PLTR", "SNOW", "NET",
+	// Healthcare
+	"JNJ", "UNH", "PFE", "ABBV", "MRK", "LLY", "TMO", "BMY", "AMGN", "GILD",
+	// Financial
+	"JPM", "BAC", "GS", "V", "MA", "WFC", "MS", "AXP", "BLK", "C",
+	// Energy
+	"XOM", "CVX", "COP", "SLB", "EOG", "OXY",
+	// Consumer
+	"WMT", "KO", "PEP", "MCD", "NKE", "SBUX", "DIS", "COST", "TGT", "HD",
+	"LOW", "ABNB", "BKNG",
+	// Industrial
+	"CAT", "BA", "HON", "UPS", "GE", "RTX", "LMT", "DE", "MMM", "FDX",
+	// Telecom / Utilities
+	"T", "VZ", "TMUS", "NEE",
 	// ETFs
-	"SPY", "QQQ", "DIA", "IWM", "VTI",
+	"SPY", "QQQ", "DIA", "IWM", "VTI", "ARKK", "XLF", "XLE", "XLK", "XLV",
 	// Crypto
-	"X:BTCUSD", "X:ETHUSD", "X:SOLUSD", "X:DOGEUSD",
+	"X:BTCUSD", "X:ETHUSD", "X:SOLUSD", "X:DOGEUSD", "X:ADAUSD", "X:AVAXUSD",
 }
 
 func main() {
@@ -148,28 +158,56 @@ func main() {
 		etf, holding string
 		weight       string
 	}{
-		// SPY - S&P 500 (top holdings)
+		// SPY - S&P 500 (top holdings by weight)
 		{"SPY", "AAPL", "0.07"}, {"SPY", "MSFT", "0.07"}, {"SPY", "NVDA", "0.06"},
 		{"SPY", "AMZN", "0.04"}, {"SPY", "META", "0.03"}, {"SPY", "GOOGL", "0.04"},
-		{"SPY", "TSLA", "0.02"}, {"SPY", "JPM", "0.02"}, {"SPY", "V", "0.02"},
-		{"SPY", "UNH", "0.02"}, {"SPY", "JNJ", "0.02"}, {"SPY", "XOM", "0.02"},
+		{"SPY", "AVGO", "0.02"}, {"SPY", "TSLA", "0.02"}, {"SPY", "JPM", "0.02"},
+		{"SPY", "V", "0.01"}, {"SPY", "UNH", "0.01"}, {"SPY", "LLY", "0.01"},
+
 		// QQQ - Nasdaq 100
 		{"QQQ", "AAPL", "0.09"}, {"QQQ", "MSFT", "0.08"}, {"QQQ", "NVDA", "0.07"},
-		{"QQQ", "AMZN", "0.06"}, {"QQQ", "META", "0.05"}, {"QQQ", "GOOGL", "0.05"},
-		{"QQQ", "TSLA", "0.04"}, {"QQQ", "CRM", "0.03"}, {"QQQ", "INTC", "0.02"},
-		// DIA - Dow Jones
-		{"DIA", "AAPL", "0.06"}, {"DIA", "MSFT", "0.06"}, {"DIA", "UNH", "0.08"},
-		{"DIA", "GS", "0.06"}, {"DIA", "MCD", "0.05"}, {"DIA", "CAT", "0.05"},
-		{"DIA", "HON", "0.04"}, {"DIA", "BA", "0.04"}, {"DIA", "V", "0.04"},
-		{"DIA", "JPM", "0.04"}, {"DIA", "NKE", "0.03"}, {"DIA", "DIS", "0.03"},
+		{"QQQ", "AMZN", "0.05"}, {"QQQ", "META", "0.05"}, {"QQQ", "GOOGL", "0.05"},
+		{"QQQ", "AVGO", "0.04"}, {"QQQ", "TSLA", "0.03"}, {"QQQ", "COST", "0.03"},
+		{"QQQ", "NFLX", "0.02"}, {"QQQ", "AMD", "0.02"}, {"QQQ", "ADBE", "0.02"},
+
+		// DIA - Dow Jones Industrial
+		{"DIA", "UNH", "0.08"}, {"DIA", "GS", "0.07"}, {"DIA", "MSFT", "0.06"},
+		{"DIA", "HD", "0.06"}, {"DIA", "CAT", "0.05"}, {"DIA", "MCD", "0.05"},
+		{"DIA", "AMGN", "0.05"}, {"DIA", "V", "0.04"}, {"DIA", "AAPL", "0.04"},
+		{"DIA", "JPM", "0.04"}, {"DIA", "BA", "0.03"}, {"DIA", "HON", "0.03"},
+
 		// IWM - Russell 2000
-		{"IWM", "INTC", "0.10"}, {"IWM", "PFE", "0.10"}, {"IWM", "BAC", "0.10"},
-		{"IWM", "SLB", "0.10"}, {"IWM", "NKE", "0.10"}, {"IWM", "SBUX", "0.10"},
+		{"IWM", "COIN", "0.05"}, {"IWM", "SQ", "0.04"}, {"IWM", "NET", "0.04"},
+		{"IWM", "PLTR", "0.04"}, {"IWM", "SNOW", "0.03"}, {"IWM", "SHOP", "0.03"},
+
 		// VTI - Total Market
 		{"VTI", "AAPL", "0.06"}, {"VTI", "MSFT", "0.06"}, {"VTI", "NVDA", "0.05"},
 		{"VTI", "AMZN", "0.04"}, {"VTI", "META", "0.03"}, {"VTI", "GOOGL", "0.03"},
-		{"VTI", "JPM", "0.02"}, {"VTI", "JNJ", "0.02"}, {"VTI", "V", "0.02"},
-		{"VTI", "UNH", "0.02"}, {"VTI", "XOM", "0.02"}, {"VTI", "WMT", "0.02"},
+		{"VTI", "JPM", "0.02"}, {"VTI", "V", "0.02"}, {"VTI", "UNH", "0.02"},
+		{"VTI", "XOM", "0.01"}, {"VTI", "LLY", "0.01"}, {"VTI", "WMT", "0.01"},
+
+		// ARKK - ARK Innovation
+		{"ARKK", "TSLA", "0.10"}, {"ARKK", "COIN", "0.08"}, {"ARKK", "SHOP", "0.07"},
+		{"ARKK", "PLTR", "0.07"}, {"ARKK", "SQ", "0.06"}, {"ARKK", "UBER", "0.05"},
+
+		// XLK - Technology Select Sector
+		{"XLK", "AAPL", "0.22"}, {"XLK", "MSFT", "0.21"}, {"XLK", "NVDA", "0.06"},
+		{"XLK", "AVGO", "0.05"}, {"XLK", "CRM", "0.03"}, {"XLK", "AMD", "0.03"},
+		{"XLK", "ADBE", "0.03"}, {"XLK", "ORCL", "0.03"}, {"XLK", "CSCO", "0.02"},
+
+		// XLF - Financial Select Sector
+		{"XLF", "JPM", "0.10"}, {"XLF", "V", "0.08"}, {"XLF", "MA", "0.07"},
+		{"XLF", "BAC", "0.05"}, {"XLF", "GS", "0.04"}, {"XLF", "WFC", "0.04"},
+		{"XLF", "MS", "0.03"}, {"XLF", "BLK", "0.03"}, {"XLF", "AXP", "0.03"},
+
+		// XLE - Energy Select Sector
+		{"XLE", "XOM", "0.23"}, {"XLE", "CVX", "0.17"}, {"XLE", "COP", "0.06"},
+		{"XLE", "EOG", "0.05"}, {"XLE", "SLB", "0.05"}, {"XLE", "OXY", "0.04"},
+
+		// XLV - Health Care Select Sector
+		{"XLV", "LLY", "0.12"}, {"XLV", "UNH", "0.10"}, {"XLV", "JNJ", "0.07"},
+		{"XLV", "ABBV", "0.06"}, {"XLV", "MRK", "0.05"}, {"XLV", "TMO", "0.05"},
+		{"XLV", "AMGN", "0.04"}, {"XLV", "PFE", "0.03"}, {"XLV", "BMY", "0.03"},
 	}
 
 	for _, h := range etfHoldings {
@@ -277,31 +315,63 @@ func buildStock(ctx context.Context, ticker string, client *polygon.Client) mode
 var fallbackData = map[string]struct {
 	Name, Sector, AssetType string
 }{
+	// Technology
 	"AAPL": {"Apple Inc.", "Technology", "stock"}, "MSFT": {"Microsoft Corporation", "Technology", "stock"},
 	"GOOGL": {"Alphabet Inc.", "Technology", "stock"}, "AMZN": {"Amazon.com Inc.", "Technology", "stock"},
 	"NVDA": {"NVIDIA Corporation", "Technology", "stock"}, "META": {"Meta Platforms Inc.", "Technology", "stock"},
 	"TSLA": {"Tesla Inc.", "Technology", "stock"}, "CRM": {"Salesforce Inc.", "Technology", "stock"},
 	"ORCL": {"Oracle Corporation", "Technology", "stock"}, "INTC": {"Intel Corporation", "Technology", "stock"},
+	"AMD": {"Advanced Micro Devices", "Technology", "stock"}, "ADBE": {"Adobe Inc.", "Technology", "stock"},
+	"NFLX": {"Netflix Inc.", "Technology", "stock"}, "CSCO": {"Cisco Systems", "Technology", "stock"},
+	"AVGO": {"Broadcom Inc.", "Technology", "stock"}, "QCOM": {"QUALCOMM Inc.", "Technology", "stock"},
+	"IBM": {"IBM Corporation", "Technology", "stock"}, "NOW": {"ServiceNow Inc.", "Technology", "stock"},
+	"UBER": {"Uber Technologies", "Technology", "stock"}, "SQ": {"Block Inc.", "Technology", "stock"},
+	"SHOP": {"Shopify Inc.", "Technology", "stock"}, "COIN": {"Coinbase Global", "Technology", "stock"},
+	"PLTR": {"Palantir Technologies", "Technology", "stock"}, "SNOW": {"Snowflake Inc.", "Technology", "stock"},
+	"NET": {"Cloudflare Inc.", "Technology", "stock"},
+	// Healthcare
 	"JNJ": {"Johnson & Johnson", "Healthcare", "stock"}, "UNH": {"UnitedHealth Group", "Healthcare", "stock"},
 	"PFE": {"Pfizer Inc.", "Healthcare", "stock"}, "ABBV": {"AbbVie Inc.", "Healthcare", "stock"},
 	"MRK": {"Merck & Co.", "Healthcare", "stock"}, "LLY": {"Eli Lilly and Company", "Healthcare", "stock"},
+	"TMO": {"Thermo Fisher Scientific", "Healthcare", "stock"}, "BMY": {"Bristol-Myers Squibb", "Healthcare", "stock"},
+	"AMGN": {"Amgen Inc.", "Healthcare", "stock"}, "GILD": {"Gilead Sciences", "Healthcare", "stock"},
+	// Financial
 	"JPM": {"JPMorgan Chase & Co.", "Financial", "stock"}, "BAC": {"Bank of America Corp.", "Financial", "stock"},
 	"GS": {"Goldman Sachs Group", "Financial", "stock"}, "V": {"Visa Inc.", "Financial", "stock"},
-	"MA": {"Mastercard Inc.", "Financial", "stock"},
+	"MA": {"Mastercard Inc.", "Financial", "stock"}, "WFC": {"Wells Fargo & Co.", "Financial", "stock"},
+	"MS": {"Morgan Stanley", "Financial", "stock"}, "AXP": {"American Express", "Financial", "stock"},
+	"BLK": {"BlackRock Inc.", "Financial", "stock"}, "C": {"Citigroup Inc.", "Financial", "stock"},
+	// Energy
 	"XOM": {"Exxon Mobil Corporation", "Energy", "stock"}, "CVX": {"Chevron Corporation", "Energy", "stock"},
 	"COP": {"ConocoPhillips", "Energy", "stock"}, "SLB": {"Schlumberger Limited", "Energy", "stock"},
+	"EOG": {"EOG Resources", "Energy", "stock"}, "OXY": {"Occidental Petroleum", "Energy", "stock"},
+	// Consumer
 	"WMT": {"Walmart Inc.", "Consumer", "stock"}, "KO": {"The Coca-Cola Company", "Consumer", "stock"},
 	"PEP": {"PepsiCo Inc.", "Consumer", "stock"}, "MCD": {"McDonald's Corporation", "Consumer", "stock"},
 	"NKE": {"NIKE Inc.", "Consumer", "stock"}, "SBUX": {"Starbucks Corporation", "Consumer", "stock"},
-	"DIS": {"The Walt Disney Company", "Consumer", "stock"},
+	"DIS": {"The Walt Disney Company", "Consumer", "stock"}, "COST": {"Costco Wholesale", "Consumer", "stock"},
+	"TGT": {"Target Corporation", "Consumer", "stock"}, "HD": {"The Home Depot", "Consumer", "stock"},
+	"LOW": {"Lowe's Companies", "Consumer", "stock"}, "ABNB": {"Airbnb Inc.", "Consumer", "stock"},
+	"BKNG": {"Booking Holdings", "Consumer", "stock"},
+	// Industrial
 	"CAT": {"Caterpillar Inc.", "Industrial", "stock"}, "BA": {"The Boeing Company", "Industrial", "stock"},
 	"HON": {"Honeywell International", "Industrial", "stock"}, "UPS": {"United Parcel Service", "Industrial", "stock"},
-	"GE": {"GE Aerospace", "Industrial", "stock"},
-	"SPY": {"SPDR S&P 500 ETF Trust", "ETF", "etf"}, "QQQ": {"Invesco QQQ Trust", "ETF", "etf"},
-	"DIA": {"SPDR Dow Jones Industrial", "ETF", "etf"}, "IWM": {"iShares Russell 2000 ETF", "ETF", "etf"},
-	"VTI": {"Vanguard Total Stock Market", "ETF", "etf"},
+	"GE": {"GE Aerospace", "Industrial", "stock"}, "RTX": {"RTX Corporation", "Industrial", "stock"},
+	"LMT": {"Lockheed Martin", "Industrial", "stock"}, "DE": {"Deere & Company", "Industrial", "stock"},
+	"MMM": {"3M Company", "Industrial", "stock"}, "FDX": {"FedEx Corporation", "Industrial", "stock"},
+	// Telecom / Utilities
+	"T": {"AT&T Inc.", "Technology", "stock"}, "VZ": {"Verizon Communications", "Technology", "stock"},
+	"TMUS": {"T-Mobile US", "Technology", "stock"}, "NEE": {"NextEra Energy", "Energy", "stock"},
+	// ETFs
+	"SPY": {"SPDR S&P 500 ETF", "ETF", "etf"}, "QQQ": {"Invesco QQQ Trust", "ETF", "etf"},
+	"DIA": {"SPDR Dow Jones Industrial", "ETF", "etf"}, "IWM": {"iShares Russell 2000", "ETF", "etf"},
+	"VTI": {"Vanguard Total Stock Market", "ETF", "etf"}, "ARKK": {"ARK Innovation ETF", "ETF", "etf"},
+	"XLF": {"Financial Select Sector SPDR", "ETF", "etf"}, "XLE": {"Energy Select Sector SPDR", "ETF", "etf"},
+	"XLK": {"Technology Select Sector SPDR", "ETF", "etf"}, "XLV": {"Health Care Select Sector SPDR", "ETF", "etf"},
+	// Crypto
 	"X:BTCUSD": {"Bitcoin", "Crypto", "crypto"}, "X:ETHUSD": {"Ethereum", "Crypto", "crypto"},
 	"X:SOLUSD": {"Solana", "Crypto", "crypto"}, "X:DOGEUSD": {"Dogecoin", "Crypto", "crypto"},
+	"X:ADAUSD": {"Cardano", "Crypto", "crypto"}, "X:AVAXUSD": {"Avalanche", "Crypto", "crypto"},
 }
 
 func d(s string) decimal.Decimal {

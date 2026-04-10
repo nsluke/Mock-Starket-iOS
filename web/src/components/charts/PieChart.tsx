@@ -21,11 +21,11 @@ const COLORS = [
 ];
 
 export function PieChart({ data, size = 140 }: PieChartProps) {
-  const total = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);
+  const total = useMemo(() => (data || []).reduce((sum, d) => sum + d.value, 0), [data]);
 
   const slices = useMemo(() => {
     let cumulative = 0;
-    return data
+    return (data || [])
       .filter((d) => d.value > 0)
       .sort((a, b) => b.value - a.value)
       .map((d, i) => {

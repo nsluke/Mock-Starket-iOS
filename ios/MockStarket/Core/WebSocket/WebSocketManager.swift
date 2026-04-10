@@ -121,15 +121,14 @@ final class WebSocketManager: @unchecked Sendable {
               let data = text.data(using: .utf8) else { return }
 
         let decoder = JSONDecoder()
-        let fmt = ISO8601DateFormatter()
-        fmt.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         decoder.dateDecodingStrategy = .custom { d in
             let c = try d.singleValueContainer()
             let s = try c.decode(String.self)
+            let fmt = ISO8601DateFormatter()
+            fmt.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             if let date = fmt.date(from: s) { return date }
-            let basic = ISO8601DateFormatter()
-            basic.formatOptions = [.withInternetDateTime]
-            if let date = basic.date(from: s) { return date }
+            fmt.formatOptions = [.withInternetDateTime]
+            if let date = fmt.date(from: s) { return date }
             throw DecodingError.dataCorruptedError(in: c, debugDescription: "Bad date: \(s)")
         }
 

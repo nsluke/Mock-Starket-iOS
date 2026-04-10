@@ -64,7 +64,7 @@ func New(h *handler.Handler, hub *ws.Hub, authVerifier mw.FirebaseAuthVerifier, 
 		client.Run()
 	})
 
-	// Authenticated API routes
+	// All API routes require auth (Firebase ID token or dev-mode UID)
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Use(mw.FirebaseAuth(authVerifier))
 
