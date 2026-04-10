@@ -15,7 +15,7 @@ struct MarketView: View {
         .scrollContentBackground(.hidden)
         .background(Theme.background)
         .navigationTitle("Market")
-        .toolbar { cashToolbar }
+        .toolbar { }
         .searchable(text: $viewModel.searchText, prompt: "Search stocks...")
         .refreshable {
             await viewModel.loadStocks()
@@ -94,21 +94,6 @@ struct MarketView: View {
         }
     }
 
-    @ToolbarContentBuilder
-    private var cashToolbar: some ToolbarContent {
-        if let portfolio = viewModel.portfolio {
-            ToolbarItem(placement: .topBarTrailing) {
-                VStack(alignment: .trailing, spacing: 1) {
-                    Text(portfolio.portfolio.cash.currencyFormatted)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(Theme.textPrimary)
-                    Text("Cash")
-                        .font(.caption2)
-                        .foregroundStyle(Theme.textTertiary)
-                }
-            }
-        }
-    }
 }
 
 struct StockRowView: View {

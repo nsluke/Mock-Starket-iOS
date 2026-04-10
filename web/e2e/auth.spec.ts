@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mockAPI } from './helpers';
+import { mockAPI, loginAsGuest } from './helpers';
 
 test.describe('Authentication', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,19 +14,23 @@ test.describe('Authentication', () => {
   test('login page shows app branding', async ({ page }) => {
     await page.goto('/login');
     await expect(page.getByText('Mock Starket')).toBeVisible();
-    await expect(page.getByText('Learn to trade. Risk nothing.')).toBeVisible();
+    await expect(page.getByText('Real stocks. Virtual money. Zero risk.')).toBeVisible();
   });
 
-  test('guest login redirects to market', async ({ page }) => {
+  test('authenticated user is redirected from login to market', async ({ page }) => {
+    // Middleware redirects logged-in users away from /login
+    await page.context().addCookies([{
+      name: 'mockstarket_token',
+      value: 'guest_e2e_test_token',
+      domain: 'localhost',
+      path: '/',
+    }]);
     await page.goto('/login');
-    await page.getByRole('button', { name: 'Continue as Guest' }).click();
     await expect(page).toHaveURL('/market');
   });
 
   test('sets token in localStorage after login', async ({ page }) => {
-    await page.goto('/login');
-    await page.getByRole('button', { name: 'Continue as Guest' }).click();
-    await page.waitForURL('/market');
+    await loginAsGuest(page);
 
     const token = await page.evaluate(() => localStorage.getItem('mockstarket_token'));
     expect(token).toBeTruthy();

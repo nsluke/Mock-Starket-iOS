@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1000001 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A2000001 /* FirebaseAuth */; };
+		A1000002 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A2000002 /* FirebaseCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000001 /* FirebaseAuth in Frameworks */,
+				A1000002 /* FirebaseCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,7 @@
 			name = MockStarket;
 			packageProductDependencies = (
 				A2000001 /* FirebaseAuth */,
+				A2000002 /* FirebaseCore */,
 			);
 			productName = "Mock Starket";
 			productReference = E1000001 /* MockStarket.app */;
@@ -578,6 +581,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A3000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
+		};
+		A2000002 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A3000001 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

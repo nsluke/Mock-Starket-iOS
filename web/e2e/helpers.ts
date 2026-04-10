@@ -44,6 +44,7 @@ export async function mockAPI(page: Page) {
 
     // Auth
     if (path === '/api/v1/auth/guest') return route.fulfill({ json: mockUser });
+    if (path === '/api/v1/auth/register' && method === 'POST') return route.fulfill({ json: mockUser });
     if (path === '/api/v1/auth/me' && method === 'GET') return route.fulfill({ json: mockUser });
     if (path === '/api/v1/auth/me' && method === 'PUT') return route.fulfill({ json: { status: 'updated' } });
     if (path === '/api/v1/auth/me' && method === 'DELETE') return route.fulfill({ json: { status: 'deleted' } });
@@ -100,8 +101,18 @@ export async function mockAPI(page: Page) {
   });
 }
 
+const GUEST_TOKEN = 'guest_e2e_test_token';
+
 export async function loginAsGuest(page: Page) {
-  await page.goto('/login');
-  await page.getByRole('button', { name: 'Continue as Guest' }).click();
-  await page.waitForURL('/market');
+  // Bypass Firebase by setting auth state directly (cookie for middleware, localStorage for client)
+  await page.context().addCookies([{
+    name: 'mockstarket_token',
+    value: GUEST_TOKEN,
+    domain: 'localhost',
+    path: '/',
+  }]);
+  await page.addInitScript((token: string) => {
+    localStorage.setItem('mockstarket_token', token);
+  }, GUEST_TOKEN);
+  await page.goto('/market');
 }

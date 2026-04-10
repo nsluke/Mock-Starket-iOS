@@ -1,8 +1,13 @@
 import SwiftUI
+import FirebaseCore
 
 @main
 struct MockStarketApp: App {
     @State private var appState = AppState()
+
+    init() {
+        FirebaseApp.configure()
+    }
 
     var body: some Scene {
         WindowGroup {
